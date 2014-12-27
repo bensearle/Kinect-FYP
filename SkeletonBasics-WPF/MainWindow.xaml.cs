@@ -406,13 +406,16 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
 
             float[] positions; // create array for skeletal positions
             positions = new float[60]; // initialize array to size 60 = (20 * XYZ)
-
+            string s = "";
             for (int i = 0; i < 20; i++) // iterate through joint types
             {
                 JointType j = joint_dictionary[1];
                 positions[3 * i] = skeleton.Joints[joint_dictionary[i]].Position.X; // get X position
                 positions[3 * i + 1] = skeleton.Joints[joint_dictionary[i]].Position.Y; // get Y position
-                positions[3 * i + 2] = skeleton.Joints[joint_dictionary[i]].Position.Z; // get Z position                
+                positions[3 * i + 2] = skeleton.Joints[joint_dictionary[i]].Position.Z; // get Z position
+
+                // s = (x,y)(x,y) for entering in to coord plotter (testing)
+                s = s + "(" + positions[3 * i] + "," + positions[3 * i + 1] + ")";
             }
 
             foreach (float pos in positions) // for each position
