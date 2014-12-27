@@ -11,6 +11,7 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
     using System.Windows.Media;
     using Microsoft.Kinect;
     using System.Collections.Generic;
+    using System.Diagnostics;
 
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -229,6 +230,7 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
                         if (skel.TrackingState == SkeletonTrackingState.Tracked)
                         {
                             this.DrawBonesAndJoints(skel, dc);
+                            this.getSkeletonXYZ(skel, dc);
                         }
                         else if (skel.TrackingState == SkeletonTrackingState.PositionOnly)
                         {
@@ -405,15 +407,18 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
             float[] positions; // create array for skeletal positions
             positions = new float[60]; // initialize array to size 60 = (20 * XYZ)
 
-            for (int i = 1; i <= 20; i++) // iterate through joint types
+            for (int i = 0; i < 20; i++) // iterate through joint types
             {
                 JointType j = joint_dictionary[1];
                 positions[3 * i] = skeleton.Joints[joint_dictionary[i]].Position.X; // get X position
                 positions[3 * i + 1] = skeleton.Joints[joint_dictionary[i]].Position.Y; // get Y position
-                positions[3 * i + 2] = skeleton.Joints[joint_dictionary[i]].Position.Z; // get Z position
-                
+                positions[3 * i + 2] = skeleton.Joints[joint_dictionary[i]].Position.Z; // get Z position                
             }
 
+            foreach (float pos in positions) // for each position
+            {
+                Debug.WriteLine("position: " + pos);
+            }
         }
 
     }
