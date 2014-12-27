@@ -380,27 +380,39 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
         /// <param name="drawingContext">drawing context to draw to</param>
         private void getSkeletonXYZ(Skeleton skeleton, DrawingContext drawingContext){
  
-            Dictionary<JointType, int> joint_dictionary = new Dictionary<JointType, int>(); // create dictionary of joint types
-	        joint_dictionary.Add(JointType.Head, 0);
-            joint_dictionary.Add(JointType.ShoulderRight, 1);
-            joint_dictionary.Add(JointType.ShoulderCenter, 2);
-            joint_dictionary.Add(JointType.ShoulderLeft, 3);
-            joint_dictionary.Add(JointType.ElbowRight, 4);
-            joint_dictionary.Add(JointType.ElbowLeft, 5);
-            joint_dictionary.Add(JointType.WristRight, 6);
-            joint_dictionary.Add(JointType.WristLeft, 7);
-            joint_dictionary.Add(JointType.HandRight, 8);
-            joint_dictionary.Add(JointType.HandLeft, 9);
-            joint_dictionary.Add(JointType.Spine, 10);
-            joint_dictionary.Add(JointType.HipRight, 11);
-            joint_dictionary.Add(JointType.HipCenter, 12);
-            joint_dictionary.Add(JointType.HipLeft, 13);
-            joint_dictionary.Add(JointType.KneeRight, 14);
-            joint_dictionary.Add(JointType.KneeLeft, 15);
-            joint_dictionary.Add(JointType.AnkleRight, 16);
-            joint_dictionary.Add(JointType.AnkleLeft, 17);
-            joint_dictionary.Add(JointType.FootRight, 18);
-            joint_dictionary.Add(JointType.FootLeft, 19);
+            Dictionary<int, JointType> joint_dictionary = new Dictionary<int, JointType>(); // create dictionary of joint types
+	        joint_dictionary.Add(0, JointType.Head);
+            joint_dictionary.Add(1, JointType.ShoulderRight);
+            joint_dictionary.Add(2, JointType.ShoulderCenter);
+            joint_dictionary.Add(3, JointType.ShoulderLeft);
+            joint_dictionary.Add(4, JointType.ElbowRight);
+            joint_dictionary.Add(5, JointType.ElbowLeft);
+            joint_dictionary.Add(6, JointType.WristRight);
+            joint_dictionary.Add(7, JointType.WristLeft);
+            joint_dictionary.Add(8, JointType.HandRight);
+            joint_dictionary.Add(9, JointType.HandLeft);
+            joint_dictionary.Add(10, JointType.Spine);
+            joint_dictionary.Add(11, JointType.HipRight);
+            joint_dictionary.Add(12, JointType.HipCenter);
+            joint_dictionary.Add(13, JointType.HipLeft);
+            joint_dictionary.Add(14, JointType.KneeRight);
+            joint_dictionary.Add(15, JointType.KneeLeft);
+            joint_dictionary.Add(16, JointType.AnkleRight);
+            joint_dictionary.Add(17, JointType.AnkleLeft);
+            joint_dictionary.Add(18, JointType.FootRight);
+            joint_dictionary.Add(19, JointType.FootLeft);
+
+            float[] positions; // create array for skeletal positions
+            positions = new float[60]; // initialize array to size 60 = (20 * XYZ)
+
+            for (int i = 1; i <= 20; i++) // iterate through joint types
+            {
+                JointType j = joint_dictionary[1];
+                positions[3 * i] = skeleton.Joints[joint_dictionary[i]].Position.X; // get X position
+                positions[3 * i + 1] = skeleton.Joints[joint_dictionary[i]].Position.Y; // get Y position
+                positions[3 * i + 2] = skeleton.Joints[joint_dictionary[i]].Position.Z; // get Z position
+                
+            }
 
         }
 
