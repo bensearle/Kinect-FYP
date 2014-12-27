@@ -10,6 +10,7 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
     using System.Windows;
     using System.Windows.Media;
     using Microsoft.Kinect;
+    using System.Collections.Generic;
 
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -371,5 +372,37 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
                 }
             }
         }
+
+        /// <summary>
+        /// Draws a skeleton's bones and joints
+        /// </summary>
+        /// <param name="skeleton">skeleton to draw</param>
+        /// <param name="drawingContext">drawing context to draw to</param>
+        private void getSkeletonXYZ(Skeleton skeleton, DrawingContext drawingContext){
+ 
+            Dictionary<JointType, int> joint_dictionary = new Dictionary<JointType, int>(); // create dictionary of joint types
+	        joint_dictionary.Add(JointType.Head, 0);
+            joint_dictionary.Add(JointType.ShoulderRight, 1);
+            joint_dictionary.Add(JointType.ShoulderCenter, 2);
+            joint_dictionary.Add(JointType.ShoulderLeft, 3);
+            joint_dictionary.Add(JointType.ElbowRight, 4);
+            joint_dictionary.Add(JointType.ElbowLeft, 5);
+            joint_dictionary.Add(JointType.WristRight, 6);
+            joint_dictionary.Add(JointType.WristLeft, 7);
+            joint_dictionary.Add(JointType.HandRight, 8);
+            joint_dictionary.Add(JointType.HandLeft, 9);
+            joint_dictionary.Add(JointType.Spine, 10);
+            joint_dictionary.Add(JointType.HipRight, 11);
+            joint_dictionary.Add(JointType.HipCenter, 12);
+            joint_dictionary.Add(JointType.HipLeft, 13);
+            joint_dictionary.Add(JointType.KneeRight, 14);
+            joint_dictionary.Add(JointType.KneeLeft, 15);
+            joint_dictionary.Add(JointType.AnkleRight, 16);
+            joint_dictionary.Add(JointType.AnkleLeft, 17);
+            joint_dictionary.Add(JointType.FootRight, 18);
+            joint_dictionary.Add(JointType.FootLeft, 19);
+
+        }
+
     }
 }
