@@ -16,6 +16,7 @@ namespace FaceTrackingBasics
     using Microsoft.Kinect.Toolkit.FaceTracking;
 
     using Point = System.Windows.Point;
+    using System.Globalization;
 
     /// <summary>
     /// Class that uses the Face Tracking SDK to display a face mask for
@@ -291,6 +292,27 @@ namespace FaceTrackingBasics
                     triangle.P2 = faceModelPts[t.Second];
                     triangle.P3 = faceModelPts[t.Third];
                     faceModel.Add(triangle);
+                    // add text of first number
+                    drawingContext.DrawText(new FormattedText("" + t.First,
+                        CultureInfo.GetCultureInfo("en-us"),
+                        FlowDirection.LeftToRight,
+                        new Typeface("Verdana"),
+                        8, System.Windows.Media.Brushes.Red),
+                        triangle.P1);
+                    // add text of second number
+                    drawingContext.DrawText(new FormattedText("" + t.Second,
+                        CultureInfo.GetCultureInfo("en-us"),
+                        FlowDirection.LeftToRight,
+                        new Typeface("Verdana"),
+                        8, System.Windows.Media.Brushes.Red),
+                        triangle.P2);
+                    // add text of third number
+                    drawingContext.DrawText(new FormattedText("" + t.Third,
+                        CultureInfo.GetCultureInfo("en-us"),
+                        FlowDirection.LeftToRight,
+                        new Typeface("Verdana"),
+                        8, System.Windows.Media.Brushes.Red),
+                        triangle.P3);
                 }
 
                 var faceModelGroup = new GeometryGroup();
@@ -303,6 +325,22 @@ namespace FaceTrackingBasics
                     faceModelGroup.Children.Add(faceTriangle);
                 }
 
+                /*for (int i = 0; i < face_coords.Length; i++)
+                {
+                    XYZCoord xyzCoord = face_coords[i];
+                    Point p = new Point(xyzCoord.X*100, xyzCoord.Y*100);
+                    //p.X = xyzCoord.X;
+                    //p.Y = xyzCoord.Y;
+                    FormattedText f = new FormattedText(""+i,
+                        CultureInfo.GetCultureInfo("en-us"),
+                        FlowDirection.LeftToRight,
+                        new Typeface("Verdana"),
+                        36, System.Windows.Media.Brushes.Yellow);
+                    drawingContext.DrawText(f, p);
+                    Debug.WriteLine(string.Format("{0}, {1}, {2}, {3}", i, p.X, p.Y, " ** "));
+                }*/
+
+                
                 drawingContext.DrawGeometry(Brushes.LightYellow, new Pen(Brushes.LightYellow, 1.0), faceModelGroup);
             }
 
@@ -371,9 +409,11 @@ namespace FaceTrackingBasics
                 public float Z;
             }
 
+            private XYZCoord[] face_coords;
+
             public void getXYZ(FaceTrackFrame frame)
             {
-                XYZCoord[] face_coords; // create array for face coordinates
+                //XYZCoord[] face_coords; // create array for face coordinates
                 face_coords = new XYZCoord[121]; // initialize array to size 121
 
                 EnumIndexableCollection<FeaturePoint, Vector3DF> facePoints3D = frame.Get3DShape();
@@ -385,13 +425,14 @@ namespace FaceTrackingBasics
                     face_coords[index].X = vector.X;
                     face_coords[index].Y = vector.Y;
                     face_coords[index].Z = vector.Z;
-                    Debug.WriteLine(string.Format("{0}: ({1}, {2}, {3})", index, vector.X, vector.Y, vector.Z));
+                    //Debug.WriteLine(string.Format("{0}, {1}, {2}, {3}", index, vector.X, vector.Y, vector.Z));
 
                     // s = (x,y)(x,y) for entering in to coord plotter (testing)
                     s = s + "(" + vector.X + "," + vector.Y + ")";
 
                     index++;
                 }
+                //this.face_coords = face_coords;
             }
         }
     }
