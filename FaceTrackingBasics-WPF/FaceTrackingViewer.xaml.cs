@@ -272,6 +272,8 @@ namespace FaceTrackingBasics
 
             public void DrawFaceModel(DrawingContext drawingContext)
             {
+                List<Tuple<Point, int>> list_number_coords = new List<Tuple<Point, int>>();
+
                 if (!this.lastFaceTrackSucceeded || this.skeletonTrackingState != SkeletonTrackingState.Tracked)
                 {
                     return;
@@ -292,7 +294,13 @@ namespace FaceTrackingBasics
                     triangle.P2 = faceModelPts[t.Second];
                     triangle.P3 = faceModelPts[t.Third];
                     faceModel.Add(triangle);
-                    // add text of first number
+                    // add points and numbers to the list
+                    list_number_coords.Add(Tuple.Create(triangle.P1, t.First));
+                    list_number_coords.Add(Tuple.Create(triangle.P2, t.Second));
+                    list_number_coords.Add(Tuple.Create(triangle.P3, t.Third));
+
+                    
+                    /*// add text of first number
                     drawingContext.DrawText(new FormattedText("" + t.First,
                         CultureInfo.GetCultureInfo("en-us"),
                         FlowDirection.LeftToRight,
@@ -312,7 +320,7 @@ namespace FaceTrackingBasics
                         FlowDirection.LeftToRight,
                         new Typeface("Verdana"),
                         8, System.Windows.Media.Brushes.Red),
-                        triangle.P3);
+                        triangle.P3);*/
                 }
 
                 var faceModelGroup = new GeometryGroup();
@@ -342,6 +350,17 @@ namespace FaceTrackingBasics
 
                 
                 drawingContext.DrawGeometry(Brushes.LightYellow, new Pen(Brushes.LightYellow, 1.0), faceModelGroup);
+                foreach (Tuple<Point, int> t in list_number_coords) // iterate through the number and points list
+                {
+                    // add the number to the drawing context
+                    drawingContext.DrawText(new FormattedText("" + t.Item2,
+                        CultureInfo.GetCultureInfo("en-us"),
+                        FlowDirection.LeftToRight,
+                        new Typeface("Verdana"),
+                        4, System.Windows.Media.Brushes.Red),
+                        t.Item1);
+                }
+
             }
 
             /// <summary>
