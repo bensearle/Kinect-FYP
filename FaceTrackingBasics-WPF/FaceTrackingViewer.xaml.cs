@@ -363,14 +363,28 @@ namespace FaceTrackingBasics
                 public Point P3;
             }
 
+
+            public struct XYZCoord
+            {
+                public float X;
+                public float Y;
+                public float Z;
+            }
+
             public void getXYZ(FaceTrackFrame frame)
             {
-                EnumIndexableCollection<FeaturePoint, Vector3DF> facePoints3D = frame.Get3DShape();
+                XYZCoord[] face_coords; // create array for face coordinates
+                face_coords = new XYZCoord[121]; // initialize array to size 121
 
-                int index = 0;
+                EnumIndexableCollection<FeaturePoint, Vector3DF> facePoints3D = frame.Get3DShape();
+                
                 string s = "";
-                foreach (Vector3DF vector in facePoints3D)
+                int index = 0;
+                foreach (Vector3DF vector in facePoints3D) 
                 {
+                    face_coords[index].X = vector.X;
+                    face_coords[index].Y = vector.Y;
+                    face_coords[index].Z = vector.Z;
                     Debug.WriteLine(string.Format("{0}: ({1}, {2}, {3})", index++, vector.X, vector.Y, vector.Z));
 
                     // s = (x,y)(x,y) for entering in to coord plotter (testing)
