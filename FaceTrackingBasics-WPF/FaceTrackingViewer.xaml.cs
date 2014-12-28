@@ -252,6 +252,8 @@ namespace FaceTrackingBasics
 
             private FaceTracker faceTracker;
 
+            private FaceTriangle[] faceTriangles_;
+
             private bool lastFaceTrackSucceeded;
 
             private SkeletonTrackingState skeletonTrackingState;
@@ -348,6 +350,8 @@ namespace FaceTrackingBasics
                         }
 
                         this.facePoints = frame.GetProjected3DShape();
+                        this.faceTriangles_ = faceTriangles;
+                        getXYZ(frame);
                     }
                 }
             }
@@ -357,6 +361,21 @@ namespace FaceTrackingBasics
                 public Point P1;
                 public Point P2;
                 public Point P3;
+            }
+
+            public void getXYZ(FaceTrackFrame frame)
+            {
+                EnumIndexableCollection<FeaturePoint, Vector3DF> facePoints3D = frame.Get3DShape();
+
+                int index = 0;
+                string s = "";
+                foreach (Vector3DF vector in facePoints3D)
+                {
+                    Debug.WriteLine(string.Format("{0}: ({1}, {2}, {3})", index++, vector.X, vector.Y, vector.Z));
+
+                    // s = (x,y)(x,y) for entering in to coord plotter (testing)
+                    s = s + "(" + vector.X + "," + vector.Y + ")";
+                }
             }
         }
     }
