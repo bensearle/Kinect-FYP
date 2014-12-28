@@ -385,10 +385,12 @@ namespace FaceTrackingBasics
                     face_coords[index].X = vector.X;
                     face_coords[index].Y = vector.Y;
                     face_coords[index].Z = vector.Z;
-                    Debug.WriteLine(string.Format("{0}: ({1}, {2}, {3})", index++, vector.X, vector.Y, vector.Z));
+                    Debug.WriteLine(string.Format("{0}: ({1}, {2}, {3})", index, vector.X, vector.Y, vector.Z));
 
                     // s = (x,y)(x,y) for entering in to coord plotter (testing)
                     s = s + "(" + vector.X + "," + vector.Y + ")";
+
+                    index++;
                 }
             }
         }
