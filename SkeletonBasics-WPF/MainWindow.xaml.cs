@@ -434,8 +434,25 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
 
         public void creatJSON()
         {
-            string p1 = ;
-            Debug.WriteLine(string.Format("{0}, {1}, {2}, {3}", index, vector.X, vector.Y, vector.Z));
+            string json_name = "\"name\":" + "variable for the skeleton name" +","; // JSON for the name
+            string json_joints = "";
+            for (int i = 0; i < 20; i++) // iterate through joint types
+            {
+                // create the JSON text for each joint
+                string j_name = "\"" + joint_dictionary[i] + "\":{"; // JSON for "head": {
+                string j_x = "\"x\":" + joint_coords[i].X + ","; // JSON for "x": head_x,
+                string j_y = "\"y\":" + joint_coords[i].Y + ","; // JSON for "y": head_y,
+                string j_z = "\"z\":" + joint_coords[i].Z; // JSON for "z": head_z
+                string j_end = "},"; // JSON for },
+                if (i == 19) {
+                    j_end = "}"; // the last joint does not require a comma
+                }
+                json_joints = json_joints + j_name + j_x + j_y + j_z + j_end; // at this joint to the joints string
+            }
+
+            string json_skeleton = "\"Skeleton_1\": {" + json_name + json_joints + "}"; // create JSON for 1 skeleton
+
+            string josn_complete = "{" + json_skeleton + "}"; // add open and close curly brackets to JSON
         }
 
 
