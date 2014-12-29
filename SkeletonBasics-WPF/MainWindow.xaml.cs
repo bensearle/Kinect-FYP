@@ -375,6 +375,10 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
             }
         }
 
+        private XYZCoord[] joint_coords;
+        Dictionary<int, JointType> joint_dictionary = new Dictionary<int, JointType>(); // create dictionary of joint types
+
+
         /// <summary>
         /// Draws a skeleton's bones and joints
         /// </summary>
@@ -382,7 +386,6 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
         /// <param name="drawingContext">drawing context to draw to</param>
         private void getSkeletonXYZ(Skeleton skeleton, DrawingContext drawingContext){
  
-            Dictionary<int, JointType> joint_dictionary = new Dictionary<int, JointType>(); // create dictionary of joint types
 	        joint_dictionary.Add(0, JointType.Head);
             joint_dictionary.Add(1, JointType.ShoulderRight);
             joint_dictionary.Add(2, JointType.ShoulderCenter);
@@ -404,15 +407,20 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
             joint_dictionary.Add(18, JointType.FootRight);
             joint_dictionary.Add(19, JointType.FootLeft);
 
+            joint_coords = new XYZCoord[20]; // initialize array to size 20
+
             float[] positions; // create array for skeletal positions
             positions = new float[60]; // initialize array to size 60 = (20 * XYZ)
             string s = "";
             for (int i = 0; i < 20; i++) // iterate through joint types
             {
                 JointType j = joint_dictionary[1];
-                positions[3 * i] = skeleton.Joints[joint_dictionary[i]].Position.X; // get X position
-                positions[3 * i + 1] = skeleton.Joints[joint_dictionary[i]].Position.Y; // get Y position
-                positions[3 * i + 2] = skeleton.Joints[joint_dictionary[i]].Position.Z; // get Z position
+                //positions[3 * i] = skeleton.Joints[joint_dictionary[i]].Position.X; // get X position
+                //positions[3 * i + 1] = skeleton.Joints[joint_dictionary[i]].Position.Y; // get Y position
+                //positions[3 * i + 2] = skeleton.Joints[joint_dictionary[i]].Position.Z; // get Z position
+                joint_coords[i].X = skeleton.Joints[joint_dictionary[i]].Position.X; // get X position
+                joint_coords[i].Y = skeleton.Joints[joint_dictionary[i]].Position.Y; // get Y position
+                joint_coords[i].Z = skeleton.Joints[joint_dictionary[i]].Position.Z; // get Z position
 
                 // s = (x,y)(x,y) for entering in to coord plotter (testing)
                 s = s + "(" + positions[3 * i] + "," + positions[3 * i + 1] + ")";
@@ -422,6 +430,20 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
             {
                 Debug.WriteLine("position: " + pos);
             }
+        }
+
+        public void creatJSON()
+        {
+            string p1 = ;
+            Debug.WriteLine(string.Format("{0}, {1}, {2}, {3}", index, vector.X, vector.Y, vector.Z));
+        }
+
+
+        public struct XYZCoord
+        {
+            public float X;
+            public float Y;
+            public float Z;
         }
 
     }
