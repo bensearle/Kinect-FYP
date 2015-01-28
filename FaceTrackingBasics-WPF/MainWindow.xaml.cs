@@ -13,6 +13,9 @@ namespace FaceTrackingBasics
     using System.Windows.Media.Imaging;
     using Microsoft.Kinect;
     using Microsoft.Kinect.Toolkit;
+    using System.Diagnostics;
+    using FaceTrackingBasics.Database; // classes in the database folder
+    using System.Linq;
 
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -27,6 +30,9 @@ namespace FaceTrackingBasics
 
         public MainWindow()
         {
+            // testing db connectivity
+            testDB();
+
             InitializeComponent();
 
             var faceTrackingViewerBinding = new Binding("Kinect") { Source = sensorChooser };
@@ -35,6 +41,31 @@ namespace FaceTrackingBasics
             sensorChooser.KinectChanged += SensorChooserOnKinectChanged;
 
             sensorChooser.Start();
+        }
+
+        private void testDB()
+        {
+            Debug.WriteLine("ben***");
+            using (var db = new Database.Database())
+            {
+                // Create and save a new Blog
+                Console.Write("Enter a name for a new Blog: ");
+
+                var entry = new facial_data { Id = 6 , name = "benny_6" };
+                db.facial_data.Add(entry);
+                db.SaveChanges();
+
+                // Display all Blogs from the database
+                var query = from b in db.facial_data
+                            orderby b.name
+                            select b;
+
+                Console.WriteLine("All blogs in the database:");
+                foreach (var item in query)
+                {
+                    Console.WriteLine(item.name);
+                }
+            }
         }
 
         private void SensorChooserOnKinectChanged(object sender, KinectChangedEventArgs kinectChangedEventArgs)
