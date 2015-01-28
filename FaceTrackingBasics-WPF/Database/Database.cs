@@ -1,4 +1,4 @@
-namespace FaceTrackingBasics
+namespace FaceTrackingBasics.Database
 {
     using System;
     using System.Data.Entity;

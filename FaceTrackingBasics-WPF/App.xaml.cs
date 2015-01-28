@@ -13,5 +13,6 @@ namespace FaceTrackingBasics
     /// </summary>
     public partial class App : Application
     {
+
     }
 }
