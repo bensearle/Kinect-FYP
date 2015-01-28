@@ -105,7 +105,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Models\Dictionaries.cs" />
     <Compile Include="Models\Vector_.cs" />
+    <Compile Include="Models\XYZCoord.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
