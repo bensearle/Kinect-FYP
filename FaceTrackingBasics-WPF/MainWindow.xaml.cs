@@ -16,6 +16,7 @@ namespace FaceTrackingBasics
     using System.Diagnostics;
     using FaceTrackingBasics.Database; // classes in the database folder
     using System.Linq;
+    using FaceTrackingBasics.Models;
 
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -30,8 +31,9 @@ namespace FaceTrackingBasics
 
         public MainWindow()
         {
-            // testing db connectivity
-            testDB();
+            // testing
+            //testDB();
+            testAngle();
 
             InitializeComponent();
 
@@ -41,6 +43,52 @@ namespace FaceTrackingBasics
             sensorChooser.KinectChanged += SensorChooserOnKinectChanged;
 
             sensorChooser.Start();
+        }
+
+        public void testAngle()
+        {
+            Vector_ v1 = new Vector_(0, 4);
+            Vector_ v2 = new Vector_(4, 0);
+            Vector_ v3 = new Vector_(4, 4);
+            Vector_ v4 = new Vector_(4, 4);
+
+            Console.WriteLine("************");            
+            Console.WriteLine(angle(v1, v2));
+            Console.WriteLine(angle(v1, v4));
+            Console.WriteLine(angle(v4, v1));
+            Console.WriteLine(angle(v4, v2));
+            Console.WriteLine(angle(v4, v4));
+
+        }
+
+        public double angle(Vector_ v1, Vector_ v2)
+        {
+            double v1_magnitude;
+            double v2_magnitude;
+            Vector_ v1_normalized;
+            Vector_ v2_normalized;
+            double dot_product;
+            double angle_radians;
+            double angle_degrees;
+
+            // get the magnitude of each vector
+            v1_magnitude = Math.Sqrt(v1.X * v1.X + v1.Y * v1.Y + v1.Z * v1.Z);
+            v2_magnitude = Math.Sqrt(v2.X * v2.X + v2.Y * v2.Y + v2.Z * v2.Z);
+            
+            // normalize the vectors
+            v1_normalized = new Vector_(v1.X / v1_magnitude, v1.Y / v1_magnitude, v1.Z / v1_magnitude);
+            v2_normalized = new Vector_(v2.X / v2_magnitude, v2.Y / v2_magnitude, v2.Z / v2_magnitude);
+
+            // calculate the dot product
+            dot_product = v1_normalized.X * v2_normalized.X + v1_normalized.Y * v2_normalized.Y + v1_normalized.Z * v2_normalized.Z;
+
+            // calculate the angle
+            angle_radians = Math.Acos(dot_product);
+
+            // convert angle to degrees
+            angle_degrees = angle_radians * (180.0 / Math.PI);
+
+            return angle_degrees;
         }
 
         private void testDB()
