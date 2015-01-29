@@ -461,7 +461,7 @@ namespace FaceTrackingBasics
                 // _l.Add(DateTime.Now); // Add date on each timer event
             }
 
-
+            bool facial_regonition_sent = false;
             public void getXYZ(FaceTrackFrame frame)
             {
                 //XYZCoord[] face_coords; // create array for face coordinates
@@ -483,6 +483,12 @@ namespace FaceTrackingBasics
                     s = s + "(" + vector.X + "," + vector.Y + ")";
 
                     index++;
+                }
+
+                if (!facial_regonition_sent)
+                {
+                    FacialRecognition.recognise(face_coords);
+                    facial_regonition_sent = true;
                 }
                 //this.face_coords = face_coords;
             }
