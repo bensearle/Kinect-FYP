@@ -11,7 +11,7 @@ namespace FaceTrackingBasics
     {
         public static void recognise(XYZCoord[] coords)
         {
-            facial_data face = new facial_data();
+            Face face = new Face();
 
             for (int i = 0; i < coords.Length; i++)
             {
@@ -26,7 +26,7 @@ namespace FaceTrackingBasics
             Console.WriteLine(face.nose_angle_1);
         }
 
-        private static void get_match(facial_data face)
+        private static void get_match(Face face)
         {
             using (var db = new Database.Database())
             {
@@ -35,7 +35,7 @@ namespace FaceTrackingBasics
                 string name = ""; // name of the closest match
 
                 // Display all Blogs from the database
-                var query = from b in db.facial_data
+                var query = from b in db.Faces
                             orderby b.name
                             select b;
 
@@ -63,11 +63,11 @@ namespace FaceTrackingBasics
             }
         }
 
-        private static void add_to_db(facial_data face)
+        private static void add_to_db(Face face)
         {
             using (var db = new Database.Database())
             {
-                db.facial_data.Add(face);
+                db.Faces.Add(face);
                 db.SaveChanges();
             }
         }

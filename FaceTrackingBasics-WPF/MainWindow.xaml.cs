@@ -129,12 +129,12 @@ namespace FaceTrackingBasics
                 // Create and save a new Blog
                 Console.Write("Enter a name for a new Blog: ");
 
-                var entry = new facial_data { Id = 6, name = "benny_7" };
-                db.facial_data.Add(entry);
+                var entry = new Face { Id = 6, name = "benny_7" };
+                db.Faces.Add(entry);
                 db.SaveChanges();
 
                 // Display all Blogs from the database
-                var query = from b in db.facial_data
+                var query = from b in db.Faces
                             orderby b.name
                             select b;
 
