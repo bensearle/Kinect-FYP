@@ -33,7 +33,18 @@ namespace FaceTrackingBasics
         {
             // testing
             //testDB();
-            testAngle();
+            timer_5();
+            //testAngle();
+            Console.WriteLine("************");
+            /*Console.WriteLine(JointType.Head.ToString());
+            Dictionaries d = new Dictionaries();
+            JointType j = d.Joints[0];
+            Console.WriteLine(JointType.Head);
+            Console.WriteLine(j);
+
+            XYZCoord joint_coords = new XYZCoord();
+            joint_coords.X = skeleton.Joints[joint_dictionary[i]].Position.X;*/
+
 
             InitializeComponent();
 
@@ -45,6 +56,24 @@ namespace FaceTrackingBasics
             sensorChooser.Start();
         }
 
+
+
+        static int tInc = 0;
+        static System.Timers.Timer _timer; // From System.Timers
+
+        static void timer_5()
+        {
+            _timer = new System.Timers.Timer(1000); // Set up the timer for 3 seconds
+            _timer.Elapsed += new System.Timers.ElapsedEventHandler(_timer_Elapsed);
+            _timer.Enabled = true; // Enable it
+        }
+        static void _timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        {
+             tInc++;
+            Console.WriteLine(tInc);
+            // _l.Add(DateTime.Now); // Add date on each timer event
+        }
+
         public void testAngle()
         {
             Vector_ v1 = new Vector_(0, 4);
@@ -52,7 +81,7 @@ namespace FaceTrackingBasics
             Vector_ v3 = new Vector_(4, 4);
             Vector_ v4 = new Vector_(4, 4);
 
-            Console.WriteLine("************");            
+            Console.WriteLine("************");
             Console.WriteLine(angle(v1, v2));
             Console.WriteLine(angle(v1, v4));
             Console.WriteLine(angle(v4, v1));
@@ -74,7 +103,7 @@ namespace FaceTrackingBasics
             // get the magnitude of each vector
             v1_magnitude = Math.Sqrt(v1.X * v1.X + v1.Y * v1.Y + v1.Z * v1.Z);
             v2_magnitude = Math.Sqrt(v2.X * v2.X + v2.Y * v2.Y + v2.Z * v2.Z);
-            
+
             // normalize the vectors
             v1_normalized = new Vector_(v1.X / v1_magnitude, v1.Y / v1_magnitude, v1.Z / v1_magnitude);
             v2_normalized = new Vector_(v2.X / v2_magnitude, v2.Y / v2_magnitude, v2.Z / v2_magnitude);
@@ -99,7 +128,7 @@ namespace FaceTrackingBasics
                 // Create and save a new Blog
                 Console.Write("Enter a name for a new Blog: ");
 
-                var entry = new facial_data { Id = 6 , name = "benny_6" };
+                var entry = new facial_data { Id = 6, name = "benny_7" };
                 db.facial_data.Add(entry);
                 db.SaveChanges();
 
