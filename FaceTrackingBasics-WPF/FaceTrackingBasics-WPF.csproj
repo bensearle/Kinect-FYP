@@ -100,12 +100,14 @@
     <Compile Include="FaceTrackingViewer.xaml.cs">
       <DependentUpon>FaceTrackingViewer.xaml</DependentUpon>
     </Compile>
+    <Compile Include="FacialRecognition.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Maths.cs" />
     <Compile Include="Models\Dictionaries.cs" />
     <Compile Include="Models\Vector_.cs" />
     <Compile Include="Models\XYZCoord.cs" />
