@@ -8,20 +8,20 @@ namespace FaceTrackingBasics
 {
     class Maths
     {
-        public double angle_from_coords(XYZCoord a, XYZCoord b, XYZCoord c)
+        public static double angle_from_coords(XYZCoord a, XYZCoord b, XYZCoord c)
         {
             return angle(
                        coords_to_vector(a, b),
                        coords_to_vector(b, c));
         }
 
-        public Vector_ coords_to_vector(XYZCoord a, XYZCoord b)
+        public static Vector_ coords_to_vector(XYZCoord a, XYZCoord b)
         {
             return new Vector_(a.X - b.X, a.Y - b.Y, a.Z - b.Z);
         }
 
 
-        public double angle(Vector_ v1, Vector_ v2)
+        public static double angle(Vector_ v1, Vector_ v2)
         {
             double v1_magnitude;
             double v2_magnitude;
