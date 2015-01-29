@@ -20,12 +20,12 @@ namespace FaceTrackingBasics
             return new Vector_(a.X - b.X, a.Y - b.Y, a.Z - b.Z);
         }
 
-        public double lenth_ratio()
+        public static double lenth_ratio()
         {
             return 0;
         }
 
-        public double angle_ratio()
+        public static double angle_ratio()
         {
             return 0;
         }
@@ -38,19 +38,19 @@ namespace FaceTrackingBasics
          */
 
         // ratio of 2 lines (a1, a2) and (b1, b2)
-        public double ratio(XYZCoord a1, XYZCoord a2, XYZCoord b1, XYZCoord b2)
+        public static double ratio(XYZCoord a1, XYZCoord a2, XYZCoord b1, XYZCoord b2)
         {
             return magnitude(a1, a2) / magnitude(b1, b2);
         }
 
         // ratio of 2 vectors
-        public double ratio(Vector_ v1, Vector_ v2)
+        public static double ratio(Vector_ v1, Vector_ v2)
         {
             return magnitude(v1) / magnitude(v2);
         }
 
         // ratio of 2 doubles
-        public double ratio(double d1, double d2)
+        public static double ratio(double d1, double d2)
         {
             return d1 / d2;
         }
@@ -62,7 +62,7 @@ namespace FaceTrackingBasics
          */
 
         // calculate the magnitude (distance) between 2 points
-        public double magnitude(XYZCoord a, XYZCoord b)
+        public static double magnitude(XYZCoord a, XYZCoord b)
         {
             // Math.Abs not needed as it is squared
             double x = Math.Abs(a.X - b.X); // distance beween X's
@@ -72,7 +72,7 @@ namespace FaceTrackingBasics
         }
 
         // calculate the magnitude (distance) of a vector
-        public double magnitude(Vector_ v)
+        public static double magnitude(Vector_ v)
         {
             return Math.Sqrt(v.X * v.X + v.Y * v.Y + v.Z * v.Z);
         }
