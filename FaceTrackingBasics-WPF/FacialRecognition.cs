@@ -19,18 +19,39 @@ namespace FaceTrackingBasics
                 Console.WriteLine("*!*!*!*!*!*!*!*!*!* " + i + "   " + s);
             }
 
-            face.name = "benny_searle";
-            face.nose_angle_1 = (decimal)Maths.angle_from_coords(coords[92], coords[94], coords[93]); // nose_angle
-            get_match(face);
-            //add_to_db(face);
-            Console.WriteLine(face.nose_angle_1);
+            face.name = "Ben";
+            // nose angle
+            face.angle_1 = (decimal)Maths.angle_from_coords(coords[92], coords[94], coords[93]);
+            face.angle_2 = 0;
+            face.angle_3 = 0;
+            face.angle_4 = 0;
+            face.angle_5 = 0;
+            face.angle_6 = 0;
+            face.angle_7 = 0;
+            face.angle_8 = 0;
+            face.angle_9 = 0;
+            face.angle_10 = 0;
+            face.length_1 = 0;
+            face.length_2 = 0;
+            face.length_3 = 0;
+            face.length_4 = 0;
+            face.length_5 = 0;
+            face.length_6 = 0;
+            face.length_7 = 0;
+            face.length_8 = 0;
+            face.length_9 = 0;
+            face.length_10 = 0;
+            face.face_code = face.angle_1 * face.angle_2 * face.angle_3 * face.angle_4 * face.angle_5 *
+                            face.angle_6 * face.angle_7 * face.angle_8 * face.angle_9 * face.angle_10 *
+                            face.length_1 * face.length_2 * face.length_3 * face.length_4 * face.length_5 *
+                            face.length_6 * face.length_7 * face.length_8 * face.length_9 * face.length_10;
         }
 
         private static void get_match(Face face)
         {
             using (var db = new Database.Database())
             {
-                double target_match = (double)face.nose_angle_1;
+                double target_match = (double)face.face_code;
                 double match = Double.MaxValue; // the closest match
                 string name = ""; // name of the closest match
 
@@ -39,18 +60,14 @@ namespace FaceTrackingBasics
                             orderby b.name
                             select b;
 
-                Console.WriteLine("Search database...");
-                Console.WriteLine("checked " + "beneth searle");
+                Console.WriteLine("Searching database...");
 
                 foreach (var found_face in query)
                 {
-                    if (found_face.name == "ben_searle") {
-                        Console.WriteLine();
-                    }
                     Console.WriteLine("checked " + found_face.name);
                     if (found_face.nose_angle_1 != null)
                     {
-                        double diff = Math.Sqrt(Math.Pow(((double)found_face.nose_angle_1 - (double)face.nose_angle_1), 2));
+                        double diff = Math.Sqrt(Math.Pow(((double)found_face.face_code - (double)face.face_code), 2));
                         if (diff < match)
                         {
                             match = diff;
