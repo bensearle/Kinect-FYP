@@ -38,5 +38,10 @@ namespace FaceTrackingBasics.Models
             Y = y;
             Z = z;
         }
+
+        public override string ToString()
+        {
+            return "X: " + X + " Y: " + Y + " Z: " + Z;
+        }
     }
 }
