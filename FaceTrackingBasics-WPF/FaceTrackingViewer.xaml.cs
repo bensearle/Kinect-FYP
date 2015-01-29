@@ -17,6 +17,9 @@ namespace FaceTrackingBasics
 
     using Point = System.Windows.Point;
     using System.Globalization;
+    using FaceTrackingBasics.Models;
+
+
 
     /// <summary>
     /// Class that uses the Face Tracking SDK to display a face mask for
@@ -25,9 +28,9 @@ namespace FaceTrackingBasics
     public partial class FaceTrackingViewer : UserControl, IDisposable
     {
         public static readonly DependencyProperty KinectProperty = DependencyProperty.Register(
-            "Kinect", 
-            typeof(KinectSensor), 
-            typeof(FaceTrackingViewer), 
+            "Kinect",
+            typeof(KinectSensor),
+            typeof(FaceTrackingViewer),
             new PropertyMetadata(
                 null, (o, args) => ((FaceTrackingViewer)o).OnSensorChanged((KinectSensor)args.OldValue, (KinectSensor)args.NewValue)));
 
@@ -138,7 +141,7 @@ namespace FaceTrackingBasics
                 {
                     this.colorImage = new byte[colorImageFrame.PixelDataLength];
                 }
-                
+
                 // Get the skeleton information
                 if (this.skeletonData == null || this.skeletonData.Length != skeletonFrame.SkeletonArrayLength)
                 {
@@ -299,7 +302,7 @@ namespace FaceTrackingBasics
                     list_number_coords.Add(Tuple.Create(triangle.P2, t.Second));
                     list_number_coords.Add(Tuple.Create(triangle.P3, t.Third));
 
-                    
+
                     /*// add text of first number
                     drawingContext.DrawText(new FormattedText("" + t.First,
                         CultureInfo.GetCultureInfo("en-us"),
@@ -348,17 +351,21 @@ namespace FaceTrackingBasics
                     Debug.WriteLine(string.Format("{0}, {1}, {2}, {3}", i, p.X, p.Y, " ** "));
                 }*/
 
-                
+
                 drawingContext.DrawGeometry(Brushes.LightYellow, new Pen(Brushes.LightYellow, 1.0), faceModelGroup);
                 foreach (Tuple<Point, int> t in list_number_coords) // iterate through the number and points list
                 {
-                    // add the number to the drawing context
-                    drawingContext.DrawText(new FormattedText("" + t.Item2,
-                        CultureInfo.GetCultureInfo("en-us"),
-                        FlowDirection.LeftToRight,
-                        new Typeface("Verdana"),
-                        4, System.Windows.Media.Brushes.Red),
-                        t.Item1);
+
+                    //if ((t.Item2 + 3) % 4 == 0) // every third number
+                    {
+                        // add the number to the drawing context
+                        drawingContext.DrawText(new FormattedText("" + t.Item2,
+                            CultureInfo.GetCultureInfo("en-us"),
+                            FlowDirection.LeftToRight,
+                            new Typeface("Verdana"),
+                            6, System.Windows.Media.Brushes.Red),
+                            t.Item1);
+                    }
                 }
 
             }
@@ -421,14 +428,39 @@ namespace FaceTrackingBasics
             }
 
 
-            public struct XYZCoord
+            /*public struct XYZCoord
             {
                 public float X;
                 public float Y;
                 public float Z;
-            }
+            }*/
 
             private XYZCoord[] face_coords;
+
+            static int tInc = 0;
+            static System.Timers.Timer _timer; // From System.Timers
+
+            public static void timer_5()
+            {
+                _timer = new System.Timers.Timer(1000); // Set up the timer for 3 seconds
+                _timer.Elapsed += new System.Timers.ElapsedEventHandler(_timer_Elapsed);
+                _timer.Enabled = true; // Enable it
+            }
+
+            public static void _timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+            {
+                if (tInc == 5)
+                {
+                    tInc = 5;
+                }
+                else
+                {
+                    tInc++;
+                }
+                Console.WriteLine(tInc);
+                // _l.Add(DateTime.Now); // Add date on each timer event
+            }
+
 
             public void getXYZ(FaceTrackFrame frame)
             {
@@ -436,14 +468,15 @@ namespace FaceTrackingBasics
                 face_coords = new XYZCoord[121]; // initialize array to size 121
 
                 EnumIndexableCollection<FeaturePoint, Vector3DF> facePoints3D = frame.Get3DShape();
-                
+
                 string s = "";
                 int index = 0;
-                foreach (Vector3DF vector in facePoints3D) 
+                foreach (Vector3DF vector in facePoints3D)
                 {
-                    face_coords[index].X = vector.X;
-                    face_coords[index].Y = vector.Y;
-                    face_coords[index].Z = vector.Z;
+                    face_coords[index] = new XYZCoord(vector);
+                    //face_coords[index].X = vector.X;
+                    //face_coords[index].Y = vector.Y;
+                    //face_coords[index].Z = vector.Z;
                     //Debug.WriteLine(string.Format("{0}, {1}, {2}, {3}", index, vector.X, vector.Y, vector.Z));
 
                     // s = (x,y)(x,y) for entering in to coord plotter (testing)

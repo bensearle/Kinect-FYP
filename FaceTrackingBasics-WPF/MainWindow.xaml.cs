@@ -33,7 +33,8 @@ namespace FaceTrackingBasics
         {
             // testing
             //testDB();
-            timer_5();
+            
+//            FaceTrackingBasics.FaceTrackingViewer.timer_5();
             //testAngle();
             Console.WriteLine("************");
             /*Console.WriteLine(JointType.Head.ToString());
@@ -69,7 +70,7 @@ namespace FaceTrackingBasics
         }
         static void _timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
-             tInc++;
+            tInc++;
             Console.WriteLine(tInc);
             // _l.Add(DateTime.Now); // Add date on each timer event
         }

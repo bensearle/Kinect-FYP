@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Kinect.Toolkit.FaceTracking;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -38,6 +39,13 @@ namespace FaceTrackingBasics.Models
             X = x;
             Y = y;
             Z = z;
+        }
+
+        public XYZCoord(Vector3DF v)
+        {
+            X = v.X;
+            Y = v.Y;
+            Z = v.Z;
         }
 
     }
