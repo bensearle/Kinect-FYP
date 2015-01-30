@@ -385,8 +385,33 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
         /// <param name="skeleton">skeleton to draw</param>
         /// <param name="drawingContext">drawing context to draw to</param>
         private void getSkeletonXYZ(Skeleton skeleton, DrawingContext drawingContext){
- 
-	        joint_dictionary.Add(0, JointType.Head);
+
+            joint_dictionary[0] = JointType.Head;
+            joint_dictionary[1] = JointType.ShoulderRight;
+            joint_dictionary[2] = JointType.ShoulderCenter;
+            joint_dictionary[3] = JointType.ShoulderLeft;
+            joint_dictionary[4] = JointType.ElbowRight;
+            joint_dictionary[5] = JointType.ElbowLeft;
+            joint_dictionary[6] = JointType.WristRight;
+            joint_dictionary[7] = JointType.WristLeft;
+            joint_dictionary[8] = JointType.HandRight;
+            joint_dictionary[9] = JointType.HandLeft;
+            joint_dictionary[10] = JointType.Spine;
+            joint_dictionary[11] = JointType.HipRight;
+            joint_dictionary[12] = JointType.HipCenter;
+            joint_dictionary[13] = JointType.HipLeft;
+            joint_dictionary[14] = JointType.KneeRight;
+            joint_dictionary[15] = JointType.KneeLeft;
+            joint_dictionary[16] = JointType.AnkleRight;
+            joint_dictionary[17] = JointType.AnkleLeft;
+            joint_dictionary[18] = JointType.FootRight;
+            joint_dictionary[19] = JointType.FootLeft;
+            Debug.WriteLine("*********************");
+
+            Dictionary<int, JointType> jjj = joint_dictionary; // create dictionary of joint types
+
+
+	        /*joint_dictionary.Add(0, JointType.Head);
             joint_dictionary.Add(1, JointType.ShoulderRight);
             joint_dictionary.Add(2, JointType.ShoulderCenter);
             joint_dictionary.Add(3, JointType.ShoulderLeft);
@@ -405,12 +430,12 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
             joint_dictionary.Add(16, JointType.AnkleRight);
             joint_dictionary.Add(17, JointType.AnkleLeft);
             joint_dictionary.Add(18, JointType.FootRight);
-            joint_dictionary.Add(19, JointType.FootLeft);
+            joint_dictionary.Add(19, JointType.FootLeft);*/
 
             joint_coords = new XYZCoord[20]; // initialize array to size 20
 
-            float[] positions; // create array for skeletal positions
-            positions = new float[60]; // initialize array to size 60 = (20 * XYZ)
+            //float[] positions; // create array for skeletal positions
+            //positions = new float[60]; // initialize array to size 60 = (20 * XYZ)
             string s = "";
             for (int i = 0; i < 20; i++) // iterate through joint types
             {
@@ -423,13 +448,16 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
                 joint_coords[i].Z = skeleton.Joints[joint_dictionary[i]].Position.Z; // get Z position
 
                 // s = (x,y)(x,y) for entering in to coord plotter (testing)
-                s = s + "(" + positions[3 * i] + "," + positions[3 * i + 1] + ")";
+                // s = s + "(" + positions[3 * i] + "," + positions[3 * i + 1] + ")";
+                s = joint_dictionary[i] + ": (" + joint_coords[i].X + "," + joint_coords[i].Y + "," + joint_coords[i].Z + ")";
+                Debug.WriteLine(s);
             }
 
-            foreach (float pos in positions) // for each position
+            creatJSON();
+            /*foreach (float pos in positions) // for each position
             {
                 Debug.WriteLine("position: " + pos);
-            }
+            } */
         }
 
         public void creatJSON()
@@ -453,6 +481,7 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
             string json_skeleton = "\"Skeleton_1\": {" + json_name + json_joints + "}"; // create JSON for 1 skeleton
 
             string josn_complete = "{" + json_skeleton + "}"; // add open and close curly brackets to JSON
+            Debug.WriteLine(josn_complete);
         }
 
 
