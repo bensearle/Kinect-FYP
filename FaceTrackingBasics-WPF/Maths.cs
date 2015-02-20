@@ -6,7 +6,7 @@ using System.Text;
 
 namespace FaceTrackingBasics
 {
-    class Maths
+    public class Maths
     {
         public static double angle_from_coords(XYZCoord a, XYZCoord b, XYZCoord c)
         {
@@ -40,6 +40,7 @@ namespace FaceTrackingBasics
         // ratio of 2 lines (a1, a2) and (b1, b2)
         public static double ratio(XYZCoord a1, XYZCoord a2, XYZCoord b1, XYZCoord b2)
         {
+            // if 0 then... throw new DivideByZeroException;
             return magnitude(a1, a2) / magnitude(b1, b2);
         }
 
@@ -52,6 +53,7 @@ namespace FaceTrackingBasics
         // ratio of 2 doubles
         public static double ratio(double d1, double d2)
         {
+            // deal with 0
             return d1 / d2;
         }
 

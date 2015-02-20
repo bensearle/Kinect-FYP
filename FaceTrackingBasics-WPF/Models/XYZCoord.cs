@@ -6,7 +6,7 @@ using System.Text;
 
 namespace FaceTrackingBasics.Models
 {
-    class XYZCoord
+    public class XYZCoord
     {
 
         public float X { get; set; }
