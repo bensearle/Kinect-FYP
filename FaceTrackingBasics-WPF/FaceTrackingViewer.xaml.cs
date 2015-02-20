@@ -96,6 +96,10 @@ namespace FaceTrackingBasics
             {
                 faceInformation.DrawFaceModel(drawingContext);
             }
+
+            // draw rectangle on the video stream
+            drawingContext.DrawRectangle(null, new Pen(Brushes.Blue, 10), new System.Windows.Rect(new Point(250, 0), new Point(400, 200)));
+
         }
 
         private void OnAllFramesReady(object sender, AllFramesReadyEventArgs allFramesReadyEventArgs)
@@ -366,8 +370,11 @@ namespace FaceTrackingBasics
                             12, System.Windows.Media.Brushes.Blue),
                             t.Item1);
                         drawingContext.DrawEllipse(Brushes.Blue, new Pen(Brushes.Blue, 1), t.Item1,1,1);
+                        //drawingContext.DrawRectangle(null, new Pen(Brushes.Blue, 10), new System.Windows.Rect(new Point(0, 0), t.Item1));                    
+                   
                     }
                 }
+                //drawingContext.DrawRectangle(Brushes.Blue, new Pen(Brushes.Blue, 10), new System.Windows.Rect(new Point(200, 50), new Point(300, 200)));
 
             }
 
