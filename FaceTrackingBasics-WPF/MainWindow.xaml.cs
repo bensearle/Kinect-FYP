@@ -31,10 +31,11 @@ namespace FaceTrackingBasics
 
         public MainWindow()
         {
+            timer_5();
             // testing
             //testDB();
-            
-//            FaceTrackingBasics.FaceTrackingViewer.timer_5();
+
+            //            FaceTrackingBasics.FaceTrackingViewer.timer_5();
             //testAngle();
             Console.WriteLine("************");
             /*Console.WriteLine(JointType.Head.ToString());
@@ -59,19 +60,27 @@ namespace FaceTrackingBasics
 
 
 
-        static int tInc = 0;
+        public static int tInc = 0;
         static System.Timers.Timer _timer; // From System.Timers
 
         static void timer_5()
         {
-            _timer = new System.Timers.Timer(1000); // Set up the timer for 3 seconds
+            _timer = new System.Timers.Timer(200); // Set up the timer for 3 seconds
             _timer.Elapsed += new System.Timers.ElapsedEventHandler(_timer_Elapsed);
             _timer.Enabled = true; // Enable it
         }
         static void _timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
-            tInc++;
-            Console.WriteLine(tInc);
+            if (tInc < 121)
+            {
+                Console.WriteLine(tInc++);
+            }
+            else
+            {
+                Console.WriteLine(tInc=0);
+            }
+
+            
             // _l.Add(DateTime.Now); // Add date on each timer event
         }
 
