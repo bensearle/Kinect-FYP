@@ -356,15 +356,16 @@ namespace FaceTrackingBasics
                 foreach (Tuple<Point, int> t in list_number_coords) // iterate through the number and points list
                 {
 
-                    //if ((t.Item2 + 3) % 4 == 0) // every third number
+                    if ((t.Item2) == MainWindow.tInc) // 
                     {
                         // add the number to the drawing context
                         drawingContext.DrawText(new FormattedText("" + t.Item2,
                             CultureInfo.GetCultureInfo("en-us"),
                             FlowDirection.LeftToRight,
                             new Typeface("Verdana"),
-                            6, System.Windows.Media.Brushes.Red),
+                            12, System.Windows.Media.Brushes.Blue),
                             t.Item1);
+                        drawingContext.DrawEllipse(Brushes.Blue, new Pen(Brushes.Blue, 1), t.Item1,1,1);
                     }
                 }
 
@@ -487,7 +488,7 @@ namespace FaceTrackingBasics
 
                 if (!facial_regonition_sent)
                 {
-                    FacialRecognition.recognise(face_coords);
+                    //FacialRecognition.recognise(face_coords);
                     facial_regonition_sent = true;
                 }
                 //this.face_coords = face_coords;
