@@ -14,6 +14,7 @@ namespace FaceTrackingBasics
     using System.Windows.Media;
     using Microsoft.Kinect;
     using Microsoft.Kinect.Toolkit.FaceTracking;
+    using System.Windows.Media.Media3D;
 
     using Point = System.Windows.Point;
     using System.Globalization;
@@ -530,8 +531,24 @@ namespace FaceTrackingBasics
                 //Debug.WriteLine(Maths.rotate_vector(new XYZCoord(2,2,2), new Vector3DF(0,0,1)));
                 //Debug.WriteLine(Maths.rotate_vector(new XYZCoord(2, 2, 2), new Vector3DF(0, 0, 10)));
 
-                Debug.WriteLine(face_coords[0] + " ** " + rotation.X+"," + rotation.Y+"," + rotation.Z + " ** " + Maths.rotate_vector(face_coords[0], rotation));
+                //Debug.WriteLine(face_coords[0] + " ** " + rotation.X+"," + rotation.Y+"," + rotation.Z + " ** " + Maths.rotate_vector(face_coords[0], rotation));
+                //Debug.WriteLine(Maths.rotate_vector(face_coords[0], rotation));
                 
+                // angle between vec0 and vec1
+                double anglebetween = Vector3D.AngleBetween(
+                    new Vector3D(face_coords[0].X, face_coords[0].Y, face_coords[0].Z),
+                    new Vector3D(face_coords[1].X, face_coords[1].Y, face_coords[1].Z));
+                
+                // angle between vec0 and vec1, after they have been rotated
+                XYZCoord vec0 = Maths.rotate_vector(face_coords[0], rotation);
+                XYZCoord vec1 = Maths.rotate_vector(face_coords[1], rotation);
+                double anglebetweenrot = Vector3D.AngleBetween(
+                    new Vector3D(vec0.X, vec0.Y, vec0.Z),
+                    new Vector3D(vec1.X, vec1.Y, vec1.Z));
+
+
+                Debug.WriteLine("*** " + anglebetween + " :: " + anglebetweenrot);
+
                 double scaleX = 1 / face_coords[0].X;
                 double scaleY = 1 / face_coords[0].Y;
                 double scaleZ = 1 / face_coords[0].Z;

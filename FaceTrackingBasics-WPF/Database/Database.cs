@@ -8,7 +8,7 @@ namespace FaceTrackingBasics.Database
     public partial class Database : DbContext
     {
         public Database()
-            : base("name=Database2")
+            : base("name=Database3")
         {
         }
 
