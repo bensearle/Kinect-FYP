@@ -22,7 +22,7 @@ namespace FaceTrackingBasics
             double rotX = Math.PI * (-rotation.X / 180);
             double rotY = Math.PI * (-rotation.Y / 180);
             double rotZ = Math.PI * (-rotation.Z / 180);
-            
+
             // rotate around X-axis
             double x1 = x;
             double y1 = (y * Math.Cos(rotX)) - (z * Math.Sin(rotX));
@@ -38,9 +38,23 @@ namespace FaceTrackingBasics
             double y3 = (x2 * Math.Sin(rotZ)) + (y2 * Math.Cos(rotZ));
             double z3 = z2;
 
-  
+
             // return rotated vector
             return new XYZCoord(x3, y3, z3);
+        }
+
+        // Calculate how closely 2 numbers are matched, between 0 and 1
+        public static decimal NumericMatch(decimal a, decimal b)
+        {
+            if (a < b)
+            {
+                return b / a;
+            }
+            else
+            {
+                return a / b;
+            }
+            
         }
 
         public static double angle_from_coords(XYZCoord a, XYZCoord b, XYZCoord c)
