@@ -21,7 +21,7 @@ namespace FaceTrackingBasics
                 Console.WriteLine("Point " + i + ": " + s);
             }*/
 
-            face.name = "Dad";
+            face.name = "Mum";
 
             face.angle_0_1 = (decimal)Vector3D.AngleBetween(new Vector3D(coords[0].X, coords[0].Y, coords[0].Z), new Vector3D(coords[1].X, coords[1].Y, coords[1].Z));
             face.angle_1_2 = (decimal)Vector3D.AngleBetween(new Vector3D(coords[1].X, coords[1].Y, coords[1].Z), new Vector3D(coords[2].X, coords[2].Y, coords[2].Z));

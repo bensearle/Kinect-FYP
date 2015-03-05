@@ -547,7 +547,7 @@ namespace FaceTrackingBasics
                     new Vector3D(vec1.X, vec1.Y, vec1.Z));
 
 
-                Debug.WriteLine("*** " + anglebetween + " :: " + anglebetweenrot);
+                //Debug.WriteLine("*** " + anglebetween + " :: " + anglebetweenrot);
 
                 double scaleX = 1 / face_coords[0].X;
                 double scaleY = 1 / face_coords[0].Y;
@@ -565,7 +565,7 @@ namespace FaceTrackingBasics
                 if (!facial_regonition_sent)
                 {
                     // frame.FaceRect.Bottom > bottom of rectangle
-                    //FacialRecognition.recognise(face_coords);
+                    FacialRecognition.recognise(face_coords);
                     facial_regonition_sent = true;
                 }
                 //this.face_coords = face_coords;

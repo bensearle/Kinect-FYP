@@ -247,5 +247,22 @@ namespace FaceTrackingBasics
                     0);
             }
         }
+
+        private void faceTrackingViewer_Loaded(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        internal bool recognize = false;
+
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            Debug.WriteLine("fsjdfhdjsfhsdj");
+        }
+        private void Button_Click_2(object sender, RoutedEventArgs e)
+        {
+            string s = textName.Text;
+            Debug.WriteLine(s);
+        }
     }
 }
