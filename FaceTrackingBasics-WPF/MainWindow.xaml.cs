@@ -17,6 +17,7 @@ namespace FaceTrackingBasics
     using FaceTrackingBasics.Database; // classes in the database folder
     using System.Linq;
     using FaceTrackingBasics.Models;
+    using Microsoft.Kinect.Toolkit.FaceTracking;
 
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -31,6 +32,10 @@ namespace FaceTrackingBasics
 
         public MainWindow()
         {
+
+            Debug.WriteLine(Maths.rotate_vector(new XYZCoord(2, 2, 0), new Vector3DF(0, 180, 0)));
+            Debug.WriteLine(Maths.rotate_vector(new XYZCoord(2, 2, 0), new Vector3DF(0, 12, 0)));
+
             timer_5();
             // testing
             //testDB();
@@ -73,11 +78,11 @@ namespace FaceTrackingBasics
         {
             if (tInc < 121)
             {
-                Console.WriteLine(tInc++);
+                tInc++;
             }
             else
             {
-                Console.WriteLine(tInc=0);
+                tInc=0;
             }
 
             

@@ -107,8 +107,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MarksEnum.cs" />
     <Compile Include="Maths.cs" />
     <Compile Include="Models\Dictionaries.cs" />
+    <Compile Include="Models\FaceCoordsTestData.cs" />
     <Compile Include="Models\Vector_.cs" />
     <Compile Include="Models\XYZCoord.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -129,6 +131,7 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <None Include="App.Config" />
+    <None Include="Bens proj.cd" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

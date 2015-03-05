@@ -460,6 +460,9 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
             } */
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public void creatJSON()
         {
             string json_name = "\"name\":" + "variable for the skeleton name" +","; // JSON for the name
