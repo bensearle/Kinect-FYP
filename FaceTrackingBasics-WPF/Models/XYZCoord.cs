@@ -9,15 +9,36 @@ namespace FaceTrackingBasics.Models
     public class XYZCoord
     {
 
-        public float X { get; set; }
-        public float Y { get; set; }
-        public float Z { get; set; }
+        public double X { get; set; }
+        public double Y { get; set; }
+        public double Z { get; set; }
 
         public XYZCoord()
         {
             X = 0;
             Y = 0;
             Z = 0;
+        }
+
+        public XYZCoord(double x)
+        {
+            X = x;
+            Y = 0;
+            Z = 0;
+        }
+
+        public XYZCoord(double x, double y)
+        {
+            X = x;
+            Y = y;
+            Z = 0;
+        }
+
+        public XYZCoord(double x, double y, double z)
+        {
+            X = x;
+            Y = y;
+            Z = z;
         }
 
         public XYZCoord(float x)
