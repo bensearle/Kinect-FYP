@@ -48,11 +48,11 @@ namespace FaceTrackingBasics
         {
             if (a < b)
             {
-                return b / a;
+                return a / b;
             }
             else
             {
-                return a / b;
+                return b / a;
             }
             
         }

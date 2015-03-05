@@ -11,7 +11,7 @@ namespace FaceTrackingBasics.Models
     {
         private Face faceA { get; set; }
         private Face faceB { get; set; }
-        private List<decimal?> matches;
+        private List<decimal?> matches = new List<decimal?>();
 
         private decimal total = 0;
         private int count = 0;

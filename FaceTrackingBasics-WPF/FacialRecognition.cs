@@ -21,7 +21,7 @@ namespace FaceTrackingBasics
                 Console.WriteLine("Point " + i + ": " + s);
             }*/
 
-            face.name = "Tests";
+            face.name = "Dad";
 
             face.angle_0_1 = (decimal)Vector3D.AngleBetween(new Vector3D(coords[0].X, coords[0].Y, coords[0].Z), new Vector3D(coords[1].X, coords[1].Y, coords[1].Z));
             face.angle_1_2 = (decimal)Vector3D.AngleBetween(new Vector3D(coords[1].X, coords[1].Y, coords[1].Z), new Vector3D(coords[2].X, coords[2].Y, coords[2].Z));
@@ -291,8 +291,8 @@ namespace FaceTrackingBasics
         {
             using (var db = new Database.Database())
             {
-                double target_match = (double)face.face_code;
-                double match = Double.MaxValue; // the closest match
+                //double target_match = (double)face.face_code;
+                decimal match = Decimal.MinValue; // the closest match
                 string name = ""; // name of the closest match
 
                 // Display all Blogs from the database
@@ -304,19 +304,18 @@ namespace FaceTrackingBasics
 
                 foreach (var found_face in query)
                 {
-                    Console.WriteLine("checked " + found_face.name);
-                    if (found_face.face_code != null)
+                    FaceMatch fm = new FaceMatch(found_face, face);
+                    decimal closeness = fm.getMean();
+
+                    if (closeness > match)
                     {
-                        // difference between face and found face
-                        double diff = Math.Sqrt(Math.Pow(((double)found_face.face_code - (double)face.face_code), 2));
-                        if (diff < match) // if this found face is a closer match
-                        {
-                            match = diff; // set the difference
-                            name = found_face.name; // set the name
-                        }
+                        match = closeness;
+                        name = found_face.name;
                     }
+
+                    Console.WriteLine("checked " + found_face.name + " :: " + closeness);
                 }
-                Console.WriteLine("closest match: " + name); // write the name of the closest match
+                Console.WriteLine("closest match: " + name + " :: " + match); // write the name of the closest match
             }
         }
     }
