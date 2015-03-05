@@ -1,4 +1,5 @@
 ﻿using FaceTrackingBasics.Models;
+using Microsoft.Kinect.Toolkit.FaceTracking;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,8 +7,42 @@ using System.Text;
 
 namespace FaceTrackingBasics
 {
-    public class Maths
+    //public static class Maths: System.Math // cannot derive from static class System.Math
+    public static class Maths
     {
+
+        public static XYZCoord rotate_vector(XYZCoord vector, Vector3DF rotation)
+        {
+            // XYZ of vector
+            double x = vector.X;
+            double y = vector.Y;
+            double z = vector.Z;
+
+            // rotation around XYZ axis the face has taken, flipped and then converted to radians
+            double rotX = Math.PI * (-rotation.X / 180);
+            double rotY = Math.PI * (-rotation.Y / 180);
+            double rotZ = Math.PI * (-rotation.Z / 180);
+            
+            // rotate around X-axis
+            double x1 = x;
+            double y1 = (y * Math.Cos(rotX)) - (z * Math.Sin(rotX));
+            double z1 = (y * Math.Sin(rotX)) + (z * Math.Cos(rotX));
+
+            // rotate around Y-axis
+            double x2 = (x1 * Math.Cos(rotY)) + (z1 * Math.Sin(rotY));
+            double y2 = y1;
+            double z2 = (-x1 * Math.Sin(rotY)) + (z1 * Math.Cos(rotY));
+
+            // rotate around Z-axis
+            double x3 = (x2 * Math.Cos(rotZ)) - (y2 * Math.Sin(rotZ));
+            double y3 = (x2 * Math.Sin(rotZ)) + (y2 * Math.Cos(rotZ));
+            double z3 = z2;
+
+  
+            // return rotated vector
+            return new XYZCoord(x3, y3, z3);
+        }
+
         public static double angle_from_coords(XYZCoord a, XYZCoord b, XYZCoord c)
         {
             return angle(
@@ -79,6 +114,12 @@ namespace FaceTrackingBasics
             return Math.Sqrt(v.X * v.X + v.Y * v.Y + v.Z * v.Z);
         }
 
+        // calculate the magnitude (distance) of a vector
+        public static double magnitude(XYZCoord v)
+        {
+            return Math.Sqrt(v.X * v.X + v.Y * v.Y + v.Z * v.Z);
+        }
+
         public static double angle(Vector_ v1, Vector_ v2)
         {
             double v1_magnitude;
@@ -107,6 +148,22 @@ namespace FaceTrackingBasics
             angle_degrees = angle_radians * (180.0 / Math.PI);
 
             return angle_degrees;
+        }
+
+        /*
+         * methods from Math class
+         * Acos(double d)
+         * Asin(double d)
+         */
+
+        public static double Acos(double d)
+        {
+            return Math.Acos(d);
+        }
+
+        public static double Asin(double d)
+        {
+            return Math.Asin(d);
         }
     }
 }
