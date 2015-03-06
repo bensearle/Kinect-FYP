@@ -43,13 +43,18 @@ namespace FaceTrackingBasics
                 FacialRecognition fr = new FacialRecognition();
                 //string name = fr.Process(frames[0]); // returns name
 
-                SkeletalTracking st = new SkeletalTracking();
+                JointPoints joints = new JointPoints(skeletons[0]);
+                Console.WriteLine("!!!!!!!!!!!!!!");
+                Console.Write(joints.ToString());
+                Console.WriteLine("!!!!!!!!!!!!!!");
+
+                /*SkeletalTracking st = new SkeletalTracking();
                 List<NamePointPair> joints = new List<NamePointPair>(st.Process(skeletons[0]));
 
                 foreach (NamePointPair np in joints)
                 {
                      Console.WriteLine("????????????"+np.ToString());
-                }
+                }*/
 
 
 
