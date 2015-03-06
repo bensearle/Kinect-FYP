@@ -1,4 +1,5 @@
 ﻿using Microsoft.Kinect;
+using Microsoft.Kinect.Toolkit.FaceTracking;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,6 +19,13 @@ namespace FaceTrackingBasics.Models
             X = joint.Position.X;
             Y = joint.Position.Y;
             Z = joint.Position.Z;
+        }
+
+        public Unit3D(Vector3DF vector)
+        {
+            X = vector.X;
+            Y = vector.Y;
+            Z = vector.Z;
         }
 
 
