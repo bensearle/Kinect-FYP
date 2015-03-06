@@ -1,4 +1,5 @@
-﻿using Microsoft.Kinect;
+﻿using FaceTrackingBasics.Models;
+using Microsoft.Kinect;
 using Microsoft.Kinect.Toolkit.FaceTracking;
 using System;
 using System.Collections.Generic;
@@ -12,7 +13,7 @@ namespace FaceTrackingBasics
     public static class SkeletonProcessing
     {
         public static bool[] skeletonTracked = {false,false,false,false,false,false}; // whether each skeleton is being tracked
-        public static Skeleton[] skeletons; // all of the skeletons
+        public static Skeleton[] skeletons = new Skeleton[6]; // all of the skeletons
         public static FaceTrackFrame[] frames = new FaceTrackFrame[6]; // all of the face tracking frames
 
         static bool testbool = true;
@@ -21,6 +22,7 @@ namespace FaceTrackingBasics
         {
             int id = skeleton.TrackingId; // id of the skeleton
             skeletonTracked[0] = true; // skeleton is now being tracked
+            skeletons[0] = skeleton;
             frames[0] = frame;
 
             if (testbool) {
@@ -39,9 +41,18 @@ namespace FaceTrackingBasics
             if (skeletonTracked[0]){ // if skeleton is being tracked
 
                 FacialRecognition fr = new FacialRecognition();
-                Console.WriteLine("*** * * * * ** ****"+fr.Process(frames[0]));
-                //skeltons[0];
-                //frames[0];
+                //string name = fr.Process(frames[0]); // returns name
+
+                SkeletalTracking st = new SkeletalTracking();
+                List<NamePointPair> joints = new List<NamePointPair>(st.Process(skeletons[0]));
+
+                foreach (NamePointPair np in joints)
+                {
+                     Console.WriteLine("????????????"+np.ToString());
+                }
+
+
+
 
             }
 

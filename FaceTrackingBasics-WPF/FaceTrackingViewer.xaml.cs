@@ -169,7 +169,7 @@ namespace FaceTrackingBasics
                         {
                             this.trackedSkeletons.Add(skeleton.TrackingId, new SkeletonFaceTracker());
                         }
-                        Console.WriteLine("*****" + skeleton.TrackingId);
+                        //Console.WriteLine("*****" + skeleton.TrackingId);
                         var jointss = new List<NamePointPair>();
                         /*
                         foreach (JointType joint in Enum.GetValues(typeof(JointType)))
@@ -186,10 +186,7 @@ namespace FaceTrackingBasics
                             //string s = joint.JointType;
                         }*/
                         //Console.WriteLine("**************************************************");
-                        foreach (NamePointPair np in jointss)
-                        {
-                            Console.WriteLine(np.ToString());
-                        }
+                        
 
                         // Give each tracker the upated frame.
                         SkeletonFaceTracker skeletonFaceTracker;
@@ -197,7 +194,7 @@ namespace FaceTrackingBasics
                         {
                             skeletonFaceTracker.OnFrameReady(this.Kinect, colorImageFormat, colorImage, depthImageFormat, depthImage, skeleton);
                             skeletonFaceTracker.LastTrackedFrame = skeletonFrame.FrameNumber;
-                            Console.WriteLine(skeletonFrame.FrameNumber);
+                            //Console.WriteLine(skeletonFrame.FrameNumber);
                         }
                     }
                 }
