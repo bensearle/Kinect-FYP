@@ -170,6 +170,16 @@ namespace FaceTrackingBasics
                             this.trackedSkeletons.Add(skeleton.TrackingId, new SkeletonFaceTracker());
                         }
 
+                        foreach (JointType joint in Enum.GetValues(typeof(JointType)))
+                        {
+
+                            Unit3D j = new Unit3D(skeleton.Joints[joint]);
+                            Console.WriteLine(joint + ":: " + j.ToString());
+                            float x = skeleton.Joints[joint].Position.X;
+                            //skeleton.Joints[joint].Position.X;
+                            //string s = joint.JointType;
+                        }
+
                         // Give each tracker the upated frame.
                         SkeletonFaceTracker skeletonFaceTracker;
                         if (this.trackedSkeletons.TryGetValue(skeleton.TrackingId, out skeletonFaceTracker))
@@ -497,7 +507,7 @@ namespace FaceTrackingBasics
                 EnumIndexableCollection<FeaturePoint, PointF> facePoints = frame.GetProjected3DShape();
                 Vector3DF rotation = frame.Rotation;
                 Vector3DF translation = frame.Translation;
-                
+
 
                 /*Debug.WriteLine(
                     "**," + rotation.X +
@@ -533,12 +543,12 @@ namespace FaceTrackingBasics
 
                 //Debug.WriteLine(face_coords[0] + " ** " + rotation.X+"," + rotation.Y+"," + rotation.Z + " ** " + Maths.rotate_vector(face_coords[0], rotation));
                 //Debug.WriteLine(Maths.rotate_vector(face_coords[0], rotation));
-                
+
                 // angle between vec0 and vec1
                 double anglebetween = Vector3D.AngleBetween(
                     new Vector3D(face_coords[0].X, face_coords[0].Y, face_coords[0].Z),
                     new Vector3D(face_coords[1].X, face_coords[1].Y, face_coords[1].Z));
-                
+
                 // angle between vec0 and vec1, after they have been rotated
                 XYZCoord vec0 = Maths.rotate_vector(face_coords[0], rotation);
                 XYZCoord vec1 = Maths.rotate_vector(face_coords[1], rotation);
