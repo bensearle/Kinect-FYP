@@ -217,6 +217,7 @@ namespace FaceTrackingBasics
         {
             sensorChooser.Stop();
             faceTrackingViewer.Dispose();
+            Environment.Exit(0);
         }
 
         private void KinectSensorOnAllFramesReady(object sender, AllFramesReadyEventArgs allFramesReadyEventArgs)
