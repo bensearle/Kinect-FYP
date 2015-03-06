@@ -32,9 +32,9 @@ namespace FaceTrackingBasics
 
         public MainWindow()
         {
-
-            Debug.WriteLine(Maths.rotate_vector(new XYZCoord(2, 2, 0), new Vector3DF(0, 180, 0)));
-            Debug.WriteLine(Maths.rotate_vector(new XYZCoord(2, 2, 0), new Vector3DF(0, 12, 0)));
+            //UdpSend.Start();
+            //Debug.WriteLine(Maths.rotate_vector(new XYZCoord(2, 2, 0), new Vector3DF(0, 180, 0)));
+            //Debug.WriteLine(Maths.rotate_vector(new XYZCoord(2, 2, 0), new Vector3DF(0, 12, 0)));
 
             timer_5();
             // testing
@@ -42,7 +42,7 @@ namespace FaceTrackingBasics
 
             //            FaceTrackingBasics.FaceTrackingViewer.timer_5();
             //testAngle();
-            Console.WriteLine("************");
+            //Console.WriteLine("************");
             /*Console.WriteLine(JointType.Head.ToString());
             Dictionaries d = new Dictionaries();
             JointType j = d.Joints[0];

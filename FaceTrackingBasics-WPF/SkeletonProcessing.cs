@@ -80,7 +80,7 @@ namespace FaceTrackingBasics
             JointPoints joints = new JointPoints(skeletons[0]); // returns all joints as JointPoints
             string joints_json = joints.ToString(); // JSON of joints
             jsonJoints[0] = joints_json;
-            //start_joints_thread(); // call this thread
+            start_joints_thread(); // call this thread
             // no longer using SkeletalTracking
             /*SkeletalTracking st = new SkeletalTracking();
             List<NamePointPair> joints = new List<NamePointPair>(st.Process(skeletons[0]));
@@ -93,7 +93,9 @@ namespace FaceTrackingBasics
 
         private static void start_json_thread()
         {
-            Console.WriteLine(jsonJoints[0] + jsonNames[0]);
+            string json = jsonJoints[0] + jsonNames[0];
+
+            UdpSend.udpBroadcastMessage(json, 4);
             start_json_thread(); // call this thread
         }
     }
