@@ -129,6 +129,12 @@ namespace FaceTrackingBasics
         }
 
         // calculate the magnitude (distance) of a vector
+        public static double magnitude(Unit3D v)
+        {
+            return Math.Sqrt(v.X * v.X + v.Y * v.Y + v.Z * v.Z);
+        }
+
+        // calculate the magnitude (distance) of a vector
         public static double magnitude(XYZCoord v)
         {
             return Math.Sqrt(v.X * v.X + v.Y * v.Y + v.Z * v.Z);
