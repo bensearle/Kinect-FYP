@@ -1,47 +1,51 @@
-﻿using System;
+﻿using Microsoft.Kinect;
+using Microsoft.Kinect.Toolkit.FaceTracking;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Controls;
 
 namespace FaceTrackingBasics
 {
-    class SkeletonProcessing
+    public static class SkeletonProcessing
     {
-        private bool tracked0 = false;
-        private bool tracked1 = false;
-        private bool tracked2 = false;
-        private bool tracked3 = false;
-        private bool tracked4 = false;
-        private bool tracked5 = false;
+        public static bool[] skeletonTracked = {false,false,false,false,false,false}; // whether each skeleton is being tracked
+        public static Skeleton[] skeletons; // all of the skeletons
+        public static FaceTrackFrame[] frames = new FaceTrackFrame[6]; // all of the face tracking frames
 
+        static bool testbool = true;
 
-        public bool SkeletonTracked(int i, bool b)
+        public static void TrackSkeleton(Skeleton skeleton, FaceTrackFrame frame)
         {
-            switch (i)
-            {
-                case 0:
-                    tracked0 = b;
-                    return true;
-                case 1:
-                    tracked1 = b;
-                    return true;
-                case 2:
-                    tracked2 = b;
-                    return true;
-                case 3:
-                    tracked3 = b;
-                    return true;
-                case 4:
-                    tracked4 = b;
-                    return true;
-                case 5:
-                    tracked5 = b;
-                    return true;
-                default:
-                    Console.WriteLine(String.Format("Error: SkeletonTracked({0}, {1})", i, b));
-                    return false;
+            int id = skeleton.TrackingId; // id of the skeleton
+            skeletonTracked[0] = true; // skeleton is now being tracked
+            frames[0] = frame;
+
+            if (testbool) {
+                StartProcessing();
+                testbool = false;
             }
+        }
+
+        public static void UntrackSkeleton(int i)
+        {
+            skeletonTracked[0] = false;
+        }
+
+        public static void StartProcessing()
+        {
+            if (skeletonTracked[0]){ // if skeleton is being tracked
+
+                FacialRecognition fr = new FacialRecognition();
+                Console.WriteLine("*** * * * * ** ****"+fr.Process(frames[0]));
+                //skeltons[0];
+                //frames[0];
+
+            }
+
+
         }
     }
 }
