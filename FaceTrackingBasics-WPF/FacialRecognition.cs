@@ -16,9 +16,9 @@ namespace FaceTrackingBasics
         /// </summary>
         /// <param name="frame">the face tracking frame</param>
         /// <returns>the name of the recognised person</returns>
-        public String Process(FaceTrackFrame frame)
+        public String Process(EnumIndexableCollection<FeaturePoint, Vector3DF> facePoints3D)
         {
-            return process_face(frame, "");
+            return process_face(facePoints3D, "");
         }
 
         /// <summary>
@@ -27,9 +27,9 @@ namespace FaceTrackingBasics
         /// <param name="frame">the face track frame</param>
         /// <param name="name">the name of the person whose face this is</param>
         /// <returns>the name of the person</returns>
-        public String Process(FaceTrackFrame frame, String name)
+        public String Process(EnumIndexableCollection<FeaturePoint, Vector3DF> facePoints3D, String name)
         {
-            return process_face(frame, name);
+            return process_face(facePoints3D, name);
         }
 
         /// <summary>
@@ -38,9 +38,9 @@ namespace FaceTrackingBasics
         /// <param name="frame">the face track frame</param>
         /// <param name="name">name of the person or blank</param>
         /// <returns></returns>
-        private String process_face(FaceTrackFrame frame, String name)
+        private String process_face(EnumIndexableCollection<FeaturePoint, Vector3DF> facePoints3D, String name)
         {
-            EnumIndexableCollection<FeaturePoint, Vector3DF> facePoints3D = frame.Get3DShape(); // get 3D face vectors
+            // EnumIndexableCollection<FeaturePoint, Vector3DF> facePoints3D = frame.Get3DShape(); // get 3D face vectors
             Unit3D[] face_vectors = new Unit3D[121]; // create Unit3D array for the face vectors
 
             int index = 0;
