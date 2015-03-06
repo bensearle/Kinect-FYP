@@ -169,15 +169,26 @@ namespace FaceTrackingBasics
                         {
                             this.trackedSkeletons.Add(skeleton.TrackingId, new SkeletonFaceTracker());
                         }
-
+                        Console.WriteLine("*****" + skeleton.TrackingId);
+                        var jointss = new List<NamePointPair>();
+                        /*
                         foreach (JointType joint in Enum.GetValues(typeof(JointType)))
                         {
-
+                            var list = new List<KeyValuePair<string, int>>();
+                            list.Add(new KeyValuePair<string,int>());
                             Unit3D j = new Unit3D(skeleton.Joints[joint]);
-                            Console.WriteLine(joint + ":: " + j.ToString());
+
+                            jointss.Add(new NamePointPair(joint.ToString(), j));
+
+                            //Console.WriteLine(joint + ":: " + j.ToString());
                             float x = skeleton.Joints[joint].Position.X;
                             //skeleton.Joints[joint].Position.X;
                             //string s = joint.JointType;
+                        }*/
+                        //Console.WriteLine("**************************************************");
+                        foreach (NamePointPair np in jointss)
+                        {
+                            Console.WriteLine(np.ToString());
                         }
 
                         // Give each tracker the upated frame.
@@ -186,6 +197,7 @@ namespace FaceTrackingBasics
                         {
                             skeletonFaceTracker.OnFrameReady(this.Kinect, colorImageFormat, colorImage, depthImageFormat, depthImage, skeleton);
                             skeletonFaceTracker.LastTrackedFrame = skeletonFrame.FrameNumber;
+                            Console.WriteLine(skeletonFrame.FrameNumber);
                         }
                     }
                 }
@@ -434,6 +446,9 @@ namespace FaceTrackingBasics
                     FaceTrackFrame frame = this.faceTracker.Track(
                         colorImageFormat, colorImage, depthImageFormat, depthImage, skeletonOfInterest);
 
+                    SkeletonProcessing.TrackSkeleton(skeletonOfInterest, frame);
+
+
                     this.lastFaceTrackSucceeded = frame.TrackSuccessful;
                     if (this.lastFaceTrackSucceeded)
                     {
@@ -575,7 +590,7 @@ namespace FaceTrackingBasics
                 if (!facial_regonition_sent)
                 {
                     // frame.FaceRect.Bottom > bottom of rectangle
-                    FacialRecognition.recognise(face_coords);
+                    //FacialRecognition.recognise(face_coords);
                     facial_regonition_sent = true;
                 }
                 //this.face_coords = face_coords;

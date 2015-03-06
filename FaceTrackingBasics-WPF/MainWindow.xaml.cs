@@ -264,5 +264,12 @@ namespace FaceTrackingBasics
             string s = textName.Text;
             Debug.WriteLine(s);
         }
+
+        public void testTextChange()
+        {
+
+            //Window;
+            //Application.Current.FindResource["k"] = "bla bla bla";
+        }
     }
 }
