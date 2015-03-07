@@ -23,7 +23,7 @@ namespace FaceTrackingBasics
 
         static bool testbool = true;
 
-        public static void TrackSkeleton(Skeleton skeleton, FaceTrackFrame frame)
+        public static void TrackSkeleton(Skeleton skeleton, FaceTrackFrame frame, int skeletonIndex)
         {
             int id = skeleton.TrackingId; // id of the skeleton
             skeletonTracked[0] = true; // skeleton is now being tracked
@@ -34,8 +34,8 @@ namespace FaceTrackingBasics
             if (testbool)
             {
                 // start a thread to process the data
-                Thread thread_process = new Thread(StartProcessing);
-                thread_process.Start();
+                //Thread thread_process = new Thread(StartProcessing);
+                //thread_process.Start();
                 //StartProcessing();
                 testbool = false;
             }

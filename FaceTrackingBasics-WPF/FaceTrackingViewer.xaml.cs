@@ -153,14 +153,22 @@ namespace FaceTrackingBasics
                 {
                     this.skeletonData = new Skeleton[skeletonFrame.SkeletonArrayLength];
                 }
+                
+                // testing
+                int ii1 = this.skeletonData.Length;
+                int ii2 = skeletonFrame.SkeletonArrayLength;
+                Console.WriteLine(ii1 + " ::::: " + ii2);
 
                 colorImageFrame.CopyPixelDataTo(this.colorImage);
                 depthImageFrame.CopyPixelDataTo(this.depthImage);
                 skeletonFrame.CopySkeletonDataTo(this.skeletonData);
 
+                int total_skeleton_count = 0;
+
                 // Update the list of trackers and the trackers with the current frame information
                 foreach (Skeleton skeleton in this.skeletonData)
                 {
+                    
                     if (skeleton.TrackingState == SkeletonTrackingState.Tracked
                         || skeleton.TrackingState == SkeletonTrackingState.PositionOnly)
                     {
@@ -169,35 +177,28 @@ namespace FaceTrackingBasics
                         {
                             this.trackedSkeletons.Add(skeleton.TrackingId, new SkeletonFaceTracker());
                         }
-                        //Console.WriteLine("*****" + skeleton.TrackingId);
-                        var jointss = new List<NamePointPair>();
-                        /*
-                        foreach (JointType joint in Enum.GetValues(typeof(JointType)))
-                        {
-                            var list = new List<KeyValuePair<string, int>>();
-                            list.Add(new KeyValuePair<string,int>());
-                            Unit3D j = new Unit3D(skeleton.Joints[joint]);
 
-                            jointss.Add(new NamePointPair(joint.ToString(), j));
-
-                            //Console.WriteLine(joint + ":: " + j.ToString());
-                            float x = skeleton.Joints[joint].Position.X;
-                            //skeleton.Joints[joint].Position.X;
-                            //string s = joint.JointType;
-                        }*/
-                        //Console.WriteLine("**************************************************");
-                        
+                        int skeletonIndex = Array.IndexOf(this.skeletonData, skeleton); // get the index of the skeleton
 
                         // Give each tracker the upated frame.
                         SkeletonFaceTracker skeletonFaceTracker;
                         if (this.trackedSkeletons.TryGetValue(skeleton.TrackingId, out skeletonFaceTracker))
                         {
-                            skeletonFaceTracker.OnFrameReady(this.Kinect, colorImageFormat, colorImage, depthImageFormat, depthImage, skeleton);
+                            skeletonFaceTracker.OnFrameReady(this.Kinect, colorImageFormat, colorImage, depthImageFormat, depthImage, skeleton, skeletonIndex);
                             skeletonFaceTracker.LastTrackedFrame = skeletonFrame.FrameNumber;
                             //Console.WriteLine(skeletonFrame.FrameNumber);
+                            total_skeleton_count++;
+                            //s.OnFrameReady(this.Kinect, colorImageFormat, colorImage, depthImageFormat, depthImage, skeleton);
+
                         }
                     }
                 }
+                if (total_skeleton_count > 1)
+                {
+                    Console.WriteLine("*************" + total_skeleton_count);
+
+                }
+                Console.WriteLine("*************"+ total_skeleton_count);
 
                 this.RemoveOldTrackers(skeletonFrame.FrameNumber);
 
@@ -412,7 +413,7 @@ namespace FaceTrackingBasics
             /// <summary>
             /// Updates the face tracking information for this skeleton
             /// </summary>
-            internal void OnFrameReady(KinectSensor kinectSensor, ColorImageFormat colorImageFormat, byte[] colorImage, DepthImageFormat depthImageFormat, short[] depthImage, Skeleton skeletonOfInterest)
+            internal void OnFrameReady(KinectSensor kinectSensor, ColorImageFormat colorImageFormat, byte[] colorImage, DepthImageFormat depthImageFormat, short[] depthImage, Skeleton skeletonOfInterest, int skeletonIndex)
             {
                 this.skeletonTrackingState = skeletonOfInterest.TrackingState;
 
@@ -443,7 +444,7 @@ namespace FaceTrackingBasics
                     FaceTrackFrame frame = this.faceTracker.Track(
                         colorImageFormat, colorImage, depthImageFormat, depthImage, skeletonOfInterest);
 
-                    SkeletonProcessing.TrackSkeleton(skeletonOfInterest, frame);
+                    SkeletonProcessing.TrackSkeleton(skeletonOfInterest, frame, skeletonIndex);
 
 
                     this.lastFaceTrackSucceeded = frame.TrackSuccessful;
