@@ -120,14 +120,26 @@ namespace FaceTrackingBasics
             {
                 if (skeletonTracked[i]) // if a skeleton is being tracked
                 {
-                    jsonString += jsonJoints[i] + jsonNames[i];
+                    jsonString += "\"Skeleton_" + i + "\": { " + jsonJoints[i] + jsonNames[i] + "}, ";
                 }
             }
 
-            Console.WriteLine("*!*!*!*!*!*!*!* "+jsonString);
-            
-            ss();
+            Console.WriteLine("*!*!*!*!*!*!*!* " + jsonString);
+            timer();
+        }
 
+        static System.Timers.Timer _timer; // From System.Timers
+
+        public static void timer()
+        {
+            _timer = new System.Timers.Timer(5000); // Set up the timer for 3 seconds
+            _timer.Elapsed += new System.Timers.ElapsedEventHandler(_timer_Elapsed);
+            _timer.Enabled = true; // Enable it
+        }
+
+        public static void _timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        {
+            ss();
         }
 
         public static void StartProcessing(int skeletonIndex)
@@ -135,9 +147,9 @@ namespace FaceTrackingBasics
             if (skeletonTracked[skeletonIndex])
             { // if skeleton is being tracked
 
-                if (jsonNames[skeletonIndex] == "\"name\": unkown") // if the name is unkown
+                Thread thread_face = new Thread(() => start_face_thread(skeletonIndex)); // create thread for facial recognition
+                if (jsonNames[skeletonIndex] == "\"name\": unknown") // if the name is unkown
                 {
-                    Thread thread_face = new Thread(() => start_face_thread(skeletonIndex)); // create thread for facial recognition
                     thread_face.Start(); // start the thread
                 }
                 Thread thread_joints = new Thread(() => start_joints_thread(skeletonIndex)); // create thread for tracking joints
@@ -145,6 +157,11 @@ namespace FaceTrackingBasics
 
                 //Thread thread_json = new Thread(() => start_json_thread(skeletonIndex));
                 //thread_json.Start();
+
+                while (thread_face.IsAlive || thread_joints.IsAlive)
+                {
+                    // wait
+                }
             }
         }
 
