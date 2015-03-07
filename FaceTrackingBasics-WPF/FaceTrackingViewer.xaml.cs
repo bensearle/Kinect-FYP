@@ -153,11 +153,6 @@ namespace FaceTrackingBasics
                 {
                     this.skeletonData = new Skeleton[skeletonFrame.SkeletonArrayLength];
                 }
-                
-                // testing
-                int ii1 = this.skeletonData.Length;
-                int ii2 = skeletonFrame.SkeletonArrayLength;
-                Console.WriteLine(ii1 + " ::::: " + ii2);
 
                 colorImageFrame.CopyPixelDataTo(this.colorImage);
                 depthImageFrame.CopyPixelDataTo(this.depthImage);
@@ -193,12 +188,6 @@ namespace FaceTrackingBasics
                         }
                     }
                 }
-                if (total_skeleton_count > 1)
-                {
-                    Console.WriteLine("*************" + total_skeleton_count);
-
-                }
-                Console.WriteLine("*************"+ total_skeleton_count);
 
                 this.RemoveOldTrackers(skeletonFrame.FrameNumber);
 

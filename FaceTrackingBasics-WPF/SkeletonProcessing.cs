@@ -19,20 +19,20 @@ namespace FaceTrackingBasics
         public static EnumIndexableCollection<FeaturePoint, Vector3DF>[] facePoints3D = new EnumIndexableCollection<FeaturePoint, Vector3DF>[6]; // all of the 3D face points
 
         private static String[] jsonJoints = new String[6];
-        private static String[] jsonNames = { "\"name\": unkown", "\"name\": unkown", "\"name\": unkown", "\"name\": unkown", "\"name\": unkown", "\"name\": unkown" };
+        private static String[] jsonNames = { "\"name\": unknown", "\"name\": unknown", "\"name\": unknown", "\"name\": unknown", "\"name\": unknown", "\"name\": unknown" };
 
         static bool testbool = true;
 
         public static void TrackSkeleton(Skeleton skeleton, FaceTrackFrame frame, int skeletonIndex)
         {
-            int id = skeleton.TrackingId; // id of the skeleton
-            skeletonTracked[0] = true; // skeleton is now being tracked
-            skeletons[0] = skeleton; // skeleton added to array
-            //frames[0] = frame;
-            facePoints3D[0] = frame.Get3DShape(); // facePoints3D added to array
+            skeletonTracked[skeletonIndex] = true; // skeleton is now being tracked
+            skeletons[skeletonIndex] = skeleton; // skeleton added to array
+            facePoints3D[skeletonIndex] = frame.Get3DShape(); // get the facePoints3D from the frame and add to array
 
             if (testbool)
             {
+                Initialize();
+                ss();
                 // start a thread to process the data
                 //Thread thread_process = new Thread(StartProcessing);
                 //thread_process.Start();
@@ -46,41 +46,122 @@ namespace FaceTrackingBasics
             skeletonTracked[0] = false;
         }
 
-        public static void StartProcessing()
+        private static Thread[] skeletonThreads;
+
+
+        public static void Initialize()
         {
-            if (skeletonTracked[0])
-            { // if skeleton is being tracked
+            skeletonThreads = new Thread[6];
 
-                if (jsonNames[0] == "\"name\": unkown") // if the name is unkown
-                {
-                    Thread thread_face = new Thread(start_face_thread); // create thread for facial recognition
-                    thread_face.Start(); // start the thread
-                }
-                Thread thread_joints = new Thread(start_joints_thread); // create thread for tracking joints
-                thread_joints.Start(); // start the thread
+            skeletonThreads[0] = new Thread(() => StartProcessing(0)); // create 6 threads
+            skeletonThreads[1] = new Thread(() => StartProcessing(1)); // create 6 threads
+            skeletonThreads[2] = new Thread(() => StartProcessing(2)); // create 6 threads
+            skeletonThreads[3] = new Thread(() => StartProcessing(3)); // create 6 threads
+            skeletonThreads[4] = new Thread(() => StartProcessing(4)); // create 6 threads
+            skeletonThreads[5] = new Thread(() => StartProcessing(5)); // create 6 threads
 
-                //Thread mainThread = null;
-                //mainThread = Thread.CurrentThread; //main thread reference                
 
-                Thread thread_json = new Thread(start_json_thread);
-                thread_json.Start();
+            /*for (int i = 0; i < 6; i++)
+            {
+                skeletonThreads[i] = new Thread(() => StartProcessing(i)); // create 6 threads
+            }*/
+        }
+
+        public static void createThread(int i)
+        {
+            switch (i)
+            {
+                case 0:
+                    skeletonThreads[0] = new Thread(() => StartProcessing(0));
+                    break;
+                case 1:
+                    skeletonThreads[1] = new Thread(() => StartProcessing(1));
+                    break;
+                case 2:
+                    skeletonThreads[2] = new Thread(() => StartProcessing(2));
+                    break;
+                case 3:
+                    skeletonThreads[3] = new Thread(() => StartProcessing(3));
+                    break;
+                case 4:
+                    skeletonThreads[4] = new Thread(() => StartProcessing(4));
+                    break;
+                case 5:
+                    skeletonThreads[5] = new Thread(() => StartProcessing(5));
+                    break;
+                default:
+                    break;
             }
         }
 
-        private static void start_face_thread()
+        public static void ss()
         {
-            FacialRecognition fr = new FacialRecognition();
-            string name = fr.Process(facePoints3D[0]); // returns name
-            string name_json = String.Format("\"name\": {0}", name); // JSON format of name
-            jsonNames[0] = name_json;
+            // start the threads
+            for (int i = 0; i < 6; i++)
+            {
+                if (skeletonTracked[i]) // if a skeleton is being tracked
+                {
+                    createThread(i);
+                    skeletonThreads[i].Start(); // start the thread
+                }
+            }
+
+            // wait until all threads have finished
+            while (skeletonThreads[0].IsAlive || skeletonThreads[1].IsAlive ||
+                skeletonThreads[2].IsAlive || skeletonThreads[3].IsAlive ||
+                skeletonThreads[4].IsAlive || skeletonThreads[5].IsAlive)
+            {
+                // just wait
+            }
+
+            // create the JSON
+            string jsonString = "";
+            for (int i = 0; i < 6; i++)
+            {
+                if (skeletonTracked[i]) // if a skeleton is being tracked
+                {
+                    jsonString += jsonJoints[i] + jsonNames[i];
+                }
+            }
+
+            Console.WriteLine("*!*!*!*!*!*!*!* "+jsonString);
+            
+            ss();
+
         }
 
-        private static void start_joints_thread()
+        public static void StartProcessing(int skeletonIndex)
         {
-            JointPoints joints = new JointPoints(skeletons[0]); // returns all joints as JointPoints
+            if (skeletonTracked[skeletonIndex])
+            { // if skeleton is being tracked
+
+                if (jsonNames[skeletonIndex] == "\"name\": unkown") // if the name is unkown
+                {
+                    Thread thread_face = new Thread(() => start_face_thread(skeletonIndex)); // create thread for facial recognition
+                    thread_face.Start(); // start the thread
+                }
+                Thread thread_joints = new Thread(() => start_joints_thread(skeletonIndex)); // create thread for tracking joints
+                thread_joints.Start(); // start the thread
+
+                //Thread thread_json = new Thread(() => start_json_thread(skeletonIndex));
+                //thread_json.Start();
+            }
+        }
+
+        private static void start_face_thread(int i)
+        {
+            FacialRecognition fr = new FacialRecognition();
+            string name = fr.Process(facePoints3D[i]); // returns name
+            string name_json = String.Format("\"name\": {0}", name); // JSON format of name
+            jsonNames[i] = name_json;
+        }
+
+        private static void start_joints_thread(int i)
+        {
+            JointPoints joints = new JointPoints(skeletons[i]); // returns all joints as JointPoints
             string joints_json = joints.ToString(); // JSON of joints
-            jsonJoints[0] = joints_json;
-            start_joints_thread(); // call this thread
+            jsonJoints[i] = joints_json;
+            //start_joints_thread(); // call this thread
             // no longer using SkeletalTracking
             /*SkeletalTracking st = new SkeletalTracking();
             List<NamePointPair> joints = new List<NamePointPair>(st.Process(skeletons[0]));
@@ -91,12 +172,12 @@ namespace FaceTrackingBasics
             }*/
         }
 
-        private static void start_json_thread()
+        private static void start_json_thread(int i)
         {
-            string json = jsonJoints[0] + jsonNames[0];
+            string json = jsonJoints[i] + jsonNames[i];
 
             UdpSend.udpBroadcastMessage(json, 4);
-            start_json_thread(); // call this thread
+            //start_json_thread(); // call this thread
         }
     }
 }
