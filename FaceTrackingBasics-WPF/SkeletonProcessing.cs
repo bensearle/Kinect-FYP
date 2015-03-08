@@ -30,12 +30,14 @@ namespace FaceTrackingBasics
 
         public static void TrackSkeleton(Skeleton skeleton, FaceTrackFrame frame, int skeletonIndex)
         {
-            skeletonTracked[skeletonIndex] = true; // skeleton is now being tracked
-            skeletons[skeletonIndex] = skeleton; // skeleton added to array
-            facePoints3D[skeletonIndex] = frame.Get3DShape(); // get the facePoints3D from the frame and add to array
+            if (!skeletonTracked[skeletonIndex]) {
+                skeletonTracked[skeletonIndex] = true; // skeleton is now being tracked
+                skeletons[skeletonIndex] = skeleton; // skeleton added to array
+                facePoints3D[skeletonIndex] = frame.Get3DShape(); // get the facePoints3D from the frame and add to array
 
-            Console.WriteLine(" /\\ " + testint++);
-
+                Console.WriteLine(" /\\ " + testint++);
+            }
+            
             if (testbool)
             {
                 Initialize();
@@ -60,14 +62,20 @@ namespace FaceTrackingBasics
         {
             skeletonThreads = new Thread[6];
             skeletonThreads[0] = new Thread(() => ProcessSkeleton(0)); // create 6 threads
+            skeletonThreads[0].Start();
             skeletonThreads[1] = new Thread(() => ProcessSkeleton(1)); // create 6 threads
+            skeletonThreads[1].Start();
             skeletonThreads[2] = new Thread(() => ProcessSkeleton(2)); // create 6 threads
+            skeletonThreads[2].Start();
             skeletonThreads[3] = new Thread(() => ProcessSkeleton(3)); // create 6 threads
+            skeletonThreads[3].Start();
             skeletonThreads[4] = new Thread(() => ProcessSkeleton(4)); // create 6 threads
+            skeletonThreads[4].Start();
             skeletonThreads[5] = new Thread(() => ProcessSkeleton(5)); // create 6 threads
+            skeletonThreads[5].Start();
 
             //main();
-            mainThread.Start();
+            // mainThread.Start();
             jsonSendThread.Start();
             //timer();
         }
@@ -155,28 +163,16 @@ namespace FaceTrackingBasics
             if (skeletonTracked[skeletonIndex])
             { // if skeleton is being tracked
 
-                Thread thread_face = new Thread(() => start_face_thread(skeletonIndex)); // create thread for facial recognition
                 if (jsonNames[skeletonIndex] == "\"name\": unknown") // if the name is unkown
                 {
-                    thread_face.Priority = ThreadPriority.Highest; // set thread prioity to highest
-                    thread_face.Start(); // start the thread
+                    start_face_thread(skeletonIndex); // create thread for facial recognition
                 }
-                Thread thread_joints = new Thread(() => start_joints_thread(skeletonIndex)); // create thread for tracking joints
-                thread_joints.Start(); // start the thread
-
-                //Thread thread_json = new Thread(() => start_json_thread(skeletonIndex));
-                //thread_json.Start();
-
-                while (thread_face.IsAlive || thread_joints.IsAlive)
-                {
-                    // wait
-                }
-
-                FaceTrackingViewer.SkeletonFaceTracker.sendData[skeletonIndex] = true;
+                start_joints_thread(skeletonIndex); // create thread for tracking joints
 
                 // create the JSON for this skeleton
                 jsonSkeleton[skeletonIndex] += "\"Skeleton_" + skeletonIndex + "\": { " + jsonJoints[skeletonIndex] + jsonNames[skeletonIndex] + "}";
 
+                skeletonTracked[skeletonIndex] = false; // change to false, so that more data can be added
             }
         }
 
@@ -200,6 +196,9 @@ namespace FaceTrackingBasics
             while (!readyToSend)
             {
                 // wait until ready to send
+                JsonModel js = new JsonModel(jsonSkeleton);
+                jsonString = js.JsonString;
+                readyToSend = true;
             }
 
             UdpSend.udpBroadcastMessage(jsonString, 4);

@@ -422,13 +422,14 @@ namespace FaceTrackingBasics
                     FaceTrackFrame frame = this.faceTracker.Track(
                         colorImageFormat, colorImage, depthImageFormat, depthImage, skeletonOfInterest);
 
-                    //SkeletonProcessing.TrackSkeleton(skeletonOfInterest, frame, skeletonIndex);
-                    
+                    SkeletonProcessing.TrackSkeleton(skeletonOfInterest, frame, skeletonIndex);
+                    /*
                     if (sendData[skeletonIndex])
                     {
                         SkeletonProcessing.TrackSkeleton(skeletonOfInterest, frame, skeletonIndex);
                         sendData[skeletonIndex] = false;
                     }
+                    */
                     
                     this.lastFaceTrackSucceeded = frame.TrackSuccessful;
                     if (this.lastFaceTrackSucceeded)
