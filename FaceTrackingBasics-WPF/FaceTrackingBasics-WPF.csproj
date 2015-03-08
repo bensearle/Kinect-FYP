@@ -88,6 +88,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Models\JointPoints.cs" />
+    <Compile Include="Models\JsonModel.cs" />
     <Compile Include="Models\NamePointPair.cs" />
     <Compile Include="Models\Unit3D.cs" />
     <Compile Include="SkeletalTracking.cs" />
