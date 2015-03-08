@@ -11,7 +11,7 @@ namespace FaceTrackingBasics
     public static class Maths
     {
 
-        public static XYZCoord rotate_vector(XYZCoord vector, Vector3DF rotation)
+        public static Unit3D rotate_vector(Unit3D vector, Vector3DF rotation)
         {
             // XYZ of vector
             double x = vector.X;
@@ -40,7 +40,7 @@ namespace FaceTrackingBasics
 
 
             // return rotated vector
-            return new XYZCoord(x3, y3, z3);
+            return new Unit3D(x3, y3, z3);
         }
 
         // Calculate how closely 2 numbers are matched, between 0 and 1
@@ -57,16 +57,16 @@ namespace FaceTrackingBasics
             
         }
 
-        public static double angle_from_coords(XYZCoord a, XYZCoord b, XYZCoord c)
+        public static double angle_from_coords(Unit3D a, Unit3D b, Unit3D c)
         {
             return angle(
                        coords_to_vector(a, b),
                        coords_to_vector(b, c));
         }
 
-        public static Vector_ coords_to_vector(XYZCoord a, XYZCoord b)
+        public static Unit3D coords_to_vector(Unit3D a, Unit3D b)
         {
-            return new Vector_(a.X - b.X, a.Y - b.Y, a.Z - b.Z);
+            return new Unit3D(a.X - b.X, a.Y - b.Y, a.Z - b.Z);
         }
 
         public static double lenth_ratio()
@@ -87,14 +87,14 @@ namespace FaceTrackingBasics
          */
 
         // ratio of 2 lines (a1, a2) and (b1, b2)
-        public static double ratio(XYZCoord a1, XYZCoord a2, XYZCoord b1, XYZCoord b2)
+        public static double ratio(Unit3D a1, Unit3D a2, Unit3D b1, Unit3D b2)
         {
             // if 0 then... throw new DivideByZeroException;
             return magnitude(a1, a2) / magnitude(b1, b2);
         }
 
         // ratio of 2 vectors
-        public static double ratio(Vector_ v1, Vector_ v2)
+        public static double ratio(Unit3D v1, Unit3D v2)
         {
             return magnitude(v1) / magnitude(v2);
         }
@@ -113,7 +113,7 @@ namespace FaceTrackingBasics
          */
 
         // calculate the magnitude (distance) between 2 points
-        public static double magnitude(XYZCoord a, XYZCoord b)
+        public static double magnitude(Unit3D a, Unit3D b)
         {
             // Math.Abs not needed as it is squared
             double x = Math.Abs(a.X - b.X); // distance beween X's
@@ -123,29 +123,17 @@ namespace FaceTrackingBasics
         }
 
         // calculate the magnitude (distance) of a vector
-        public static double magnitude(Vector_ v)
-        {
-            return Math.Sqrt(v.X * v.X + v.Y * v.Y + v.Z * v.Z);
-        }
-
-        // calculate the magnitude (distance) of a vector
         public static double magnitude(Unit3D v)
         {
             return Math.Sqrt(v.X * v.X + v.Y * v.Y + v.Z * v.Z);
         }
 
-        // calculate the magnitude (distance) of a vector
-        public static double magnitude(XYZCoord v)
-        {
-            return Math.Sqrt(v.X * v.X + v.Y * v.Y + v.Z * v.Z);
-        }
-
-        public static double angle(Vector_ v1, Vector_ v2)
+        public static double angle(Unit3D v1, Unit3D v2)
         {
             double v1_magnitude;
             double v2_magnitude;
-            Vector_ v1_normalized;
-            Vector_ v2_normalized;
+            Unit3D v1_normalized;
+            Unit3D v2_normalized;
             double dot_product;
             double angle_radians;
             double angle_degrees;
@@ -155,8 +143,8 @@ namespace FaceTrackingBasics
             v2_magnitude = Math.Sqrt(v2.X * v2.X + v2.Y * v2.Y + v2.Z * v2.Z);
 
             // normalize the vectors
-            v1_normalized = new Vector_(v1.X / v1_magnitude, v1.Y / v1_magnitude, v1.Z / v1_magnitude);
-            v2_normalized = new Vector_(v2.X / v2_magnitude, v2.Y / v2_magnitude, v2.Z / v2_magnitude);
+            v1_normalized = new Unit3D(v1.X / v1_magnitude, v1.Y / v1_magnitude, v1.Z / v1_magnitude);
+            v2_normalized = new Unit3D(v2.X / v2_magnitude, v2.Y / v2_magnitude, v2.Z / v2_magnitude);
 
             // calculate the dot product
             dot_product = v1_normalized.X * v2_normalized.X + v1_normalized.Y * v2_normalized.Y + v1_normalized.Z * v2_normalized.Z;

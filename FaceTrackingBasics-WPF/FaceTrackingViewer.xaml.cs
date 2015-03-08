@@ -305,8 +305,6 @@ namespace FaceTrackingBasics
                     faceModelPts.Add(new Point(this.facePoints[i].X + 0.5f, this.facePoints[i].Y + 0.5f));
                 }
 
-                FaceVector[] vectors_on_screen = new FaceVector[121]; // the 2 points on screen that each vector is between
-
                 foreach (var t in faceTriangles)
                 {
                     var triangle = new FaceModelTriangle();
@@ -318,15 +316,6 @@ namespace FaceTrackingBasics
                     list_number_coords.Add(Tuple.Create(triangle.P1, t.First));
                     list_number_coords.Add(Tuple.Create(triangle.P2, t.Second));
                     list_number_coords.Add(Tuple.Create(triangle.P3, t.Third));
-
-                    vectors_on_screen[t.First].P1 = triangle.P1;
-                    vectors_on_screen[t.First].P2 = triangle.P1;
-
-                    vectors_on_screen[t.Second].P1 = triangle.P1;
-                    vectors_on_screen[t.Second].P2 = triangle.P1;
-
-                    vectors_on_screen[t.Third].P1 = triangle.P1;
-                    vectors_on_screen[t.Third].P2 = triangle.P1;
 
                     /*// add text of first number
                     drawingContext.DrawText(new FormattedText("" + t.First,
@@ -447,7 +436,6 @@ namespace FaceTrackingBasics
 
                         this.facePoints = frame.GetProjected3DShape();
                         this.faceTriangles_ = faceTriangles;
-                        getXYZ(frame);
                     }
                 }
             }
@@ -458,22 +446,6 @@ namespace FaceTrackingBasics
                 public Point P2;
                 public Point P3;
             }
-
-            private struct FaceVector
-            {
-                public Point P1;
-                public Point P2;
-            }
-
-
-            /*public struct XYZCoord
-            {
-                public float X;
-                public float Y;
-                public float Z;
-            }*/
-
-            public XYZCoord[] face_coords;
 
             static int tInc = 0;
             static System.Timers.Timer _timer; // From System.Timers
@@ -499,89 +471,6 @@ namespace FaceTrackingBasics
                 // _l.Add(DateTime.Now); // Add date on each timer event
             }
 
-            bool facial_regonition_sent = false;
-            public void getXYZ(FaceTrackFrame frame)
-            {
-                //XYZCoord[] face_coords; // create array for face coordinates
-                face_coords = new XYZCoord[121]; // initialize array to size 121
-
-                EnumIndexableCollection<FeaturePoint, Vector3DF> facePoints3D = frame.Get3DShape();
-                EnumIndexableCollection<FeaturePoint, PointF> facePoints = frame.GetProjected3DShape();
-                Vector3DF rotation = frame.Rotation;
-                Vector3DF translation = frame.Translation;
-
-
-                /*Debug.WriteLine(
-                    "**," + rotation.X +
-                    "," + rotation.Y +
-                    "," + rotation.Z );
-                Debug.WriteLine(
-                    "***********," + translation.X +
-                    "," + translation.Y +
-                    "," + translation.Z);
-                */
-                string s = "";
-
-                double[] vector_magnitudes = new double[121];
-
-                int index = 0;
-                foreach (Vector3DF vector in facePoints3D)
-                {
-                    face_coords[index] = new XYZCoord(vector);
-                    vector_magnitudes[index] = Maths.magnitude(face_coords[index]);
-                    //face_coords[index].X = vector.X;
-                    //face_coords[index].Y = vector.Y;
-                    //face_coords[index].Z = vector.Z;
-                    //Debug.WriteLine(string.Format("{0}, {1}, {2}, {3}", index, vector.X, vector.Y, vector.Z));
-
-                    // s = (x,y)(x,y) for entering in to coord plotter (testing)
-                    s = s + "(" + vector.X + "," + vector.Y + ")";
-
-                    index++;
-                }
-
-                //Debug.WriteLine(Maths.rotate_vector(new XYZCoord(2,2,2), new Vector3DF(0,0,1)));
-                //Debug.WriteLine(Maths.rotate_vector(new XYZCoord(2, 2, 2), new Vector3DF(0, 0, 10)));
-
-                //Debug.WriteLine(face_coords[0] + " ** " + rotation.X+"," + rotation.Y+"," + rotation.Z + " ** " + Maths.rotate_vector(face_coords[0], rotation));
-                //Debug.WriteLine(Maths.rotate_vector(face_coords[0], rotation));
-
-                // angle between vec0 and vec1
-                double anglebetween = Vector3D.AngleBetween(
-                    new Vector3D(face_coords[0].X, face_coords[0].Y, face_coords[0].Z),
-                    new Vector3D(face_coords[1].X, face_coords[1].Y, face_coords[1].Z));
-
-                // angle between vec0 and vec1, after they have been rotated
-                XYZCoord vec0 = Maths.rotate_vector(face_coords[0], rotation);
-                XYZCoord vec1 = Maths.rotate_vector(face_coords[1], rotation);
-                double anglebetweenrot = Vector3D.AngleBetween(
-                    new Vector3D(vec0.X, vec0.Y, vec0.Z),
-                    new Vector3D(vec1.X, vec1.Y, vec1.Z));
-
-
-                //Debug.WriteLine("*** " + anglebetween + " :: " + anglebetweenrot);
-
-                double scaleX = 1 / face_coords[0].X;
-                double scaleY = 1 / face_coords[0].Y;
-                double scaleZ = 1 / face_coords[0].Z;
-
-                /*Debug.WriteLine(
-                    "**	" + vector_magnitudes[0] / vector_magnitudes[1] +
-                    "	" + vector_magnitudes[1] / vector_magnitudes[0] +
-                    "	" + vector_magnitudes[5] / vector_magnitudes[10]);
-                */
-                if (face_coords[0].X > 0)
-                {
-                    // if clause to get test data
-                }
-                if (!facial_regonition_sent)
-                {
-                    // frame.FaceRect.Bottom > bottom of rectangle
-                    //FacialRecognition.recognise(face_coords);
-                    facial_regonition_sent = true;
-                }
-                //this.face_coords = face_coords;
-            }
         }
     }
 }

@@ -89,9 +89,7 @@
     </ApplicationDefinition>
     <Compile Include="Models\JointPoints.cs" />
     <Compile Include="Models\JsonModel.cs" />
-    <Compile Include="Models\NamePointPair.cs" />
     <Compile Include="Models\Unit3D.cs" />
-    <Compile Include="SkeletalTracking.cs" />
     <Compile Include="SkeletonProcessing.cs" />
     <Compile Include="UdpSend.cs" />
     <Page Include="FaceTrackingViewer.xaml">
@@ -118,13 +116,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MarksEnum.cs" />
     <Compile Include="Maths.cs" />
-    <Compile Include="Models\Dictionaries.cs" />
-    <Compile Include="Models\FaceCoordsTestData.cs" />
     <Compile Include="Models\FaceMatch.cs" />
-    <Compile Include="Models\Vector_.cs" />
-    <Compile Include="Models\XYZCoord.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

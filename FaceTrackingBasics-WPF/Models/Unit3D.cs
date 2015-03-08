@@ -28,6 +28,13 @@ namespace FaceTrackingBasics.Models
             Z = vector.Z;
         }
 
+        public Unit3D(double x, double y, double z)
+        {
+            X = x;
+            Y = y;
+            Z = z;
+        }
+
 
         public override string ToString()
         {

@@ -32,26 +32,8 @@ namespace FaceTrackingBasics
 
         public MainWindow()
         {
-            //UdpSend.Start();
-            //Debug.WriteLine(Maths.rotate_vector(new XYZCoord(2, 2, 0), new Vector3DF(0, 180, 0)));
-            //Debug.WriteLine(Maths.rotate_vector(new XYZCoord(2, 2, 0), new Vector3DF(0, 12, 0)));
-
-            timer_5();
-            // testing
-            //testDB();
-
-            //            FaceTrackingBasics.FaceTrackingViewer.timer_5();
-            //testAngle();
-            //Console.WriteLine("************");
-            /*Console.WriteLine(JointType.Head.ToString());
-            Dictionaries d = new Dictionaries();
-            JointType j = d.Joints[0];
-            Console.WriteLine(JointType.Head);
-            Console.WriteLine(j);
-
-            XYZCoord joint_coords = new XYZCoord();
-            joint_coords.X = skeleton.Joints[joint_dictionary[i]].Position.X;*/
-
+            //timer_5();
+            SkeletonProcessing.Initialize();
 
             InitializeComponent();
 
@@ -62,8 +44,6 @@ namespace FaceTrackingBasics
 
             sensorChooser.Start();
         }
-
-
 
         public static int tInc = 0;
         static System.Timers.Timer _timer; // From System.Timers
@@ -83,80 +63,6 @@ namespace FaceTrackingBasics
             else
             {
                 tInc=0;
-            }
-
-            
-            // _l.Add(DateTime.Now); // Add date on each timer event
-        }
-
-        public void testAngle()
-        {
-            Vector_ v1 = new Vector_(0, 4);
-            Vector_ v2 = new Vector_(4, 0);
-            Vector_ v3 = new Vector_(4, 4);
-            Vector_ v4 = new Vector_(4, 4);
-
-            Console.WriteLine("************");
-            Console.WriteLine(angle(v1, v2));
-            Console.WriteLine(angle(v1, v4));
-            Console.WriteLine(angle(v4, v1));
-            Console.WriteLine(angle(v4, v2));
-            Console.WriteLine(angle(v4, v4));
-
-        }
-
-        public double angle(Vector_ v1, Vector_ v2)
-        {
-            double v1_magnitude;
-            double v2_magnitude;
-            Vector_ v1_normalized;
-            Vector_ v2_normalized;
-            double dot_product;
-            double angle_radians;
-            double angle_degrees;
-
-            // get the magnitude of each vector
-            v1_magnitude = Math.Sqrt(v1.X * v1.X + v1.Y * v1.Y + v1.Z * v1.Z);
-            v2_magnitude = Math.Sqrt(v2.X * v2.X + v2.Y * v2.Y + v2.Z * v2.Z);
-
-            // normalize the vectors
-            v1_normalized = new Vector_(v1.X / v1_magnitude, v1.Y / v1_magnitude, v1.Z / v1_magnitude);
-            v2_normalized = new Vector_(v2.X / v2_magnitude, v2.Y / v2_magnitude, v2.Z / v2_magnitude);
-
-            // calculate the dot product
-            dot_product = v1_normalized.X * v2_normalized.X + v1_normalized.Y * v2_normalized.Y + v1_normalized.Z * v2_normalized.Z;
-
-            // calculate the angle
-            angle_radians = Math.Acos(dot_product);
-
-            // convert angle to degrees
-            angle_degrees = angle_radians * (180.0 / Math.PI);
-
-            return angle_degrees;
-        }
-
-        private void testDB()
-        {
-            Debug.WriteLine("ben***");
-            using (var db = new Database.Database())
-            {
-                // Create and save a new Blog
-                Console.Write("Enter a name for a new Blog: ");
-
-                var entry = new Face { Id = 6, name = "benny_7" };
-                db.Faces.Add(entry);
-                db.SaveChanges();
-
-                // Display all Blogs from the database
-                var query = from b in db.Faces
-                            orderby b.name
-                            select b;
-
-                Console.WriteLine("All blogs in the database:");
-                foreach (var item in query)
-                {
-                    Console.WriteLine(item.name);
-                }
             }
         }
 
