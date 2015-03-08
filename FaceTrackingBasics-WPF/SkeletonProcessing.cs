@@ -51,7 +51,9 @@ namespace FaceTrackingBasics
 
         public static void UntrackSkeleton(int i)
         {
-            skeletonTracked[0] = false;
+            skeletonTracked[i] = false;
+            jsonNames [i] = "\"name\": unknown";
+            // need to deal with skeletons that leave
         }
 
         private static Thread[] skeletonThreads;
