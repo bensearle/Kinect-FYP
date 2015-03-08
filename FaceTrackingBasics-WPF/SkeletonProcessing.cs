@@ -24,13 +24,17 @@ namespace FaceTrackingBasics
 
         private static bool readyToSend = false;
         private static string jsonString = "{}";
+
         static bool testbool = true;
+        static int testint = 0;
 
         public static void TrackSkeleton(Skeleton skeleton, FaceTrackFrame frame, int skeletonIndex)
         {
             skeletonTracked[skeletonIndex] = true; // skeleton is now being tracked
             skeletons[skeletonIndex] = skeleton; // skeleton added to array
             facePoints3D[skeletonIndex] = frame.Get3DShape(); // get the facePoints3D from the frame and add to array
+
+            Console.WriteLine(" /\\ " + testint++);
 
             if (testbool)
             {
@@ -50,6 +54,7 @@ namespace FaceTrackingBasics
 
         private static Thread[] skeletonThreads;
         private static Thread jsonSendThread = new Thread(start_json_thread);
+        private static Thread mainThread = new Thread(timer);
 
         public static void Initialize()
         {
@@ -61,9 +66,10 @@ namespace FaceTrackingBasics
             skeletonThreads[4] = new Thread(() => ProcessSkeleton(4)); // create 6 threads
             skeletonThreads[5] = new Thread(() => ProcessSkeleton(5)); // create 6 threads
 
-            main();
+            //main();
+            mainThread.Start();
             jsonSendThread.Start();
-            timer();
+            //timer();
         }
 
         public static void createThread(int i)
@@ -72,21 +78,27 @@ namespace FaceTrackingBasics
             {
                 case 0:
                     skeletonThreads[0] = new Thread(() => ProcessSkeleton(0));
+                    skeletonThreads[0].Start();
                     break;
                 case 1:
                     skeletonThreads[1] = new Thread(() => ProcessSkeleton(1));
+                    skeletonThreads[1].Start();
                     break;
                 case 2:
                     skeletonThreads[2] = new Thread(() => ProcessSkeleton(2));
+                    skeletonThreads[2].Start();
                     break;
                 case 3:
                     skeletonThreads[3] = new Thread(() => ProcessSkeleton(3));
+                    skeletonThreads[3].Start();
                     break;
                 case 4:
                     skeletonThreads[4] = new Thread(() => ProcessSkeleton(4));
+                    skeletonThreads[4].Start();
                     break;
                 case 5:
                     skeletonThreads[5] = new Thread(() => ProcessSkeleton(5));
+                    skeletonThreads[5].Start();
                     break;
                 default:
                     break;
@@ -100,8 +112,12 @@ namespace FaceTrackingBasics
             {
                 if (skeletonTracked[i]) // if a skeleton is being tracked
                 {
-                    createThread(i);
-                    skeletonThreads[i].Start(); // start the thread
+                    if (!skeletonThreads[i].IsAlive)
+                    {
+                        createThread(i);
+                        //skeletonThreads[i] = new Thread(() => ProcessSkeleton(i));
+                        //skeletonThreads[i].Start(); // start the thread
+                    }
                 }
             }
 
@@ -113,16 +129,6 @@ namespace FaceTrackingBasics
                 // just wait
             }
 
-            // create the JSON
-            /*string jsonString = "";
-            for (int i = 0; i < 6; i++)
-            {
-                if (skeletonTracked[i]) // if a skeleton is being tracked
-                {
-                    jsonString += "\"Skeleton_" + i + "\": { " + jsonJoints[i] + jsonNames[i] + "}, ";
-                }
-            }*/
-
             JsonModel js = new JsonModel(jsonSkeleton);
             jsonString = js.JsonString;
             readyToSend = true;
@@ -130,21 +136,21 @@ namespace FaceTrackingBasics
 
         static System.Timers.Timer _timer; // From System.Timers
 
-        public static void timer()
+        private static void timer()
         {
-            _timer = new System.Timers.Timer(1000); // Set up the timer for 3 seconds
+            _timer = new System.Timers.Timer(3000); // Set up the timer 
             _timer.Elapsed += new System.Timers.ElapsedEventHandler(_timer_Elapsed);
             _timer.Enabled = true; // Enable it
         }
 
-        public static void _timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        private static void _timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
             main();
             timer();
             Console.WriteLine("timer");
         }
 
-        public static void ProcessSkeleton(int skeletonIndex)
+        private static void ProcessSkeleton(int skeletonIndex)
         {
             if (skeletonTracked[skeletonIndex])
             { // if skeleton is being tracked
@@ -152,6 +158,7 @@ namespace FaceTrackingBasics
                 Thread thread_face = new Thread(() => start_face_thread(skeletonIndex)); // create thread for facial recognition
                 if (jsonNames[skeletonIndex] == "\"name\": unknown") // if the name is unkown
                 {
+                    thread_face.Priority = ThreadPriority.Highest; // set thread prioity to highest
                     thread_face.Start(); // start the thread
                 }
                 Thread thread_joints = new Thread(() => start_joints_thread(skeletonIndex)); // create thread for tracking joints
@@ -164,6 +171,8 @@ namespace FaceTrackingBasics
                 {
                     // wait
                 }
+
+                FaceTrackingViewer.SkeletonFaceTracker.sendData[skeletonIndex] = true;
 
                 // create the JSON for this skeleton
                 jsonSkeleton[skeletonIndex] += "\"Skeleton_" + skeletonIndex + "\": { " + jsonJoints[skeletonIndex] + jsonNames[skeletonIndex] + "}";
@@ -184,15 +193,6 @@ namespace FaceTrackingBasics
             JointPoints joints = new JointPoints(skeletons[i]); // returns all joints as JointPoints
             string joints_json = joints.ToString(); // JSON of joints
             jsonJoints[i] = joints_json;
-            //start_joints_thread(); // call this thread
-            // no longer using SkeletalTracking
-            /*SkeletalTracking st = new SkeletalTracking();
-            List<NamePointPair> joints = new List<NamePointPair>(st.Process(skeletons[0]));
-
-            foreach (NamePointPair np in joints)
-            {
-                 Console.WriteLine("????????????"+np.ToString());
-            }*/
         }
 
         private static void start_json_thread()

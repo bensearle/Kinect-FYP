@@ -33,7 +33,7 @@ namespace FaceTrackingBasics
         public MainWindow()
         {
             //timer_5();
-            SkeletonProcessing.Initialize();
+            //SkeletonProcessing.Initialize();
 
             InitializeComponent();
 

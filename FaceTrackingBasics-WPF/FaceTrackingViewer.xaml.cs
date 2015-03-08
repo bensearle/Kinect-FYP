@@ -263,7 +263,7 @@ namespace FaceTrackingBasics
             }
         }
 
-        private class SkeletonFaceTracker : IDisposable
+        public class SkeletonFaceTracker : IDisposable
         {
             private static FaceTriangle[] faceTriangles;
 
@@ -422,9 +422,14 @@ namespace FaceTrackingBasics
                     FaceTrackFrame frame = this.faceTracker.Track(
                         colorImageFormat, colorImage, depthImageFormat, depthImage, skeletonOfInterest);
 
-                    SkeletonProcessing.TrackSkeleton(skeletonOfInterest, frame, skeletonIndex);
-
-
+                    //SkeletonProcessing.TrackSkeleton(skeletonOfInterest, frame, skeletonIndex);
+                    
+                    if (sendData[skeletonIndex])
+                    {
+                        SkeletonProcessing.TrackSkeleton(skeletonOfInterest, frame, skeletonIndex);
+                        sendData[skeletonIndex] = false;
+                    }
+                    
                     this.lastFaceTrackSucceeded = frame.TrackSuccessful;
                     if (this.lastFaceTrackSucceeded)
                     {
@@ -439,6 +444,8 @@ namespace FaceTrackingBasics
                     }
                 }
             }
+
+            public static bool[] sendData = { true, true, true, true, true, true};
 
             private struct FaceModelTriangle
             {
