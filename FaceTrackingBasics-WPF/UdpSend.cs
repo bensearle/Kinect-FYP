@@ -84,6 +84,8 @@ namespace FaceTrackingBasics
 
                 udpClient.Close();
 
+                Console.WriteLine(":: "+message);
+
             }
             catch (Exception e)
             {
