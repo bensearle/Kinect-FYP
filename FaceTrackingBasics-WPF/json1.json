@@ -1,0 +1,29 @@
+﻿{
+    "Skeleton_1": {
+        "name": name,
+        "head": {
+            "x": head_x,
+            "y": head_y,
+            "z": head_z
+        },
+        "shoulder_right": {},
+        "shoulder_center": {},
+        "shoulder_left": {},
+        "elbow_right": {},
+        "elbow_left": {},
+        "wrist_right": {},
+        "wrist_left": {},
+        "hand_right": {},
+        "hand_left": {},
+        "spine": {},
+        "hip_right": {},
+        "hip_center": {},
+        "hip_left": {},
+        "knee_right": {},
+        "knee_left": {},
+        "ankle_right": {},
+        "ankle_left": {},
+        "foot_right": {},
+        "foot_left": {}
+    }
+}
