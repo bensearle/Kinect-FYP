@@ -7,7 +7,7 @@ using System.Text;
 
 namespace FaceTrackingBasics
 {
-    //public static class Maths: System.Math // cannot derive from static class System.Math
+    //public static class Maths:     // cannot derive from static class System.Math
     public static class Maths
     {
 
@@ -112,13 +112,12 @@ namespace FaceTrackingBasics
          * magnitude(Vector_ v)
          */
 
-        // calculate the magnitude (distance) between 2 points
+        // calculate the magnitude (distance) between 2 coordinates
         public static double magnitude(Unit3D a, Unit3D b)
         {
-            // Math.Abs not needed as it is squared
-            double x = Math.Abs(a.X - b.X); // distance beween X's
-            double y = Math.Abs(a.Y - b.Y); // distance beween Y's
-            double z = Math.Abs(a.Z - b.Z); // distance beween Z's
+            double x = a.X - b.X; // distance beween X's
+            double y = a.Y - b.Y; // distance beween Y's
+            double z = a.Z - b.Z; // distance beween Z's
             return Math.Sqrt(x * x + y * y + z * z);
         }
 
