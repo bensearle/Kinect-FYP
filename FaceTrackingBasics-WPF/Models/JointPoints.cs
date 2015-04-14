@@ -32,7 +32,7 @@ namespace FaceTrackingBasics.Models
             }
         }
 
-        public override string ToString()
+        /*public override string ToString()
         {
             String s = "";
 
@@ -40,6 +40,33 @@ namespace FaceTrackingBasics.Models
             {
                 s += String.Format("\"{0}\": {{ \"x\": {1}, \"y\": {2}, \"z\": {3} }},",
                     joint.Name, joint.Point.X, joint.Point.Y, joint.Point.Z);
+            }
+
+            return s;
+        }*/
+
+        public override string ToString()
+        {
+            String s = "";
+
+            foreach (NamePointPair1 joint in joints)
+            {
+                s += String.Format("{0}:{1}, ", joint.Name, joint.Point.ToString());
+            }
+
+            return s;
+        }
+
+
+        public string ToJson()
+        {
+            return String.Format("{{\"x\":{0},\"y\":{1},\"z\":{2}}}", X, Y, Z);
+
+            String s = "";
+
+            foreach (NamePointPair1 joint in joints)
+            {
+                s += String.Format("\"{0}\":{1},", joint.Name, joint.Point.ToJson());
             }
 
             return s;
