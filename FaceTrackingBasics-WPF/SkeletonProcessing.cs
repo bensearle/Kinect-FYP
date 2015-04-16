@@ -26,18 +26,24 @@ namespace FaceTrackingBasics
         private static string jsonString = "{}";
 
         static bool testbool = true;
-        static int testint = 0;
+        static int testi = 0;
+
+        private static int testint = 0;
 
         public static void TrackSkeleton(Skeleton skeleton, FaceTrackFrame frame, int skeletonIndex)
         {
-            if (!skeletonTracked[skeletonIndex]) {
+            //Console.WriteLine(":::: " + skeletonIndex);
+            if (!skeletonTracked[skeletonIndex])
+            {
+                testi += 2;
+                Console.WriteLine("£££££££ " + testi);
                 skeletonTracked[skeletonIndex] = true; // skeleton is now being tracked
                 skeletons[skeletonIndex] = skeleton; // skeleton added to array
                 facePoints3D[skeletonIndex] = frame.Get3DShape(); // get the facePoints3D from the frame and add to array
 
                 Console.WriteLine(" /\\ " + testint++);
             }
-            
+
             if (testbool)
             {
                 Initialize();
@@ -52,7 +58,7 @@ namespace FaceTrackingBasics
         public static void UntrackSkeleton(int i)
         {
             skeletonTracked[i] = false;
-            jsonNames [i] = "\"name\": unknown";
+            jsonNames[i] = "\"name\": unknown";
             // need to deal with skeletons that leave
         }
 
@@ -64,21 +70,27 @@ namespace FaceTrackingBasics
         {
             skeletonThreads = new Thread[6];
             skeletonThreads[0] = new Thread(() => ProcessSkeleton(0)); // create 6 threads
+            skeletonThreads[0].Name = "ThreadSkel0";
             skeletonThreads[0].Start();
             skeletonThreads[1] = new Thread(() => ProcessSkeleton(1)); // create 6 threads
+            skeletonThreads[0].Name = "ThreadSkel1";
             skeletonThreads[1].Start();
             skeletonThreads[2] = new Thread(() => ProcessSkeleton(2)); // create 6 threads
+            skeletonThreads[0].Name = "ThreadSkel2";
             skeletonThreads[2].Start();
             skeletonThreads[3] = new Thread(() => ProcessSkeleton(3)); // create 6 threads
+            skeletonThreads[0].Name = "ThreadSkel3";
             skeletonThreads[3].Start();
             skeletonThreads[4] = new Thread(() => ProcessSkeleton(4)); // create 6 threads
+            skeletonThreads[0].Name = "ThreadSkel4";
             skeletonThreads[4].Start();
             skeletonThreads[5] = new Thread(() => ProcessSkeleton(5)); // create 6 threads
+            skeletonThreads[0].Name = "ThreadSkel5";
             skeletonThreads[5].Start();
 
             //main();
             // mainThread.Start();
-            jsonSendThread.Start();
+            //jsonSendThread.Start(); // commented for testing
             //timer();
         }
 
@@ -165,6 +177,9 @@ namespace FaceTrackingBasics
             if (skeletonTracked[skeletonIndex])
             { // if skeleton is being tracked
 
+                testi += 1;
+                Console.WriteLine(";;;;;;;;;;;; " + testi);
+                Console.WriteLine("************* " + skeletonIndex);
                 if (jsonNames[skeletonIndex] == "\"name\": unknown") // if the name is unkown
                 {
                     start_face_thread(skeletonIndex); // create thread for facial recognition
@@ -175,15 +190,24 @@ namespace FaceTrackingBasics
                 jsonSkeleton[skeletonIndex] += "\"Skeleton_" + skeletonIndex + "\": { " + jsonJoints[skeletonIndex] + jsonNames[skeletonIndex] + "}";
 
                 skeletonTracked[skeletonIndex] = false; // change to false, so that more data can be added
+                //ProcessSkeleton(skeletonIndex);
             }
+            while (!skeletonTracked[skeletonIndex])
+            {
+                // wait
+            }
+            //Console.WriteLine("£$£$£$£$£$£$£$£$£$£$ money");
+            ProcessSkeleton(skeletonIndex);
+
         }
 
         private static void start_face_thread(int i)
         {
             FacialRecognition fr = new FacialRecognition();
-            string name = fr.Process(facePoints3D[i]); // returns name
+            string name = fr.Process(facePoints3D[i], "face testing 4343"); // returns name
             string name_json = String.Format("\"name\": \"{0}\"", name); // JSON format of name
             jsonNames[i] = name_json;
+
         }
 
         private static void start_joints_thread(int i)
