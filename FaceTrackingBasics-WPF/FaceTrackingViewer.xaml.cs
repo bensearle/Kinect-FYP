@@ -15,6 +15,7 @@ namespace FaceTrackingBasics
     using Microsoft.Kinect;
     using Microsoft.Kinect.Toolkit.FaceTracking;
     using System.Windows.Media.Media3D;
+    using Coding4Fun.Kinect.Wpf;
 
     using Point = System.Windows.Point;
     using System.Globalization;
@@ -90,14 +91,35 @@ namespace FaceTrackingBasics
             }
         }
 
+        public static Skeleton[] skeletons = new Skeleton[6]; // all of the skeletons
+
         protected override void OnRender(DrawingContext drawingContext)
         {
             base.OnRender(drawingContext);
             foreach (SkeletonFaceTracker faceInformation in this.trackedSkeletons.Values)
             {
-                faceInformation.DrawFaceModel(drawingContext);
+                // faceInformation.DrawFaceModel(drawingContext);
             }
 
+
+            // draw joints
+            /*foreach (Skeleton skeleton in skeletons)
+            {
+                if (skeleton != null)
+                {
+                    foreach (JointType joint in Enum.GetValues(typeof(JointType)))
+                    {
+                        Joint scaledJoint = skeleton.Joints[joint].ScaleTo(640, 480, 0.6f, 0.4f);
+
+                        float x = scaledJoint.Position.X;
+                        float y = scaledJoint.Position.Y;
+
+                        Point p = new Point(x, y);
+                        Console.WriteLine(":::::::::::::::: " + p);
+                        drawingContext.DrawEllipse(Brushes.Blue, new Pen(Brushes.Blue, 1), p, 5, 5);
+                    }
+                }
+            }*/
 
             // draw rectangle on the video stream
             drawingContext.DrawRectangle(null, new Pen(Brushes.Blue, 10), new System.Windows.Rect(new Point(250, 0), new Point(400, 200)));
@@ -163,7 +185,7 @@ namespace FaceTrackingBasics
                 // Update the list of trackers and the trackers with the current frame information
                 foreach (Skeleton skeleton in this.skeletonData)
                 {
-                    
+
                     if (skeleton.TrackingState == SkeletonTrackingState.Tracked
                         || skeleton.TrackingState == SkeletonTrackingState.PositionOnly)
                     {
@@ -422,7 +444,12 @@ namespace FaceTrackingBasics
                     FaceTrackFrame frame = this.faceTracker.Track(
                         colorImageFormat, colorImage, depthImageFormat, depthImage, skeletonOfInterest);
 
+                    // printFaceVectors(frame);
+                    // commented for testing
                     SkeletonProcessing.TrackSkeleton(skeletonOfInterest, frame, skeletonIndex);
+                    // skeletons[skeletonIndex] = skeletonOfInterest; // add skeleton to local array 
+
+
                     /*
                     if (sendData[skeletonIndex])
                     {
@@ -430,7 +457,7 @@ namespace FaceTrackingBasics
                         sendData[skeletonIndex] = false;
                     }
                     */
-                    
+
                     this.lastFaceTrackSucceeded = frame.TrackSuccessful;
                     if (this.lastFaceTrackSucceeded)
                     {
@@ -446,7 +473,22 @@ namespace FaceTrackingBasics
                 }
             }
 
-            public static bool[] sendData = { true, true, true, true, true, true};
+
+            private void printFaceVectors(FaceTrackFrame frame)
+            {
+                string s = " *** ,";
+                int i = 0;
+                EnumIndexableCollection<FeaturePoint, Vector3DF> facePoints3D = frame.Get3DShape(); // get 3D face vectors
+                foreach (Vector3DF vector in facePoints3D)
+                {
+                    s += "Vector" + i + "," + vector.X + "," + vector.Y + "," + vector.Z + ",";
+
+                    i++;
+                }
+                Console.WriteLine(s);
+            }
+
+            public static bool[] sendData = { true, true, true, true, true, true };
 
             private struct FaceModelTriangle
             {
