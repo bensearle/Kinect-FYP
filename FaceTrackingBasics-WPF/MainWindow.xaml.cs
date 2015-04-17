@@ -164,7 +164,10 @@ namespace FaceTrackingBasics
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
-            Debug.WriteLine("fsjdfhdjsfhsdj");
+            SkeletonProcessing.NewPerson(textName.Text);
+            string name = textName.Text;
+            Debug.WriteLine("fsjdfhdjsfhsdj"+name);
+            //SkeletonProcessing.addNewFace("Ben at Work");
         }
         private void Button_Click_2(object sender, RoutedEventArgs e)
         {
