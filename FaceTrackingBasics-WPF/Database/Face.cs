@@ -13,6 +13,7 @@ namespace FaceTrackingBasics.Database
 
         [StringLength(50)]
         public string name { get; set; }
+        //public Tuple<int, int> angleTuple;
 
         public decimal? nose_angle_1 { get; set; }
 

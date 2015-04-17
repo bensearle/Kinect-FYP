@@ -25,7 +25,7 @@
         <DockPanel Grid.Row="0" Margin="0 0 0 20">
             <Button Click="Button_Click_1" 
                 Background="#FF0D6AA3" 
-                Height="100" Width="100" >
+                Height="100" Width="100" VerticalAlignment="Top" >
                 <TextBlock Text="Add Face" HorizontalAlignment="Center"/>
             </Button>
             <Button Click="Button_Click_2" 
