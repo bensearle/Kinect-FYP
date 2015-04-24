@@ -98,32 +98,50 @@ namespace FaceTrackingBasics
             base.OnRender(drawingContext);
             foreach (SkeletonFaceTracker faceInformation in this.trackedSkeletons.Values)
             {
-                // faceInformation.DrawFaceModel(drawingContext);
+                 faceInformation.DrawFaceModel(drawingContext);
             }
 
 
             // draw joints
-            /*foreach (Skeleton skeleton in skeletons)
+            foreach (Skeleton skeleton in skeletons)
             {
                 if (skeleton != null)
                 {
                     foreach (JointType joint in Enum.GetValues(typeof(JointType)))
                     {
-                        Joint scaledJoint = skeleton.Joints[joint].ScaleTo(640, 480, 0.6f, 0.4f);
+                        //Joint scaledJoint = skeleton.Joints[joint].ScaleTo(640, 480, 0.6f, 0.4f);
+                        Point p = SkeletonPointToScreen(skeleton.Joints[joint].Position);
+                        //float x = scaledJoint.Position.X;
+                        //float y = scaledJoint.Position.Y;
 
-                        float x = scaledJoint.Position.X;
-                        float y = scaledJoint.Position.Y;
-
-                        Point p = new Point(x, y);
-                        Console.WriteLine(":::::::::::::::: " + p);
-                        drawingContext.DrawEllipse(Brushes.Blue, new Pen(Brushes.Blue, 1), p, 5, 5);
+                        //Point p = new Point(x, y);
+                        Console.WriteLine(":::::::::::::::: " + joint +" "+ p);
+                        drawingContext.DrawEllipse(Brushes.Red, new Pen(Brushes.Red, 1), p, 5, 5);
                     }
                 }
-            }*/
+            }
 
             // draw rectangle on the video stream
             drawingContext.DrawRectangle(null, new Pen(Brushes.Blue, 10), new System.Windows.Rect(new Point(250, 0), new Point(400, 200)));
 
+        }
+
+        /// <summary>
+        /// Active Kinect sensor
+        /// </summary>
+        private KinectSensor jointSensor;
+
+        /// <summary>
+        /// Maps a SkeletonPoint to lie within our render space and converts to Point
+        /// </summary>
+        /// <param name="skelpoint">point to map</param>
+        /// <returns>mapped point</returns>
+        private Point SkeletonPointToScreen(SkeletonPoint skelpoint)
+        {
+            // Convert point to depth space.  
+            // We are not using depth directly, but we do want the points in our 640x480 output resolution.
+            DepthImagePoint depthPoint = jointSensor.CoordinateMapper.MapSkeletonPointToDepthPoint(skelpoint, DepthImageFormat.Resolution640x480Fps30);
+            return new Point(depthPoint.X, depthPoint.Y);
         }
 
         private void OnAllFramesReady(object sender, AllFramesReadyEventArgs allFramesReadyEventArgs)
@@ -245,6 +263,7 @@ namespace FaceTrackingBasics
             if (newSensor != null)
             {
                 newSensor.AllFramesReady += this.OnAllFramesReady;
+                jointSensor = newSensor; //
             }
         }
 
@@ -446,8 +465,8 @@ namespace FaceTrackingBasics
 
                     // printFaceVectors(frame);
                     // commented for testing
-                    SkeletonProcessing.TrackSkeleton(skeletonOfInterest, frame, skeletonIndex);
-                    // skeletons[skeletonIndex] = skeletonOfInterest; // add skeleton to local array 
+                    //SkeletonProcessing.TrackSkeleton(skeletonOfInterest, frame, skeletonIndex);
+                    skeletons[skeletonIndex] = skeletonOfInterest; // add skeleton to local array 
 
 
                     /*
