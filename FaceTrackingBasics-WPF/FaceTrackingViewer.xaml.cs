@@ -91,40 +91,33 @@ namespace FaceTrackingBasics
             }
         }
 
-        public static Skeleton[] skeletons = new Skeleton[6]; // all of the skeletons
-
         protected override void OnRender(DrawingContext drawingContext)
         {
             base.OnRender(drawingContext);
             foreach (SkeletonFaceTracker faceInformation in this.trackedSkeletons.Values)
             {
-                 faceInformation.DrawFaceModel(drawingContext);
+                faceInformation.DrawFaceModel(drawingContext);
             }
 
-
             // draw joints
-            foreach (Skeleton skeleton in skeletons)
+            if (this.skeletonData != null)
             {
-                if (skeleton != null)
+                foreach (Skeleton skeleton in this.skeletonData)
                 {
-                    foreach (JointType joint in Enum.GetValues(typeof(JointType)))
+                    if (skeleton.TrackingState != SkeletonTrackingState.NotTracked)
                     {
-                        //Joint scaledJoint = skeleton.Joints[joint].ScaleTo(640, 480, 0.6f, 0.4f);
-                        Point p = SkeletonPointToScreen(skeleton.Joints[joint].Position);
-                        //float x = scaledJoint.Position.X;
-                        //float y = scaledJoint.Position.Y;
-
-                        //Point p = new Point(x, y);
-                        Console.WriteLine(":::::::::::::::: " + joint +" "+ p);
-                        drawingContext.DrawEllipse(Brushes.Red, new Pen(Brushes.Red, 1), p, 5, 5);
+                        foreach (JointType joint in Enum.GetValues(typeof(JointType)))
+                        {
+                            Point p = SkeletonPointToScreen(skeleton.Joints[joint].Position);
+                            drawingContext.DrawEllipse(Brushes.Red, new Pen(Brushes.Red, 1), p, 5, 5);
+                        }
                     }
                 }
             }
-
-            // draw rectangle on the video stream
-            drawingContext.DrawRectangle(null, new Pen(Brushes.Blue, 10), new System.Windows.Rect(new Point(250, 0), new Point(400, 200)));
-
         }
+
+        // draw rectangle on the video stream
+        //drawingContext.DrawRectangle(null, new Pen(Brushes.Blue, 10), new System.Windows.Rect(new Point(250, 0), new Point(400, 200)));
 
         /// <summary>
         /// Active Kinect sensor
@@ -146,6 +139,7 @@ namespace FaceTrackingBasics
 
         private void OnAllFramesReady(object sender, AllFramesReadyEventArgs allFramesReadyEventArgs)
         {
+            Kinect.SkeletonStream.TrackingMode = SkeletonTrackingMode.Default; // Use Seated Mode
             ColorImageFrame colorImageFrame = null;
             DepthImageFrame depthImageFrame = null;
             SkeletonFrame skeletonFrame = null;
@@ -331,6 +325,8 @@ namespace FaceTrackingBasics
 
             public void DrawFaceModel(DrawingContext drawingContext)
             {
+                Boolean drawFaceNumbers = false;
+
                 List<Tuple<Point, int>> list_number_coords = new List<Tuple<Point, int>>();
 
                 if (!this.lastFaceTrackSucceeded || this.skeletonTrackingState != SkeletonTrackingState.Tracked)
@@ -354,10 +350,12 @@ namespace FaceTrackingBasics
                     triangle.P3 = faceModelPts[t.Third];
                     faceModel.Add(triangle);
                     // add points and numbers to the list
-                    list_number_coords.Add(Tuple.Create(triangle.P1, t.First));
-                    list_number_coords.Add(Tuple.Create(triangle.P2, t.Second));
-                    list_number_coords.Add(Tuple.Create(triangle.P3, t.Third));
-
+                    if (drawFaceNumbers)
+                    {
+                        list_number_coords.Add(Tuple.Create(triangle.P1, t.First));
+                        list_number_coords.Add(Tuple.Create(triangle.P2, t.Second));
+                        list_number_coords.Add(Tuple.Create(triangle.P3, t.Third));
+                    }
                     /*// add text of first number
                     drawingContext.DrawText(new FormattedText("" + t.First,
                         CultureInfo.GetCultureInfo("en-us"),
@@ -407,22 +405,25 @@ namespace FaceTrackingBasics
                 }*/
 
 
-                drawingContext.DrawGeometry(Brushes.LightYellow, new Pen(Brushes.LightYellow, 1.0), faceModelGroup);
-                foreach (Tuple<Point, int> t in list_number_coords) // iterate through the number and points list
+                drawingContext.DrawGeometry(Brushes.Red, new Pen(Brushes.Red, 1.0), faceModelGroup);
+                if (drawFaceNumbers)
                 {
-
-                    if ((t.Item2) == MainWindow.tInc) // 
+                    foreach (Tuple<Point, int> t in list_number_coords) // iterate through the number and points list
                     {
-                        // add the number to the drawing context
-                        drawingContext.DrawText(new FormattedText("" + t.Item2,
-                            CultureInfo.GetCultureInfo("en-us"),
-                            FlowDirection.LeftToRight,
-                            new Typeface("Verdana"),
-                            12, System.Windows.Media.Brushes.Blue),
-                            t.Item1);
-                        drawingContext.DrawEllipse(Brushes.Blue, new Pen(Brushes.Blue, 1), t.Item1, 1, 1);
-                        //drawingContext.DrawRectangle(null, new Pen(Brushes.Blue, 10), new System.Windows.Rect(new Point(0, 0), t.Item1));                    
 
+                        if ((t.Item2) == MainWindow.tInc) // 
+                        {
+                            // add the number to the drawing context
+                            drawingContext.DrawText(new FormattedText("" + t.Item2,
+                                CultureInfo.GetCultureInfo("en-us"),
+                                FlowDirection.LeftToRight,
+                                new Typeface("Verdana"),
+                                12, System.Windows.Media.Brushes.Blue),
+                                t.Item1);
+                            drawingContext.DrawEllipse(Brushes.Blue, new Pen(Brushes.Blue, 1), t.Item1, 1, 1);
+                            //drawingContext.DrawRectangle(null, new Pen(Brushes.Blue, 10), new System.Windows.Rect(new Point(0, 0), t.Item1));                    
+
+                        }
                     }
                 }
                 //drawingContext.DrawRectangle(Brushes.Blue, new Pen(Brushes.Blue, 10), new System.Windows.Rect(new Point(200, 50), new Point(300, 200)));
@@ -465,8 +466,7 @@ namespace FaceTrackingBasics
 
                     // printFaceVectors(frame);
                     // commented for testing
-                    //SkeletonProcessing.TrackSkeleton(skeletonOfInterest, frame, skeletonIndex);
-                    skeletons[skeletonIndex] = skeletonOfInterest; // add skeleton to local array 
+                    SkeletonProcessing.TrackSkeleton(skeletonOfInterest, frame, skeletonIndex);
 
 
                     /*
