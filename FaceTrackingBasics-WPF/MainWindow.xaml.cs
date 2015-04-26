@@ -162,17 +162,23 @@ namespace FaceTrackingBasics
 
         internal bool recognize = false;
 
-        private void Button_Click_1(object sender, RoutedEventArgs e)
+        private void Button_Add_Face(object sender, RoutedEventArgs e)
         {
             SkeletonProcessing.NewPerson(textName.Text);
-            string name = textName.Text;
-            Debug.WriteLine("fsjdfhdjsfhsdj"+name);
+            //string name = textName.Text;
             //SkeletonProcessing.addNewFace("Ben at Work");
         }
-        private void Button_Click_2(object sender, RoutedEventArgs e)
+        private void Button_Get_Face(object sender, RoutedEventArgs e)
         {
-            string s = textName.Text;
-            Debug.WriteLine(s);
+            for (int i = 0; i < 6; i++)
+            {
+                SkeletonProcessing.UntrackSkeleton(i);
+            }
+        }
+
+        public void UpdateNames(string s)
+        {
+            textPeople.Text = s;
         }
 
         public void testTextChange()
