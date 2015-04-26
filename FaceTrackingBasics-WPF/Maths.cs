@@ -11,7 +11,7 @@ namespace FaceTrackingBasics
     public static class Maths
     {
 
-        public static Unit3D rotate_vector(Unit3D vector, Vector3DF rotation)
+        public static Unit3D Rotate_vector(Unit3D vector, Vector3DF rotation)
         {
             // XYZ of vector
             double x = vector.X;
@@ -57,26 +57,31 @@ namespace FaceTrackingBasics
             
         }
 
-        public static double angle_from_coords(Unit3D a, Unit3D b, Unit3D c)
+        public static double Angle_from_coords(Unit3D a, Unit3D b, Unit3D c)
         {
-            return angle(
-                       coords_to_vector(a, b),
-                       coords_to_vector(b, c));
+            return Angle(
+                       Coords_to_vector(a, b),
+                       Coords_to_vector(b, c));
         }
 
-        public static Unit3D coords_to_vector(Unit3D a, Unit3D b)
+        public static Unit3D Coords_to_vector(Unit3D a, Unit3D b)
         {
             return new Unit3D(a.X - b.X, a.Y - b.Y, a.Z - b.Z);
         }
 
-        public static double lenth_ratio()
+        public static double Lenth_ratio()
         {
             return 0;
         }
 
-        public static double angle_ratio()
+        public static double Angle_ratio()
         {
             return 0;
+        }
+
+        public static System.Windows.Point MidwayPoint(System.Windows.Point p1, System.Windows.Point p2)
+        {
+            return new System.Windows.Point((p1.X + p2.X) / 2, (p1.Y + p2.Y) / 2);
         }
 
         /*
@@ -87,20 +92,20 @@ namespace FaceTrackingBasics
          */
 
         // ratio of 2 lines (a1, a2) and (b1, b2)
-        public static double ratio(Unit3D a1, Unit3D a2, Unit3D b1, Unit3D b2)
+        public static double Ratio(Unit3D a1, Unit3D a2, Unit3D b1, Unit3D b2)
         {
             // if 0 then... throw new DivideByZeroException;
-            return magnitude(a1, a2) / magnitude(b1, b2);
+            return Magnitude(a1, a2) / Magnitude(b1, b2);
         }
 
         // ratio of 2 vectors
-        public static double ratio(Unit3D v1, Unit3D v2)
+        public static double Ratio(Unit3D v1, Unit3D v2)
         {
-            return magnitude(v1) / magnitude(v2);
+            return Magnitude(v1) / Magnitude(v2);
         }
 
         // ratio of 2 doubles
-        public static double ratio(double d1, double d2)
+        public static double Ratio(double d1, double d2)
         {
             // deal with 0
             return d1 / d2;
@@ -113,7 +118,7 @@ namespace FaceTrackingBasics
          */
 
         // calculate the magnitude (distance) between 2 coordinates
-        public static double magnitude(Unit3D a, Unit3D b)
+        public static double Magnitude(Unit3D a, Unit3D b)
         {
             double x = a.X - b.X; // distance beween X's
             double y = a.Y - b.Y; // distance beween Y's
@@ -122,12 +127,12 @@ namespace FaceTrackingBasics
         }
 
         // calculate the magnitude (distance) of a vector
-        public static double magnitude(Unit3D v)
+        public static double Magnitude(Unit3D v)
         {
             return Math.Sqrt(v.X * v.X + v.Y * v.Y + v.Z * v.Z);
         }
 
-        public static double angle(Unit3D v1, Unit3D v2)
+        public static double Angle(Unit3D v1, Unit3D v2)
         {
             double v1_magnitude;
             double v2_magnitude;

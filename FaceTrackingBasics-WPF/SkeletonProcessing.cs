@@ -47,9 +47,9 @@ namespace FaceTrackingBasics
                 skeletons[skeletonIndex] = skeleton; // skeleton added to array
                 facePoints3D[skeletonIndex] = frame.Get3DShape(); // get the facePoints3D from the frame and add to array
                 skeletonReady[skeletonIndex] = true; // skeleton is now being tracked               
-                Console.WriteLine(" THREAD STATE " + skeletonThreads[skeletonIndex].ThreadState);
+                //Console.WriteLine(" THREAD STATE " + skeletonThreads[skeletonIndex].ThreadState);
                 //skeletonThreads[skeletonIndex].Interrupt(); // wake the thread to process the skeleton
-                Console.WriteLine(" /\\ " + testint++);
+                //Console.WriteLine(" /\\ " + testint++);
 
             }
         }
@@ -57,7 +57,7 @@ namespace FaceTrackingBasics
         public static void NewPerson(string name)
         {
             newPerson = name;
-            Console.WriteLine("@@@@@" + newPerson);
+            //Console.WriteLine("@@@@@" + newPerson);
         }
 
 
@@ -65,7 +65,7 @@ namespace FaceTrackingBasics
         {
             skeletonReady[i] = false;
             jsonNames[i] = "\"name\": unknown";
-            // need to deal with skeletons that leave
+            Console.WriteLine("***skel being untracked " +i);
         }
 
         private static Thread[] skeletonThreads;
@@ -158,28 +158,30 @@ namespace FaceTrackingBasics
 
                 if (newPerson != "") // if person is to be added to the system
                 {
-                    Console.WriteLine("Add New Person: " + newPerson);
+                    //Console.WriteLine("Add New Person: " + newPerson);
                     string name = newPerson;
                     newPerson = "";
-                    Console.WriteLine(name + " being added to database");
+                    //Console.WriteLine(name + " being added to database");
                     FacialRecognition fr = new FacialRecognition();
                     string nameAdded = fr.Process(facePoints3D[skeletonIndex], name); // returns name
+                    Console.WriteLine(name + " added to database");
                 }
 
-                testi += 1;
+                //testi += 1;
 
                 if (jsonNames[skeletonIndex] == "\"name\": unknown") // if the name is unkown
                 {
                     start_face_thread(skeletonIndex); // create thread for facial recognition
+                    //MainWindow.UpdateNames("");        
                 }
                 start_joints_thread(skeletonIndex); // create thread for tracking joints
 
                 // create the JSON for this skeleton
                 jsonSkeleton[skeletonIndex] = "\"Skeleton_" + skeletonIndex + "\": { " + jsonJoints[skeletonIndex] + jsonNames[skeletonIndex] + "}";
 
-                Console.WriteLine(skeletonIndex + " --" + jsonSkeleton[skeletonIndex]);
+                //Console.WriteLine(skeletonIndex + " --" + jsonSkeleton[skeletonIndex]);
                 skeletonReady[skeletonIndex] = false; // change to false, so that more data can be added
-                //readyToSend = true;            
+                readyToSend = true;            
             }
             try
             {
@@ -218,8 +220,8 @@ namespace FaceTrackingBasics
             JointPoints joints = new JointPoints(skeletons[i]); // returns all joints as JointPoints
             string joints_json = joints.ToString(); // JSON of joints
             jsonJoints[i] = joints_json;
-            Console.WriteLine("++ "+i+" ++"+joints_json);
-            Console.WriteLine(i + " ++" + jsonJoints[i]);
+            //Console.WriteLine("++ "+i+" ++"+joints_json);
+            //Console.WriteLine(i + " ++" + jsonJoints[i]);
 
         }
 
