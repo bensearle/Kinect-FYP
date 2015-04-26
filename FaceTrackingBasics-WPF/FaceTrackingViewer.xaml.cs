@@ -100,7 +100,7 @@ namespace FaceTrackingBasics
             }
 
             // draw joints
-            if (this.skeletonData != null)
+            if (this.skeletonData != null && false)
             {
                 foreach (Skeleton skeleton in this.skeletonData)
                 {
@@ -314,6 +314,139 @@ namespace FaceTrackingBasics
 
             public int LastTrackedFrame { get; set; }
 
+            private List<Tuple<int, int>> facialPairs = new List<Tuple<int, int>>
+            {
+                new Tuple<int, int>( 1, 2 ),
+                new Tuple<int, int>( 2, 3 ),
+                new Tuple<int, int>( 1, 4 )
+            };
+
+            private List<int> facialVectors = new List<int>
+            {
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                //6, // top lip
+                //7, // chin
+                //8, // chin
+                //9, // chin
+                //10, // chin
+                11,
+                12,
+                13,
+                //14, // left eyebrow
+                //15, // left eyebrow
+                //16, // left eyebrow
+                //17, // left eyebrow
+                //18, // left eyebrow
+                19,
+                20,
+                21,
+                22,
+                23,
+                24,
+                25,
+                26,
+                27,
+                28,
+                29,
+                //30, // chin
+                //31, //chin
+                //32, // chin
+                //33, // top lip
+                34,
+                35,
+                36,
+                37,
+                38,
+                //39, // mouth
+                //40, // mouth
+                //41, // mouth
+                //42, // mouth
+                43,
+                44,
+                45,
+                46,
+                //47, // right eyebrow
+                //48, // right eyebrow
+                //49, // right eyebrow
+                //50, // right eyebrow
+                //51, // right eyebrow
+                52,
+                53,
+                54,
+                55,
+                56,
+                57,
+                58,
+                59,
+                60,
+                61,
+                62,
+                //63, // chin
+                //64, // chin
+                //65, // chin
+                //66, // top lip
+                67,
+                68,
+                69,
+                70,
+                71,
+                72,
+                73,
+                74,
+                75,
+                76,
+                77,
+                //78, // top lip
+                //79, // mouth
+                //80, // mouth
+                //81, // mouth
+                //82, // mouth
+                //83, // mouth
+                //84, // mouth
+                //85, // mouth
+                //86, // mouth
+                //87, // mouth
+                //88, // mouth
+                //89, // mouth
+                //90, // top lip
+                //91, // top lip
+                92,
+                93,
+                94,
+                95,
+                96,
+                97,
+                98,
+                99,
+                100,
+                101,
+                102,
+                103,
+                104,
+                105,
+                106,
+                107,
+                108,
+                109,
+                110,
+                111,
+                //112, // right side of face
+                //113, // right side of face
+                //114, // right side of face
+                //115, // right side of face
+                //116, // left to right side of face
+                //117, // left side of face
+                //118, // left side of face
+                //119, // left side of face
+                //120  // left side of face
+
+            };
+
             public void Dispose()
             {
                 if (this.faceTracker != null)
@@ -342,7 +475,41 @@ namespace FaceTrackingBasics
                     faceModelPts.Add(new Point(this.facePoints[i].X + 0.5f, this.facePoints[i].Y + 0.5f));
                 }
 
-                foreach (var t in faceTriangles)
+                foreach (int vec in facialVectors)
+                {
+                    drawingContext.DrawLine(new Pen(Brushes.Yellow, 1), faceModelPts[vec], faceModelPts[vec + 1]);
+                    //Point p = Maths.MidwayPoint(faceModelPts[vec], faceModelPts[vec + 1]);
+                    /*Point p = faceModelPts[vec];
+
+                    FormattedText f = new FormattedText("" + vec,
+                        CultureInfo.GetCultureInfo("en-us"),
+                        FlowDirection.LeftToRight,
+                        new Typeface("Verdana"),
+                        5, System.Windows.Media.Brushes.Red);
+                    drawingContext.DrawText(f, p);*/
+                }
+
+                // draw the numbers over top
+                foreach (int vec in facialVectors)
+                {
+                    //Point p = Maths.MidwayPoint(faceModelPts[vec], faceModelPts[vec + 1]);
+                    Point p = faceModelPts[vec+1];
+
+                    FormattedText f = new FormattedText("" + vec,
+                        CultureInfo.GetCultureInfo("en-us"),
+                        FlowDirection.LeftToRight,
+                        new Typeface("Verdana"),
+                        5, System.Windows.Media.Brushes.Red);
+                    drawingContext.DrawText(f, p);
+                }
+
+                /*for (int i = 0; i < 120; i++)
+                {
+                    drawingContext.DrawLine(new Pen(Brushes.Blue, 1), faceModelPts[i], faceModelPts[i + 1]);
+
+                }*/
+
+                /*foreach (var t in faceTriangles)
                 {
                     var triangle = new FaceModelTriangle();
                     triangle.P1 = faceModelPts[t.First];
@@ -356,7 +523,7 @@ namespace FaceTrackingBasics
                         list_number_coords.Add(Tuple.Create(triangle.P2, t.Second));
                         list_number_coords.Add(Tuple.Create(triangle.P3, t.Third));
                     }
-                    /*// add text of first number
+                    // add text of first number
                     drawingContext.DrawText(new FormattedText("" + t.First,
                         CultureInfo.GetCultureInfo("en-us"),
                         FlowDirection.LeftToRight,
@@ -376,10 +543,10 @@ namespace FaceTrackingBasics
                         FlowDirection.LeftToRight,
                         new Typeface("Verdana"),
                         8, System.Windows.Media.Brushes.Red),
-                        triangle.P3);*/
-                }
+                        triangle.P3);
+                }*/
 
-                var faceModelGroup = new GeometryGroup();
+                /*var faceModelGroup = new GeometryGroup();
                 for (int i = 0; i < faceModel.Count; i++)
                 {
                     var faceTriangle = new GeometryGroup();
@@ -387,7 +554,7 @@ namespace FaceTrackingBasics
                     faceTriangle.Children.Add(new LineGeometry(faceModel[i].P2, faceModel[i].P3));
                     faceTriangle.Children.Add(new LineGeometry(faceModel[i].P3, faceModel[i].P1));
                     faceModelGroup.Children.Add(faceTriangle);
-                }
+                }*/
 
                 /*for (int i = 0; i < face_coords.Length; i++)
                 {
@@ -405,7 +572,7 @@ namespace FaceTrackingBasics
                 }*/
 
 
-                drawingContext.DrawGeometry(Brushes.Red, new Pen(Brushes.Red, 1.0), faceModelGroup);
+                // drawingContext.DrawGeometry(Brushes.Red, new Pen(Brushes.Red, 1.0), faceModelGroup);
                 if (drawFaceNumbers)
                 {
                     foreach (Tuple<Point, int> t in list_number_coords) // iterate through the number and points list
@@ -440,6 +607,7 @@ namespace FaceTrackingBasics
                 if (this.skeletonTrackingState != SkeletonTrackingState.Tracked)
                 {
                     // nothing to do with an untracked skeleton.
+                    SkeletonProcessing.UntrackSkeleton(skeletonIndex); // stop processing the skeleton
                     return;
                 }
 
@@ -466,7 +634,7 @@ namespace FaceTrackingBasics
 
                     // printFaceVectors(frame);
                     // commented for testing
-                    SkeletonProcessing.TrackSkeleton(skeletonOfInterest, frame, skeletonIndex);
+                    //SkeletonProcessing.TrackSkeleton(skeletonOfInterest, frame, skeletonIndex);
 
 
                     /*
