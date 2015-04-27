@@ -164,9 +164,15 @@ namespace FaceTrackingBasics
 
         /*
          * methods from Math class
+         * Round(double d)
          * Acos(double d)
          * Asin(double d)
          */
+
+        public static double Round(double d)
+        {
+            return Math.Round(d);
+        }
 
         public static double Acos(double d)
         {
