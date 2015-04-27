@@ -32,6 +32,11 @@ namespace FaceTrackingBasics
 
         private static int testint = 0;
 
+        public static string GetName(int i)
+        {
+            return jsonNames[i];
+        }
+
         public static void Initialize()
         {
             skeletonThreads = new Thread[6];
@@ -190,7 +195,7 @@ namespace FaceTrackingBasics
         private static void processSkeletonJoints(int i)
         {
             JointPoints joints = new JointPoints(skeletons[i]); // returns all joints as JointPoints
-            string joints_json = joints.ToString(); // JSON of joints
+            string joints_json = joints.ToJson(); // JSON of joints
             jsonJoints[i] = joints_json;
             //Console.WriteLine("++ "+i+" ++"+joints_json);
             //Console.WriteLine(i + " ++" + jsonJoints[i]);
