@@ -86,6 +86,7 @@ namespace FaceTrackingBasics
         {
             skeletonReady[i] = false;
             jsonNames[i] = "\"name\": unknown";
+            jsonSkeleton[i] = "";
             Console.WriteLine("***skel being untracked " + i);
         }
 
@@ -201,7 +202,7 @@ namespace FaceTrackingBasics
             JsonModel js = new JsonModel(jsonSkeleton);
             jsonString = js.JsonString;
 
-            UdpSend.udpBroadcastMessage(jsonString, 4);
+            UdpSend.UdpBroadcastMessage(jsonString, 4);
             readyToSend = false;
 
             while (!readyToSend)

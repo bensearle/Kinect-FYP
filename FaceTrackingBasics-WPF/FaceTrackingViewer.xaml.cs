@@ -108,7 +108,7 @@ namespace FaceTrackingBasics
                     {
                         foreach (JointType joint in Enum.GetValues(typeof(JointType)))
                         {
-                            Point p = SkeletonPointToScreen(skeleton.Joints[joint].Position);
+                            Point p = skeletonPointToScreen(skeleton.Joints[joint].Position);
                             drawingContext.DrawEllipse(Brushes.Red, new Pen(Brushes.Red, 1), p, 5, 5);
                         }
                     }
@@ -129,7 +129,7 @@ namespace FaceTrackingBasics
         /// </summary>
         /// <param name="skelpoint">point to map</param>
         /// <returns>mapped point</returns>
-        private Point SkeletonPointToScreen(SkeletonPoint skelpoint)
+        private Point skeletonPointToScreen(SkeletonPoint skelpoint)
         {
             // Convert point to depth space.  
             // We are not using depth directly, but we do want the points in our 640x480 output resolution.

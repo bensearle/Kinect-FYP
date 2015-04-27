@@ -16,25 +16,26 @@ namespace FaceTrackingBasics.Models
         private decimal total = 0;
         private int count = 0;
         private decimal mean;
-       /* public double median { get; set; }
-        public double maximum { get; set; }
-        public double minimum { get; set; }
-        public double range { get; set; }
-        public double standard_deviation { get; set; }
-        */
+        /* public double median { get; set; }
+         public double maximum { get; set; }
+         public double minimum { get; set; }
+         public double range { get; set; }
+         public double standard_deviation { get; set; }
+         */
         public FaceMatch(Face a, Face b)
         {
             faceA = a;
             faceB = b;
             getMatches();
-            getAverages();
+            calculateAverages();
         }
 
-        public decimal getMean(){
+        public decimal GetMean()
+        {
             return mean;
         }
 
-        private void getAverages()
+        private void calculateAverages()
         {
             foreach (decimal match in matches)
             {

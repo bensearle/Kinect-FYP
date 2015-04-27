@@ -62,7 +62,7 @@ namespace FaceTrackingBasics
         /// <param name="message">String message to be broadcast as ASCII</param>
         /// <param name="portNum">Port number to transmist from and to</param>
         /// <param name="yourIP">please provide your IP address to broadcast on.</param>
-        public static void udpBroadcastMessage(string message, int portNumber)
+        public static void UdpBroadcastMessage(string message, int portNumber)
         {
             string local_ip = getLocalIP();
             try
