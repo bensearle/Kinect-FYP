@@ -93,6 +93,7 @@ namespace FaceTrackingBasics
 
         protected override void OnRender(DrawingContext drawingContext)
         {
+
             base.OnRender(drawingContext);
             foreach (SkeletonFaceTracker faceInformation in this.trackedSkeletons.Values)
             {
@@ -100,8 +101,9 @@ namespace FaceTrackingBasics
             }
 
             // draw joints
-            if (this.skeletonData != null && false)
+            if (this.skeletonData != null)
             {
+                int index = 0;
                 foreach (Skeleton skeleton in this.skeletonData)
                 {
                     if (skeleton.TrackingState != SkeletonTrackingState.NotTracked)
@@ -110,8 +112,19 @@ namespace FaceTrackingBasics
                         {
                             Point p = skeletonPointToScreen(skeleton.Joints[joint].Position);
                             drawingContext.DrawEllipse(Brushes.Red, new Pen(Brushes.Red, 1), p, 5, 5);
+
+                            if (joint.ToString() == "Head")
+                            {
+                                FormattedText f = new FormattedText(SkeletonProcessing.GetName(index),
+                                    CultureInfo.GetCultureInfo("en-us"),
+                                    FlowDirection.LeftToRight,
+                                    new Typeface("Verdana"),
+                                    14, System.Windows.Media.Brushes.Red);
+                                drawingContext.DrawText(f, new Point(p.X, p.Y+10));
+                            }
                         }
                     }
+                    index++;
                 }
             }
         }
@@ -493,7 +506,7 @@ namespace FaceTrackingBasics
                 foreach (int vec in facialVectors)
                 {
                     //Point p = Maths.MidwayPoint(faceModelPts[vec], faceModelPts[vec + 1]);
-                    Point p = faceModelPts[vec+1];
+                    Point p = faceModelPts[vec + 1];
 
                     FormattedText f = new FormattedText("" + vec,
                         CultureInfo.GetCultureInfo("en-us"),
@@ -634,9 +647,11 @@ namespace FaceTrackingBasics
 
                     // printFaceVectors(frame);
                     // commented for testing
-                    //SkeletonProcessing.TrackSkeleton(skeletonOfInterest, frame, skeletonIndex);
+                    SkeletonProcessing.TrackSkeleton(skeletonOfInterest, frame, skeletonIndex);
 
-
+                    //EnumIndexableCollection<FeaturePoint, Vector3DF> face3D = frame.Get3DShape();
+                    //EnumIndexableCollection<FeaturePoint, PointF> face2D = frame.GetProjected3DShape();
+                    
                     /*
                     if (sendData[skeletonIndex])
                     {
@@ -659,7 +674,6 @@ namespace FaceTrackingBasics
                     }
                 }
             }
-
 
             private void printFaceVectors(FaceTrackFrame frame)
             {
