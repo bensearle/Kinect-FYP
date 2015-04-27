@@ -506,7 +506,7 @@ namespace FaceTrackingBasics
                 foreach (var found_face in query)
                 {
                     FaceMatch fm = new FaceMatch(found_face, face);
-                    decimal closeness = fm.getMean();
+                    decimal closeness = fm.GetMean();
 
                     if (closeness > match)
                     {
