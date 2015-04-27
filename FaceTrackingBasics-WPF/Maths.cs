@@ -162,6 +162,13 @@ namespace FaceTrackingBasics
             return angle_degrees;
         }
 
+        public static System.Windows.Point ScalePoint(System.Windows.Point p)
+        {
+            //return new System.Windows.Point(p.X * 4 - 1200, p.Y * 4 - 800); // x4 bigger
+            return new System.Windows.Point(p.X * 5 - 1620, p.Y * 5 - 1100); // x5 bigger
+
+        }
+
         /*
          * methods from Math class
          * Round(double d)

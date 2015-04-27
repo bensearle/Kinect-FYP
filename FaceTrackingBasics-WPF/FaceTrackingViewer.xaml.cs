@@ -101,7 +101,7 @@ namespace FaceTrackingBasics
             }
 
             // draw joints
-            if (this.skeletonData != null)
+            if (this.skeletonData != null && false)
             {
                 int index = 0;
                 foreach (Skeleton skeleton in this.skeletonData)
@@ -152,7 +152,9 @@ namespace FaceTrackingBasics
 
         private void OnAllFramesReady(object sender, AllFramesReadyEventArgs allFramesReadyEventArgs)
         {
-            Kinect.SkeletonStream.TrackingMode = SkeletonTrackingMode.Default; // Use Seated Mode
+            // ************************
+            // commented for testing
+            //Kinect.SkeletonStream.TrackingMode = SkeletonTrackingMode.Default; // Use Seated Mode
             ColorImageFrame colorImageFrame = null;
             DepthImageFrame depthImageFrame = null;
             SkeletonFrame skeletonFrame = null;
@@ -342,22 +344,22 @@ namespace FaceTrackingBasics
                 3,
                 4,
                 5,
-                //6, // top lip
-                //7, // chin
+                6,
+                //7, // upper lip
                 //8, // chin
                 //9, // chin
                 //10, // chin
                 11,
                 12,
                 13,
-                //14, // left eyebrow
+                14,
                 //15, // left eyebrow
                 //16, // left eyebrow
                 //17, // left eyebrow
                 //18, // left eyebrow
                 19,
                 20,
-                21,
+                //21, // upper left eye
                 22,
                 23,
                 24,
@@ -366,8 +368,8 @@ namespace FaceTrackingBasics
                 27,
                 28,
                 29,
-                //30, // chin
-                //31, //chin
+                30, // chin
+                //31, // chin
                 //32, // chin
                 //33, // top lip
                 34,
@@ -375,22 +377,22 @@ namespace FaceTrackingBasics
                 36,
                 37,
                 38,
-                //39, // mouth
+                39,
                 //40, // mouth
-                //41, // mouth
-                //42, // mouth
+                41,
+                42,
                 43,
                 44,
                 45,
                 46,
-                //47, // right eyebrow
+                47,
                 //48, // right eyebrow
                 //49, // right eyebrow
                 //50, // right eyebrow
                 //51, // right eyebrow
                 52,
                 53,
-                54,
+                //54, // upper right eye
                 55,
                 56,
                 57,
@@ -399,22 +401,22 @@ namespace FaceTrackingBasics
                 60,
                 61,
                 62,
-                //63, // chin
+                63,
                 //64, // chin
                 //65, // chin
                 //66, // top lip
-                67,
+                //67, // upper left eye
                 68,
-                69,
+                //69, // upper right eye
                 70,
-                71,
+                //71, // upper left eye
                 72,
-                73,
+                //73, // upper right eye
                 74,
                 75,
                 76,
                 77,
-                //78, // top lip
+                78, // top lip
                 //79, // mouth
                 //80, // mouth
                 //81, // mouth
@@ -448,11 +450,11 @@ namespace FaceTrackingBasics
                 109,
                 110,
                 111,
-                //112, // right side of face
+                112, // right side of face
                 //113, // right side of face
                 //114, // right side of face
                 //115, // right side of face
-                //116, // left to right side of face
+                //116, // right side of face
                 //117, // left side of face
                 //118, // left side of face
                 //119, // left side of face
@@ -488,9 +490,18 @@ namespace FaceTrackingBasics
                     faceModelPts.Add(new Point(this.facePoints[i].X + 0.5f, this.facePoints[i].Y + 0.5f));
                 }
 
+                for (int i = 0; i < 10; i++)
+                {
+                    
+                }
+                //Console.WriteLine("**");
+                //Unit3D dot0 = new Unit3D(faceModelPts[0].X,faceModelPts[0].Y,0);
                 foreach (int vec in facialVectors)
                 {
-                    drawingContext.DrawLine(new Pen(Brushes.Yellow, 1), faceModelPts[vec], faceModelPts[vec + 1]);
+                    //drawingContext.DrawLine(new Pen(Brushes.Yellow, 1), Maths.ScalePoint(faceModelPts[vec]), Maths.ScalePoint(faceModelPts[vec + 1]));
+                    //Unit3D dot = new Unit3D(faceModelPts[vec].X,faceModelPts[vec].Y,0);
+                    //double mag = Maths.Magnitude(dot0, dot);
+                    //Console.Write(vec+","+mag+",");
                     //Point p = Maths.MidwayPoint(faceModelPts[vec], faceModelPts[vec + 1]);
                     /*Point p = faceModelPts[vec];
 
@@ -506,15 +517,22 @@ namespace FaceTrackingBasics
                 foreach (int vec in facialVectors)
                 {
                     //Point p = Maths.MidwayPoint(faceModelPts[vec], faceModelPts[vec + 1]);
-                    Point p = faceModelPts[vec + 1];
+                    //Point p = new Point (faceModelPts[vec].X*4-1200, faceModelPts[vec].Y*4-800);
+                    Point p = Maths.ScalePoint(faceModelPts[vec]);
 
                     FormattedText f = new FormattedText("" + vec,
                         CultureInfo.GetCultureInfo("en-us"),
                         FlowDirection.LeftToRight,
                         new Typeface("Verdana"),
-                        5, System.Windows.Media.Brushes.Red);
+                        5, System.Windows.Media.Brushes.Yellow);
                     drawingContext.DrawText(f, p);
                 }
+
+                //drawingContext.DrawLine(new Pen(Brushes.Red, 1), new Point(faceModelPts[69].X * 4 - 1200, faceModelPts[69].Y * 4 - 800), new Point(faceModelPts[54].X * 4 - 1200, faceModelPts[54].Y * 4 - 800));
+                //drawingContext.DrawLine(new Pen(Brushes.Red, 1), new Point(faceModelPts[73].X * 4 - 1200, faceModelPts[73].Y * 4 - 800), new Point(faceModelPts[54].X * 4 - 1200, faceModelPts[54].Y * 4 - 800));
+                //drawingContext.DrawLine(new Pen(Brushes.Red, 1), new Point(faceModelPts[21].X * 4 - 1200, faceModelPts[21].Y * 4 - 800), new Point(faceModelPts[71].X * 4 - 1200, faceModelPts[71].Y * 4 - 800));
+                //drawingContext.DrawLine(new Pen(Brushes.Red, 1), new Point(faceModelPts[21].X * 4 - 1200, faceModelPts[21].Y * 4 - 800), new Point(faceModelPts[67].X * 4 - 1200, faceModelPts[67].Y * 4 - 800));
+
 
                 /*for (int i = 0; i < 120; i++)
                 {
@@ -647,7 +665,7 @@ namespace FaceTrackingBasics
 
                     // printFaceVectors(frame);
                     // commented for testing
-                    SkeletonProcessing.TrackSkeleton(skeletonOfInterest, frame, skeletonIndex);
+                    //SkeletonProcessing.TrackSkeleton(skeletonOfInterest, frame, skeletonIndex);
 
                     //EnumIndexableCollection<FeaturePoint, Vector3DF> face3D = frame.Get3DShape();
                     //EnumIndexableCollection<FeaturePoint, PointF> face2D = frame.GetProjected3DShape();
