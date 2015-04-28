@@ -1,4 +1,4 @@
-namespace FaceTrackingBasics.Database
+namespace KinectTrackerAndBroadcaster.Database
 {
     using System;
     using System.Collections.Generic;

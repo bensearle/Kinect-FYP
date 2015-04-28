@@ -4,7 +4,7 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-namespace FaceTrackingBasics
+namespace KinectTrackerAndBroadcaster
 {
     using System.Windows;
 

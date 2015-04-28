@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FaceTrackingBasics.Models
+namespace KinectTrackerAndBroadcaster.Models
 {
     public class Unit3D
     {

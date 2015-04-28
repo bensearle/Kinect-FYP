@@ -1,8 +1,8 @@
 ﻿<Window 
-        x:Class="FaceTrackingBasics.MainWindow"
+        x:Class="KinectTrackerAndBroadcaster.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:local="clr-namespace:FaceTrackingBasics"
+        xmlns:local="clr-namespace:KinectTrackerAndBroadcaster"
         Title="Face Tracking Basics"
         Closed="WindowClosed"
         Height="735" Width="770" 
@@ -40,7 +40,7 @@
         <Viewbox Grid.Row="1" Stretch="Uniform" HorizontalAlignment="Center">
             <Grid Name="MainGrid" Width="640" Height="480">
                 <Image Name="ColorImage"/>
-                <local:FaceTrackingViewer x:Name="faceTrackingViewer" Loaded="faceTrackingViewer_Loaded" />
+                <local:KinectStream x:Name="KinectStream" Loaded="KinectStream_Loaded" />
             </Grid>
         </Viewbox>
     </Grid>

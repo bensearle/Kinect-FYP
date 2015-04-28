@@ -1,10 +1,10 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="FaceTrackingViewer.xaml.cs" company="Microsoft">
+// <copyright file="KinectStream.xaml.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace FaceTrackingBasics
+namespace KinectTrackerAndBroadcaster
 {
     using System;
     using System.Collections.Generic;
@@ -14,12 +14,10 @@ namespace FaceTrackingBasics
     using System.Windows.Media;
     using Microsoft.Kinect;
     using Microsoft.Kinect.Toolkit.FaceTracking;
-    using System.Windows.Media.Media3D;
-    using Coding4Fun.Kinect.Wpf;
 
     using Point = System.Windows.Point;
     using System.Globalization;
-    using FaceTrackingBasics.Models;
+    using KinectTrackerAndBroadcaster.Models;
 
 
 
@@ -27,18 +25,18 @@ namespace FaceTrackingBasics
     /// Class that uses the Face Tracking SDK to display a face mask for
     /// tracked skeletons
     /// </summary>
-    public partial class FaceTrackingViewer : UserControl, IDisposable
+    public partial class KinectStream : UserControl, IDisposable
     {
         public static readonly DependencyProperty KinectProperty = DependencyProperty.Register(
             "Kinect",
             typeof(KinectSensor),
-            typeof(FaceTrackingViewer),
+            typeof(KinectStream),
             new PropertyMetadata(
-                null, (o, args) => ((FaceTrackingViewer)o).OnSensorChanged((KinectSensor)args.OldValue, (KinectSensor)args.NewValue)));
+                null, (o, args) => ((KinectStream)o).OnSensorChanged((KinectSensor)args.OldValue, (KinectSensor)args.NewValue)));
 
         private const uint MaxMissedFrames = 100;
 
-        private readonly Dictionary<int, SkeletonFaceTracker> trackedSkeletons = new Dictionary<int, SkeletonFaceTracker>();
+        private readonly Dictionary<int, SkeletonTracker> trackedSkeletons = new Dictionary<int, SkeletonTracker>();
 
         private byte[] colorImage;
 
@@ -52,12 +50,12 @@ namespace FaceTrackingBasics
 
         private Skeleton[] skeletonData;
 
-        public FaceTrackingViewer()
+        public KinectStream()
         {
             this.InitializeComponent();
         }
 
-        ~FaceTrackingViewer()
+        ~KinectStream()
         {
             this.Dispose(false);
         }
@@ -95,7 +93,7 @@ namespace FaceTrackingBasics
         {
 
             base.OnRender(drawingContext);
-            foreach (SkeletonFaceTracker faceInformation in this.trackedSkeletons.Values)
+            foreach (SkeletonTracker faceInformation in this.trackedSkeletons.Values)
             {
                 faceInformation.DrawFaceModel(drawingContext);
             }
@@ -120,7 +118,7 @@ namespace FaceTrackingBasics
                                     FlowDirection.LeftToRight,
                                     new Typeface("Verdana"),
                                     14, System.Windows.Media.Brushes.Red);
-                                drawingContext.DrawText(f, new Point(p.X, p.Y+10));
+                                drawingContext.DrawText(f, new Point(p.X, p.Y + 10));
                             }
                         }
                     }
@@ -147,7 +145,7 @@ namespace FaceTrackingBasics
             // Convert point to depth space.  
             // We are not using depth directly, but we do want the points in our 640x480 output resolution.
             DepthImagePoint depthPoint = jointSensor.CoordinateMapper.MapSkeletonPointToDepthPoint(skelpoint, DepthImageFormat.Resolution640x480Fps30);
-            return new Point(depthPoint.X, depthPoint.Y);
+            return new Point(depthPoint.X +2.5f, depthPoint.Y+2.5f);
         }
 
         private void OnAllFramesReady(object sender, AllFramesReadyEventArgs allFramesReadyEventArgs)
@@ -219,17 +217,17 @@ namespace FaceTrackingBasics
                         // We want keep a record of any skeleton, tracked or untracked.
                         if (!this.trackedSkeletons.ContainsKey(skeleton.TrackingId))
                         {
-                            this.trackedSkeletons.Add(skeleton.TrackingId, new SkeletonFaceTracker());
+                            this.trackedSkeletons.Add(skeleton.TrackingId, new SkeletonTracker());
                         }
 
                         int skeletonIndex = Array.IndexOf(this.skeletonData, skeleton); // get the index of the skeleton
 
                         // Give each tracker the upated frame.
-                        SkeletonFaceTracker skeletonFaceTracker;
-                        if (this.trackedSkeletons.TryGetValue(skeleton.TrackingId, out skeletonFaceTracker))
+                        SkeletonTracker skeletonTracker;
+                        if (this.trackedSkeletons.TryGetValue(skeleton.TrackingId, out skeletonTracker))
                         {
-                            skeletonFaceTracker.OnFrameReady(this.Kinect, colorImageFormat, colorImage, depthImageFormat, depthImage, skeleton, skeletonIndex);
-                            skeletonFaceTracker.LastTrackedFrame = skeletonFrame.FrameNumber;
+                            skeletonTracker.OnFrameReady(this.Kinect, colorImageFormat, colorImage, depthImageFormat, depthImage, skeleton, skeletonIndex);
+                            skeletonTracker.LastTrackedFrame = skeletonFrame.FrameNumber;
                             //Console.WriteLine(skeletonFrame.FrameNumber);
                             total_skeleton_count++;
                             //s.OnFrameReady(this.Kinect, colorImageFormat, colorImage, depthImageFormat, depthImage, skeleton);
@@ -313,15 +311,11 @@ namespace FaceTrackingBasics
             }
         }
 
-        public class SkeletonFaceTracker : IDisposable
+        public class SkeletonTracker : IDisposable
         {
-            private static FaceTriangle[] faceTriangles;
-
             private EnumIndexableCollection<FeaturePoint, PointF> facePoints;
 
             private FaceTracker faceTracker;
-
-            private FaceTriangle[] faceTriangles_;
 
             private bool lastFaceTrackSucceeded;
 
@@ -329,14 +323,10 @@ namespace FaceTrackingBasics
 
             public int LastTrackedFrame { get; set; }
 
-            private List<Tuple<int, int>> facialPairs = new List<Tuple<int, int>>
-            {
-                new Tuple<int, int>( 1, 2 ),
-                new Tuple<int, int>( 2, 3 ),
-                new Tuple<int, int>( 1, 4 )
-            };
-
-            private List<int> facialVectors = new List<int>
+            /// <summary>
+            /// 
+            /// </summary>
+            private List<int> staticFacialPoints = new List<int>
             {
                 0, // forehead
                 1, // forehead
@@ -461,6 +451,9 @@ namespace FaceTrackingBasics
                 //120  // left side of face
             };
 
+            /// <summary>
+            /// 
+            /// </summary>
             private List<int> facialLine = new List<int> { 
                 0,44,45,47,62,61,63,43,30,28,29,14,12,11,0, // outer of face loop
                 34,45,46,47,2,62,60,61,41,63,42,30,27,29,13,12,1,11,2,14,36,// face loop of triangles
@@ -483,174 +476,57 @@ namespace FaceTrackingBasics
 
             public void DrawFaceModel(DrawingContext drawingContext)
             {
-                Boolean drawFaceNumbers = false;
-
-                List<Tuple<Point, int>> list_number_coords = new List<Tuple<Point, int>>();
+                Boolean scaleFace = true;
 
                 if (!this.lastFaceTrackSucceeded || this.skeletonTrackingState != SkeletonTrackingState.Tracked)
                 {
                     return;
                 }
 
+                // get the coordinates for the face points
                 var faceModelPts = new List<Point>();
-                var faceModel = new List<FaceModelTriangle>();
-
                 for (int i = 0; i < this.facePoints.Count; i++)
                 {
                     faceModelPts.Add(new Point(this.facePoints[i].X + 0.5f, this.facePoints[i].Y + 0.5f));
                 }
 
-                for (int i = 0; i < facialVectors.Count - 1; i++)
-                {
-                    //drawingContext.DrawLine(new Pen(Brushes.Yellow, 1), Maths.ScalePoint(faceModelPts[facialVectors[i]]), Maths.ScalePoint(faceModelPts[facialVectors[i+1]]));
-                }
-
+                // draw the face line
                 int lineLength = facialLine.Count;
                 for (int i = 0; i < lineLength; i++)
                 {
-                    if (i == lineLength - 1) // last number in list
+                    if (i != lineLength - 1) // last number in list
                     {
-
-                    }
-                    else
-                    {
-                        //drawingContext.DrawLine(new Pen(Brushes.Blue, 1), Maths.ScalePoint(faceModelPts[facialLine[i]]), Maths.ScalePoint(faceModelPts[facialLine[i + 1]]));
-                        drawingContext.DrawLine(new Pen(Brushes.Yellow, 1), faceModelPts[facialLine[i]], faceModelPts[facialLine[i + 1]]);
-                    
-                    }
-                }
-
-                //Console.WriteLine("**");
-                //Unit3D dot0 = new Unit3D(faceModelPts[0].X,faceModelPts[0].Y,0);
-                //foreach (int vec in facialVectors)
-                {
-                    //drawingContext.DrawLine(new Pen(Brushes.Yellow, 1), Maths.ScalePoint(faceModelPts[vec]), Maths.ScalePoint(faceModelPts[vec + 1]));
-                    //Unit3D dot = new Unit3D(faceModelPts[vec].X,faceModelPts[vec].Y,0);
-                    //double mag = Maths.Magnitude(dot0, dot);
-                    //Console.Write(vec+","+mag+",");
-                    //Point p = Maths.MidwayPoint(faceModelPts[vec], faceModelPts[vec + 1]);
-                    /*Point p = faceModelPts[vec];
-
-                    FormattedText f = new FormattedText("" + vec,
-                        CultureInfo.GetCultureInfo("en-us"),
-                        FlowDirection.LeftToRight,
-                        new Typeface("Verdana"),
-                        5, System.Windows.Media.Brushes.Red);
-                    drawingContext.DrawText(f, p);*/
-                }
-
-                // draw the numbers over top
-                foreach (int vec in facialVectors)
-                {
-                    //Point p = Maths.MidwayPoint(faceModelPts[vec], faceModelPts[vec + 1]);
-                    //Point p = new Point (faceModelPts[vec].X*4-1200, faceModelPts[vec].Y*4-800);
-                    Point p = Maths.ScalePoint(faceModelPts[vec]);
-
-                    FormattedText f = new FormattedText("" + vec,
-                        CultureInfo.GetCultureInfo("en-us"),
-                        FlowDirection.LeftToRight,
-                        new Typeface("Verdana"),
-                        5, System.Windows.Media.Brushes.Yellow);
-                    drawingContext.DrawText(f, p);
-                }
-
-                //drawingContext.DrawLine(new Pen(Brushes.Red, 1), new Point(faceModelPts[69].X * 4 - 1200, faceModelPts[69].Y * 4 - 800), new Point(faceModelPts[54].X * 4 - 1200, faceModelPts[54].Y * 4 - 800));
-                //drawingContext.DrawLine(new Pen(Brushes.Red, 1), new Point(faceModelPts[73].X * 4 - 1200, faceModelPts[73].Y * 4 - 800), new Point(faceModelPts[54].X * 4 - 1200, faceModelPts[54].Y * 4 - 800));
-                //drawingContext.DrawLine(new Pen(Brushes.Red, 1), new Point(faceModelPts[21].X * 4 - 1200, faceModelPts[21].Y * 4 - 800), new Point(faceModelPts[71].X * 4 - 1200, faceModelPts[71].Y * 4 - 800));
-                //drawingContext.DrawLine(new Pen(Brushes.Red, 1), new Point(faceModelPts[21].X * 4 - 1200, faceModelPts[21].Y * 4 - 800), new Point(faceModelPts[67].X * 4 - 1200, faceModelPts[67].Y * 4 - 800));
-
-
-                /*for (int i = 0; i < 120; i++)
-                {
-                    drawingContext.DrawLine(new Pen(Brushes.Blue, 1), faceModelPts[i], faceModelPts[i + 1]);
-
-                }*/
-
-                /*foreach (var t in faceTriangles)
-                {
-                    var triangle = new FaceModelTriangle();
-                    triangle.P1 = faceModelPts[t.First];
-                    triangle.P2 = faceModelPts[t.Second];
-                    triangle.P3 = faceModelPts[t.Third];
-                    faceModel.Add(triangle);
-                    // add points and numbers to the list
-                    if (drawFaceNumbers)
-                    {
-                        list_number_coords.Add(Tuple.Create(triangle.P1, t.First));
-                        list_number_coords.Add(Tuple.Create(triangle.P2, t.Second));
-                        list_number_coords.Add(Tuple.Create(triangle.P3, t.Third));
-                    }
-                    // add text of first number
-                    drawingContext.DrawText(new FormattedText("" + t.First,
-                        CultureInfo.GetCultureInfo("en-us"),
-                        FlowDirection.LeftToRight,
-                        new Typeface("Verdana"),
-                        8, System.Windows.Media.Brushes.Red),
-                        triangle.P1);
-                    // add text of second number
-                    drawingContext.DrawText(new FormattedText("" + t.Second,
-                        CultureInfo.GetCultureInfo("en-us"),
-                        FlowDirection.LeftToRight,
-                        new Typeface("Verdana"),
-                        8, System.Windows.Media.Brushes.Red),
-                        triangle.P2);
-                    // add text of third number
-                    drawingContext.DrawText(new FormattedText("" + t.Third,
-                        CultureInfo.GetCultureInfo("en-us"),
-                        FlowDirection.LeftToRight,
-                        new Typeface("Verdana"),
-                        8, System.Windows.Media.Brushes.Red),
-                        triangle.P3);
-                }*/
-
-                /*var faceModelGroup = new GeometryGroup();
-                for (int i = 0; i < faceModel.Count; i++)
-                {
-                    var faceTriangle = new GeometryGroup();
-                    faceTriangle.Children.Add(new LineGeometry(faceModel[i].P1, faceModel[i].P2));
-                    faceTriangle.Children.Add(new LineGeometry(faceModel[i].P2, faceModel[i].P3));
-                    faceTriangle.Children.Add(new LineGeometry(faceModel[i].P3, faceModel[i].P1));
-                    faceModelGroup.Children.Add(faceTriangle);
-                }*/
-
-                /*for (int i = 0; i < face_coords.Length; i++)
-                {
-                    XYZCoord xyzCoord = face_coords[i];
-                    Point p = new Point(xyzCoord.X*100, xyzCoord.Y*100);
-                    //p.X = xyzCoord.X;
-                    //p.Y = xyzCoord.Y;
-                    FormattedText f = new FormattedText(""+i,
-                        CultureInfo.GetCultureInfo("en-us"),
-                        FlowDirection.LeftToRight,
-                        new Typeface("Verdana"),
-                        36, System.Windows.Media.Brushes.Yellow);
-                    drawingContext.DrawText(f, p);
-                    Debug.WriteLine(string.Format("{0}, {1}, {2}, {3}", i, p.X, p.Y, " ** "));
-                }*/
-
-
-                // drawingContext.DrawGeometry(Brushes.Red, new Pen(Brushes.Red, 1.0), faceModelGroup);
-                if (drawFaceNumbers)
-                {
-                    foreach (Tuple<Point, int> t in list_number_coords) // iterate through the number and points list
-                    {
-
-                        if ((t.Item2) == MainWindow.tInc) // 
+                        if (scaleFace)
                         {
-                            // add the number to the drawing context
-                            drawingContext.DrawText(new FormattedText("" + t.Item2,
-                                CultureInfo.GetCultureInfo("en-us"),
-                                FlowDirection.LeftToRight,
-                                new Typeface("Verdana"),
-                                12, System.Windows.Media.Brushes.Blue),
-                                t.Item1);
-                            drawingContext.DrawEllipse(Brushes.Blue, new Pen(Brushes.Blue, 1), t.Item1, 1, 1);
-                            //drawingContext.DrawRectangle(null, new Pen(Brushes.Blue, 10), new System.Windows.Rect(new Point(0, 0), t.Item1));                    
+                            drawingContext.DrawLine(new Pen(Brushes.Yellow, 1), Maths.ScalePoint(faceModelPts[facialLine[i]]), Maths.ScalePoint(faceModelPts[facialLine[i + 1]]));
 
+                        }
+                        else
+                        {
+                            drawingContext.DrawLine(new Pen(Brushes.Yellow, 1), faceModelPts[facialLine[i]], faceModelPts[facialLine[i + 1]]);
                         }
                     }
                 }
-                //drawingContext.DrawRectangle(Brushes.Blue, new Pen(Brushes.Blue, 10), new System.Windows.Rect(new Point(200, 50), new Point(300, 200)));
+
+                // draw the numbers over top of face
+                foreach (int point in staticFacialPoints)
+                {
+                    Point p;
+                    if (scaleFace)
+                    {
+                        p = Maths.ScalePoint(faceModelPts[point]);
+                    }
+                    else
+                    {
+                        p = faceModelPts[point];
+                    }
+                    FormattedText f = new FormattedText("" + point,
+                        CultureInfo.GetCultureInfo("en-us"),
+                        FlowDirection.LeftToRight,
+                        new Typeface("Verdana"),
+                        5, System.Windows.Media.Brushes.Cyan);
+                    drawingContext.DrawText(f, p);
+                }
 
             }
 
@@ -695,26 +571,11 @@ namespace FaceTrackingBasics
 
                     //EnumIndexableCollection<FeaturePoint, Vector3DF> face3D = frame.Get3DShape();
                     //EnumIndexableCollection<FeaturePoint, PointF> face2D = frame.GetProjected3DShape();
-                    
-                    /*
-                    if (sendData[skeletonIndex])
-                    {
-                        SkeletonProcessing.TrackSkeleton(skeletonOfInterest, frame, skeletonIndex);
-                        sendData[skeletonIndex] = false;
-                    }
-                    */
 
                     this.lastFaceTrackSucceeded = frame.TrackSuccessful;
                     if (this.lastFaceTrackSucceeded)
                     {
-                        if (faceTriangles == null)
-                        {
-                            // only need to get this once.  It doesn't change.
-                            faceTriangles = frame.GetTriangles();
-                        }
-
                         this.facePoints = frame.GetProjected3DShape();
-                        this.faceTriangles_ = faceTriangles;
                     }
                 }
             }
@@ -733,14 +594,6 @@ namespace FaceTrackingBasics
                 Console.WriteLine(s);
             }
 
-            public static bool[] sendData = { true, true, true, true, true, true };
-
-            private struct FaceModelTriangle
-            {
-                public Point P1;
-                public Point P2;
-                public Point P3;
-            }
 
             static int tInc = 0;
             static System.Timers.Timer _timer; // From System.Timers

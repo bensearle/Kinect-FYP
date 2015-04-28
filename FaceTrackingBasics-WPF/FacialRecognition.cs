@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using FaceTrackingBasics.Models;
-using FaceTrackingBasics.Database;
+using KinectTrackerAndBroadcaster.Models;
+using KinectTrackerAndBroadcaster.Database;
 using System.Windows.Media.Media3D;
 using Microsoft.Kinect.Toolkit.FaceTracking;
 
-namespace FaceTrackingBasics
+namespace KinectTrackerAndBroadcaster
 {
     class FacialRecognition
     {

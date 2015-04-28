@@ -4,7 +4,7 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-namespace FaceTrackingBasics
+namespace KinectTrackerAndBroadcaster
 {
     using System;
     using System.Windows;
@@ -14,9 +14,9 @@ namespace FaceTrackingBasics
     using Microsoft.Kinect;
     using Microsoft.Kinect.Toolkit;
     using System.Diagnostics;
-    using FaceTrackingBasics.Database; // classes in the database folder
+    using KinectTrackerAndBroadcaster.Database; // classes in the database folder
     using System.Linq;
-    using FaceTrackingBasics.Models;
+    using KinectTrackerAndBroadcaster.Models;
     using Microsoft.Kinect.Toolkit.FaceTracking;
 
     /// <summary>
@@ -37,8 +37,8 @@ namespace FaceTrackingBasics
 
             InitializeComponent();
 
-            var faceTrackingViewerBinding = new Binding("Kinect") { Source = sensorChooser };
-            faceTrackingViewer.SetBinding(FaceTrackingViewer.KinectProperty, faceTrackingViewerBinding);
+            var KinectStreamBinding = new Binding("Kinect") { Source = sensorChooser };
+            KinectStream.SetBinding(KinectStream.KinectProperty, KinectStreamBinding);
 
             sensorChooser.KinectChanged += SensorChooserOnKinectChanged;
 
@@ -122,7 +122,7 @@ namespace FaceTrackingBasics
         private void WindowClosed(object sender, EventArgs e)
         {
             sensorChooser.Stop();
-            faceTrackingViewer.Dispose();
+            KinectStream.Dispose();
             Environment.Exit(0);
         }
 
@@ -155,7 +155,7 @@ namespace FaceTrackingBasics
             }
         }
 
-        private void faceTrackingViewer_Loaded(object sender, RoutedEventArgs e)
+        private void KinectStream_Loaded(object sender, RoutedEventArgs e)
         {
 
         }

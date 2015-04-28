@@ -1,11 +1,11 @@
-﻿using FaceTrackingBasics.Database;
+﻿using KinectTrackerAndBroadcaster.Database;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FaceTrackingBasics.Models
+namespace KinectTrackerAndBroadcaster.Models
 {
     public class FaceMatch
     {

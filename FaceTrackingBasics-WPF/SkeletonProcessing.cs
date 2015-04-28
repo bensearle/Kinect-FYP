@@ -1,4 +1,4 @@
-﻿using FaceTrackingBasics.Models;
+﻿using KinectTrackerAndBroadcaster.Models;
 using Microsoft.Kinect;
 using Microsoft.Kinect.Toolkit.FaceTracking;
 using System;
@@ -9,7 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 
-namespace FaceTrackingBasics
+namespace KinectTrackerAndBroadcaster
 {
     public static class SkeletonProcessing
     {

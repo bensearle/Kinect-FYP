@@ -1,11 +1,13 @@
-﻿using FaceTrackingBasics.Models;
+﻿using KinectTrackerAndBroadcaster.Models;
 using Microsoft.Kinect.Toolkit.FaceTracking;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace FaceTrackingBasics
+using Point = System.Windows.Point;
+
+namespace KinectTrackerAndBroadcaster
 {
     //public static class Maths:     // cannot derive from static class System.Math
     public static class Maths
@@ -175,15 +177,15 @@ namespace FaceTrackingBasics
             return angle_radians;
         }
 
-        public static System.Windows.Point MidwayPoint(System.Windows.Point p1, System.Windows.Point p2)
+        public static Point MidwayPoint(Point p1, Point p2)
         {
-            return new System.Windows.Point((p1.X + p2.X) / 2, (p1.Y + p2.Y) / 2);
+            return new Point((p1.X + p2.X) / 2, (p1.Y + p2.Y) / 2);
         }
 
-        public static System.Windows.Point ScalePoint(System.Windows.Point p)
+        public static Point ScalePoint(Point p)
         {
-            //return new System.Windows.Point(p.X * 4 - 1200, p.Y * 4 - 800); // x4 bigger
-            return new System.Windows.Point(p.X * 5 - 1620, p.Y * 5 - 1100); // x5 bigger
+            //return new Point(p.X * 4 - 1200, p.Y * 4 - 800); // x4 bigger
+            return new Point(p.X * 5 - 1620, p.Y * 5 - 1100); // x5 bigger
 
         }
 
