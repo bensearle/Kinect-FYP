@@ -22,25 +22,20 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <DockPanel Grid.Row="0" Margin="0 0 0 20">
+        <DockPanel Grid.Row="0" Margin="0,10">
             <Button Click="Button_Add_Face" 
                 Background="#FF0D6AA3" 
-                Height="100" Width="100" VerticalAlignment="Top" >
+                Height="28" Width="107" VerticalAlignment="Top" Margin="10,10,10,10" >
                 <TextBlock Text="Add Face" HorizontalAlignment="Center"/>
             </Button>
+            <TextBox Name="textName" Width="208" Margin="10,10,10,10">
+            </TextBox>
             <Button Click="Button_Get_Face" 
-                Background="#FF0D6AA3" Width="100" >
+            	Background="#FF0D6AA3" Width="109" DockPanel.Dock="Right" Margin="10,10,10,10" >
                 <TextBlock Text="Get Face" HorizontalAlignment="Center"/>
             </Button>
-            <TextBox Name="textName" Width="112">
-                Text
-            </TextBox>
-            <TextBox Name="textPeople" Width="112">
-                Text
-            </TextBox>
-            <Image DockPanel.Dock="Left" Source="Images\Logo.png" Stretch="Fill" Height="32" Width="81" Margin="0 10 0 5"/>
-            <TextBlock Name="FoundPerson" DockPanel.Dock="Right" Margin="0 0 -1 0" VerticalAlignment="Bottom" Foreground="{StaticResource MediumGreyBrush}" FontFamily="Segoe UI" FontSize="18">Face Tracking Basics</TextBlock>
-            <Image Grid.Column="1" Source="Images\Status.png" Stretch="None" HorizontalAlignment="Center" Margin="0 0 0 5"/>
+            <Image DockPanel.Dock="Right" Source="Images\Logo.png" Stretch="Fill" Height="32" Width="81" Margin="10 10 10 10"/>
+            <TextBlock x:Name="FoundPerson" DockPanel.Dock="Right" Margin="0,0,-1,10" VerticalAlignment="Bottom" Foreground="{StaticResource MediumGreyBrush}" FontFamily="Segoe UI" FontSize="18" Height="27"><Run Text="Skeletal and Facial Tracker and Broadcaster"/></TextBlock>
         </DockPanel>
         <Viewbox Grid.Row="1" Stretch="Uniform" HorizontalAlignment="Center">
             <Grid Name="MainGrid" Width="640" Height="480">

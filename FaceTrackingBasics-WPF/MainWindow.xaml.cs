@@ -175,17 +175,5 @@ namespace FaceTrackingBasics
                 SkeletonProcessing.UntrackSkeleton(i);
             }
         }
-
-        public void UpdateNames(string s)
-        {
-            textPeople.Text = s;
-        }
-
-        public void testTextChange()
-        {
-
-            //Window;
-            //Application.Current.FindResource["k"] = "bla bla bla";
-        }
     }
 }
