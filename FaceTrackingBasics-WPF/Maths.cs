@@ -154,6 +154,14 @@ namespace FaceTrackingBasics
             // calculate the dot product
             dot_product = v1_normalized.X * v2_normalized.X + v1_normalized.Y * v2_normalized.Y + v1_normalized.Z * v2_normalized.Z;
 
+            // deal with rounding errors that go outside of the -1 to 1 range
+            if (dot_product > 1)
+            {
+                dot_product = 1;
+            } else if (dot_product < -1){
+                dot_product = -1;
+            }
+
             // calculate the angle
             angle_radians = Math.Acos(dot_product);
 
