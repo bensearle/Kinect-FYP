@@ -76,6 +76,177 @@ namespace FaceTrackingBasics
         {
             Face face = new Face();
 
+            face.angle_0_1_2 = (decimal)Maths.Angle(face_vectors[0], face_vectors[1], face_vectors[2]);
+            face.angle_1_2_3 = (decimal)Maths.Angle(face_vectors[1], face_vectors[2], face_vectors[3]);
+            face.angle_2_3_4 = (decimal)Maths.Angle(face_vectors[2], face_vectors[3], face_vectors[4]);
+            face.angle_3_4_5 = (decimal)Maths.Angle(face_vectors[3], face_vectors[4], face_vectors[5]);
+            face.angle_4_5_6 = (decimal)Maths.Angle(face_vectors[4], face_vectors[5], face_vectors[6]);
+            face.angle_5_6_11 = (decimal)Maths.Angle(face_vectors[5], face_vectors[6], face_vectors[11]);
+            face.angle_6_11_12 = (decimal)Maths.Angle(face_vectors[6], face_vectors[11], face_vectors[12]);
+            face.angle_11_12_13 = (decimal)Maths.Angle(face_vectors[11], face_vectors[12], face_vectors[13]);
+            face.angle_12_13_14 = (decimal)Maths.Angle(face_vectors[12], face_vectors[13], face_vectors[14]);
+            face.angle_13_14_19 = (decimal)Maths.Angle(face_vectors[13], face_vectors[14], face_vectors[19]);
+            face.angle_14_19_20 = (decimal)Maths.Angle(face_vectors[14], face_vectors[19], face_vectors[20]);
+            face.angle_19_20_22 = (decimal)Maths.Angle(face_vectors[19], face_vectors[20], face_vectors[22]);
+            face.angle_20_22_23 = (decimal)Maths.Angle(face_vectors[20], face_vectors[22], face_vectors[23]);
+            face.angle_22_23_24 = (decimal)Maths.Angle(face_vectors[22], face_vectors[23], face_vectors[24]);
+            face.angle_23_24_25 = (decimal)Maths.Angle(face_vectors[23], face_vectors[24], face_vectors[25]);
+            face.angle_24_25_26 = (decimal)Maths.Angle(face_vectors[24], face_vectors[25], face_vectors[26]);
+            face.angle_25_26_27 = (decimal)Maths.Angle(face_vectors[25], face_vectors[26], face_vectors[27]);
+            face.angle_26_27_28 = (decimal)Maths.Angle(face_vectors[26], face_vectors[27], face_vectors[28]);
+            face.angle_27_28_29 = (decimal)Maths.Angle(face_vectors[27], face_vectors[28], face_vectors[29]);
+            face.angle_28_29_30 = (decimal)Maths.Angle(face_vectors[28], face_vectors[29], face_vectors[30]);
+            face.angle_29_30_34 = (decimal)Maths.Angle(face_vectors[29], face_vectors[30], face_vectors[34]);
+            face.angle_30_34_35 = (decimal)Maths.Angle(face_vectors[30], face_vectors[34], face_vectors[35]);
+            face.angle_34_35_36 = (decimal)Maths.Angle(face_vectors[34], face_vectors[35], face_vectors[36]);
+            face.angle_35_36_37 = (decimal)Maths.Angle(face_vectors[35], face_vectors[36], face_vectors[37]);
+            face.angle_36_37_38 = (decimal)Maths.Angle(face_vectors[36], face_vectors[37], face_vectors[38]);
+            face.angle_37_38_39 = (decimal)Maths.Angle(face_vectors[37], face_vectors[38], face_vectors[39]);
+            face.angle_38_39_40 = (decimal)Maths.Angle(face_vectors[38], face_vectors[39], face_vectors[40]);
+            face.angle_39_40_41 = (decimal)Maths.Angle(face_vectors[39], face_vectors[40], face_vectors[41]);
+            face.angle_40_41_42 = (decimal)Maths.Angle(face_vectors[40], face_vectors[41], face_vectors[42]);
+            face.angle_41_42_43 = (decimal)Maths.Angle(face_vectors[41], face_vectors[42], face_vectors[43]);
+            face.angle_42_43_44 = (decimal)Maths.Angle(face_vectors[42], face_vectors[43], face_vectors[44]);
+            face.angle_43_44_45 = (decimal)Maths.Angle(face_vectors[43], face_vectors[44], face_vectors[45]);
+            face.angle_44_45_46 = (decimal)Maths.Angle(face_vectors[44], face_vectors[45], face_vectors[46]);
+            face.angle_45_46_47 = (decimal)Maths.Angle(face_vectors[45], face_vectors[46], face_vectors[47]);
+            face.angle_46_47_52 = (decimal)Maths.Angle(face_vectors[46], face_vectors[47], face_vectors[52]);
+            face.angle_47_52_53 = (decimal)Maths.Angle(face_vectors[47], face_vectors[52], face_vectors[53]);
+            face.angle_52_53_55 = (decimal)Maths.Angle(face_vectors[52], face_vectors[53], face_vectors[55]);
+            face.angle_53_55_56 = (decimal)Maths.Angle(face_vectors[53], face_vectors[55], face_vectors[56]);
+            face.angle_55_56_57 = (decimal)Maths.Angle(face_vectors[55], face_vectors[56], face_vectors[57]);
+            face.angle_56_57_58 = (decimal)Maths.Angle(face_vectors[56], face_vectors[57], face_vectors[58]);
+            face.angle_57_58_59 = (decimal)Maths.Angle(face_vectors[57], face_vectors[58], face_vectors[59]);
+            face.angle_58_59_60 = (decimal)Maths.Angle(face_vectors[58], face_vectors[59], face_vectors[60]);
+            face.angle_59_60_61 = (decimal)Maths.Angle(face_vectors[59], face_vectors[60], face_vectors[61]);
+            face.angle_60_61_62 = (decimal)Maths.Angle(face_vectors[60], face_vectors[61], face_vectors[62]);
+            face.angle_61_62_63 = (decimal)Maths.Angle(face_vectors[61], face_vectors[62], face_vectors[63]);
+            face.angle_62_63_68 = (decimal)Maths.Angle(face_vectors[62], face_vectors[63], face_vectors[68]);
+            face.angle_63_68_70 = (decimal)Maths.Angle(face_vectors[63], face_vectors[68], face_vectors[70]);
+            face.angle_68_70_72 = (decimal)Maths.Angle(face_vectors[68], face_vectors[70], face_vectors[72]);
+            face.angle_70_72_74 = (decimal)Maths.Angle(face_vectors[70], face_vectors[72], face_vectors[74]);
+            face.angle_72_74_75 = (decimal)Maths.Angle(face_vectors[72], face_vectors[74], face_vectors[75]);
+            face.angle_74_75_76 = (decimal)Maths.Angle(face_vectors[74], face_vectors[75], face_vectors[76]);
+            face.angle_75_76_77 = (decimal)Maths.Angle(face_vectors[75], face_vectors[76], face_vectors[77]);
+            face.angle_76_77_78 = (decimal)Maths.Angle(face_vectors[76], face_vectors[77], face_vectors[78]);
+            face.angle_77_78_92 = (decimal)Maths.Angle(face_vectors[77], face_vectors[78], face_vectors[92]);
+            face.angle_78_92_93 = (decimal)Maths.Angle(face_vectors[78], face_vectors[92], face_vectors[93]);
+            face.angle_92_93_94 = (decimal)Maths.Angle(face_vectors[92], face_vectors[93], face_vectors[94]);
+            face.angle_93_94_95 = (decimal)Maths.Angle(face_vectors[93], face_vectors[94], face_vectors[95]);
+            face.angle_94_95_96 = (decimal)Maths.Angle(face_vectors[94], face_vectors[95], face_vectors[96]);
+            face.angle_95_96_97 = (decimal)Maths.Angle(face_vectors[95], face_vectors[96], face_vectors[97]);
+            face.angle_96_97_98 = (decimal)Maths.Angle(face_vectors[96], face_vectors[97], face_vectors[98]);
+            face.angle_97_98_99 = (decimal)Maths.Angle(face_vectors[97], face_vectors[98], face_vectors[99]);
+            face.angle_98_99_100 = (decimal)Maths.Angle(face_vectors[98], face_vectors[99], face_vectors[100]);
+            face.angle_99_100_101 = (decimal)Maths.Angle(face_vectors[99], face_vectors[100], face_vectors[101]);
+            face.angle_100_101_102 = (decimal)Maths.Angle(face_vectors[100], face_vectors[101], face_vectors[102]);
+            face.angle_101_102_103 = (decimal)Maths.Angle(face_vectors[101], face_vectors[102], face_vectors[103]);
+            face.angle_102_103_104 = (decimal)Maths.Angle(face_vectors[102], face_vectors[103], face_vectors[104]);
+            face.angle_103_104_105 = (decimal)Maths.Angle(face_vectors[103], face_vectors[104], face_vectors[105]);
+            face.angle_104_105_106 = (decimal)Maths.Angle(face_vectors[104], face_vectors[105], face_vectors[106]);
+            face.angle_105_106_107 = (decimal)Maths.Angle(face_vectors[105], face_vectors[106], face_vectors[107]);
+            face.angle_106_107_108 = (decimal)Maths.Angle(face_vectors[106], face_vectors[107], face_vectors[108]);
+            face.angle_107_108_109 = (decimal)Maths.Angle(face_vectors[107], face_vectors[108], face_vectors[109]);
+            face.angle_108_109_110 = (decimal)Maths.Angle(face_vectors[108], face_vectors[109], face_vectors[110]);
+            face.angle_109_110_111 = (decimal)Maths.Angle(face_vectors[109], face_vectors[110], face_vectors[111]);
+            face.angle_110_111_112 = (decimal)Maths.Angle(face_vectors[110], face_vectors[111], face_vectors[112]);
+            face.angle_111_112_0 = (decimal)Maths.Angle(face_vectors[111], face_vectors[112], face_vectors[0]);
+            face.angle_112_0_1 = (decimal)Maths.Angle(face_vectors[112], face_vectors[0], face_vectors[1]);
+
+
+            face.magRatio_0_1_2 = (decimal)Maths.Ratio(face_vectors[0], face_vectors[1], face_vectors[2]);
+            face.magRatio_1_2_3 = (decimal)Maths.Ratio(face_vectors[1], face_vectors[2], face_vectors[3]);
+            face.magRatio_2_3_4 = (decimal)Maths.Ratio(face_vectors[2], face_vectors[3], face_vectors[4]);
+            face.magRatio_3_4_5 = (decimal)Maths.Ratio(face_vectors[3], face_vectors[4], face_vectors[5]);
+            face.magRatio_4_5_6 = (decimal)Maths.Ratio(face_vectors[4], face_vectors[5], face_vectors[6]);
+            face.magRatio_5_6_11 = (decimal)Maths.Ratio(face_vectors[5], face_vectors[6], face_vectors[11]);
+            face.magRatio_6_11_12 = (decimal)Maths.Ratio(face_vectors[6], face_vectors[11], face_vectors[12]);
+            face.magRatio_11_12_13 = (decimal)Maths.Ratio(face_vectors[11], face_vectors[12], face_vectors[13]);
+            face.magRatio_12_13_14 = (decimal)Maths.Ratio(face_vectors[12], face_vectors[13], face_vectors[14]);
+            face.magRatio_13_14_19 = (decimal)Maths.Ratio(face_vectors[13], face_vectors[14], face_vectors[19]);
+            face.magRatio_14_19_20 = (decimal)Maths.Ratio(face_vectors[14], face_vectors[19], face_vectors[20]);
+            face.magRatio_19_20_22 = (decimal)Maths.Ratio(face_vectors[19], face_vectors[20], face_vectors[22]);
+            face.magRatio_20_22_23 = (decimal)Maths.Ratio(face_vectors[20], face_vectors[22], face_vectors[23]);
+            face.magRatio_22_23_24 = (decimal)Maths.Ratio(face_vectors[22], face_vectors[23], face_vectors[24]);
+            face.magRatio_23_24_25 = (decimal)Maths.Ratio(face_vectors[23], face_vectors[24], face_vectors[25]);
+            face.magRatio_24_25_26 = (decimal)Maths.Ratio(face_vectors[24], face_vectors[25], face_vectors[26]);
+            face.magRatio_25_26_27 = (decimal)Maths.Ratio(face_vectors[25], face_vectors[26], face_vectors[27]);
+            face.magRatio_26_27_28 = (decimal)Maths.Ratio(face_vectors[26], face_vectors[27], face_vectors[28]);
+            face.magRatio_27_28_29 = (decimal)Maths.Ratio(face_vectors[27], face_vectors[28], face_vectors[29]);
+            face.magRatio_28_29_30 = (decimal)Maths.Ratio(face_vectors[28], face_vectors[29], face_vectors[30]);
+            face.magRatio_29_30_34 = (decimal)Maths.Ratio(face_vectors[29], face_vectors[30], face_vectors[34]);
+            face.magRatio_30_34_35 = (decimal)Maths.Ratio(face_vectors[30], face_vectors[34], face_vectors[35]);
+            face.magRatio_34_35_36 = (decimal)Maths.Ratio(face_vectors[34], face_vectors[35], face_vectors[36]);
+            face.magRatio_35_36_37 = (decimal)Maths.Ratio(face_vectors[35], face_vectors[36], face_vectors[37]);
+            face.magRatio_36_37_38 = (decimal)Maths.Ratio(face_vectors[36], face_vectors[37], face_vectors[38]);
+            face.magRatio_37_38_39 = (decimal)Maths.Ratio(face_vectors[37], face_vectors[38], face_vectors[39]);
+            face.magRatio_38_39_40 = (decimal)Maths.Ratio(face_vectors[38], face_vectors[39], face_vectors[40]);
+            face.magRatio_39_40_41 = (decimal)Maths.Ratio(face_vectors[39], face_vectors[40], face_vectors[41]);
+            face.magRatio_40_41_42 = (decimal)Maths.Ratio(face_vectors[40], face_vectors[41], face_vectors[42]);
+            face.magRatio_41_42_43 = (decimal)Maths.Ratio(face_vectors[41], face_vectors[42], face_vectors[43]);
+            face.magRatio_42_43_44 = (decimal)Maths.Ratio(face_vectors[42], face_vectors[43], face_vectors[44]);
+            face.magRatio_43_44_45 = (decimal)Maths.Ratio(face_vectors[43], face_vectors[44], face_vectors[45]);
+            face.magRatio_44_45_46 = (decimal)Maths.Ratio(face_vectors[44], face_vectors[45], face_vectors[46]);
+            face.magRatio_45_46_47 = (decimal)Maths.Ratio(face_vectors[45], face_vectors[46], face_vectors[47]);
+            face.magRatio_46_47_52 = (decimal)Maths.Ratio(face_vectors[46], face_vectors[47], face_vectors[52]);
+            face.magRatio_47_52_53 = (decimal)Maths.Ratio(face_vectors[47], face_vectors[52], face_vectors[53]);
+            face.magRatio_52_53_55 = (decimal)Maths.Ratio(face_vectors[52], face_vectors[53], face_vectors[55]);
+            face.magRatio_53_55_56 = (decimal)Maths.Ratio(face_vectors[53], face_vectors[55], face_vectors[56]);
+            face.magRatio_55_56_57 = (decimal)Maths.Ratio(face_vectors[55], face_vectors[56], face_vectors[57]);
+            face.magRatio_56_57_58 = (decimal)Maths.Ratio(face_vectors[56], face_vectors[57], face_vectors[58]);
+            face.magRatio_57_58_59 = (decimal)Maths.Ratio(face_vectors[57], face_vectors[58], face_vectors[59]);
+            face.magRatio_58_59_60 = (decimal)Maths.Ratio(face_vectors[58], face_vectors[59], face_vectors[60]);
+            face.magRatio_59_60_61 = (decimal)Maths.Ratio(face_vectors[59], face_vectors[60], face_vectors[61]);
+            face.magRatio_60_61_62 = (decimal)Maths.Ratio(face_vectors[60], face_vectors[61], face_vectors[62]);
+            face.magRatio_61_62_63 = (decimal)Maths.Ratio(face_vectors[61], face_vectors[62], face_vectors[63]);
+            face.magRatio_62_63_68 = (decimal)Maths.Ratio(face_vectors[62], face_vectors[63], face_vectors[68]);
+            face.magRatio_63_68_70 = (decimal)Maths.Ratio(face_vectors[63], face_vectors[68], face_vectors[70]);
+            face.magRatio_68_70_72 = (decimal)Maths.Ratio(face_vectors[68], face_vectors[70], face_vectors[72]);
+            face.magRatio_70_72_74 = (decimal)Maths.Ratio(face_vectors[70], face_vectors[72], face_vectors[74]);
+            face.magRatio_72_74_75 = (decimal)Maths.Ratio(face_vectors[72], face_vectors[74], face_vectors[75]);
+            face.magRatio_74_75_76 = (decimal)Maths.Ratio(face_vectors[74], face_vectors[75], face_vectors[76]);
+            face.magRatio_75_76_77 = (decimal)Maths.Ratio(face_vectors[75], face_vectors[76], face_vectors[77]);
+            face.magRatio_76_77_78 = (decimal)Maths.Ratio(face_vectors[76], face_vectors[77], face_vectors[78]);
+            face.magRatio_77_78_92 = (decimal)Maths.Ratio(face_vectors[77], face_vectors[78], face_vectors[92]);
+            face.magRatio_78_92_93 = (decimal)Maths.Ratio(face_vectors[78], face_vectors[92], face_vectors[93]);
+            face.magRatio_92_93_94 = (decimal)Maths.Ratio(face_vectors[92], face_vectors[93], face_vectors[94]);
+            face.magRatio_93_94_95 = (decimal)Maths.Ratio(face_vectors[93], face_vectors[94], face_vectors[95]);
+            face.magRatio_94_95_96 = (decimal)Maths.Ratio(face_vectors[94], face_vectors[95], face_vectors[96]);
+            face.magRatio_95_96_97 = (decimal)Maths.Ratio(face_vectors[95], face_vectors[96], face_vectors[97]);
+            face.magRatio_96_97_98 = (decimal)Maths.Ratio(face_vectors[96], face_vectors[97], face_vectors[98]);
+            face.magRatio_97_98_99 = (decimal)Maths.Ratio(face_vectors[97], face_vectors[98], face_vectors[99]);
+            face.magRatio_98_99_100 = (decimal)Maths.Ratio(face_vectors[98], face_vectors[99], face_vectors[100]);
+            face.magRatio_99_100_101 = (decimal)Maths.Ratio(face_vectors[99], face_vectors[100], face_vectors[101]);
+            face.magRatio_100_101_102 = (decimal)Maths.Ratio(face_vectors[100], face_vectors[101], face_vectors[102]);
+            face.magRatio_101_102_103 = (decimal)Maths.Ratio(face_vectors[101], face_vectors[102], face_vectors[103]);
+            face.magRatio_102_103_104 = (decimal)Maths.Ratio(face_vectors[102], face_vectors[103], face_vectors[104]);
+            face.magRatio_103_104_105 = (decimal)Maths.Ratio(face_vectors[103], face_vectors[104], face_vectors[105]);
+            face.magRatio_104_105_106 = (decimal)Maths.Ratio(face_vectors[104], face_vectors[105], face_vectors[106]);
+            face.magRatio_105_106_107 = (decimal)Maths.Ratio(face_vectors[105], face_vectors[106], face_vectors[107]);
+            face.magRatio_106_107_108 = (decimal)Maths.Ratio(face_vectors[106], face_vectors[107], face_vectors[108]);
+            face.magRatio_107_108_109 = (decimal)Maths.Ratio(face_vectors[107], face_vectors[108], face_vectors[109]);
+            face.magRatio_108_109_110 = (decimal)Maths.Ratio(face_vectors[108], face_vectors[109], face_vectors[110]);
+            face.magRatio_109_110_111 = (decimal)Maths.Ratio(face_vectors[109], face_vectors[110], face_vectors[111]);
+            face.magRatio_110_111_112 = (decimal)Maths.Ratio(face_vectors[110], face_vectors[111], face_vectors[112]);
+            face.magRatio_111_112_0 = (decimal)Maths.Ratio(face_vectors[111], face_vectors[112], face_vectors[0]);
+            face.magRatio_112_0_1 = (decimal)Maths.Ratio(face_vectors[112], face_vectors[0], face_vectors[1]);
+
+
+
+            return face;
+        }
+
+        /// <summary>
+        /// Method used to calculate all of the face details, other than the name.
+        /// </summary>
+        /// <param name="face_vectors">array of Unit3D face vectors</param>
+        /// <returns>the face details, but not the name</returns>
+        private static Face get_face_old2(Unit3D[] face_vectors)
+        {
+            Face face = new Face();
+
+            face.angle_0_1 = (decimal)Maths.Angle(face_vectors[0], face_vectors[1], face_vectors[2]);
+
             face.angle_0_1 = (decimal)Vector3D.AngleBetween(new Vector3D(face_vectors[0].X, face_vectors[0].Y, face_vectors[0].Z), new Vector3D(face_vectors[1].X, face_vectors[1].Y, face_vectors[1].Z));
             face.angle_1_2 = (decimal)Vector3D.AngleBetween(new Vector3D(face_vectors[1].X, face_vectors[1].Y, face_vectors[1].Z), new Vector3D(face_vectors[2].X, face_vectors[2].Y, face_vectors[2].Z));
             face.angle_2_3 = (decimal)Vector3D.AngleBetween(new Vector3D(face_vectors[2].X, face_vectors[2].Y, face_vectors[2].Z), new Vector3D(face_vectors[3].X, face_vectors[3].Y, face_vectors[3].Z));

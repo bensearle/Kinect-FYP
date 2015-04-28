@@ -101,7 +101,7 @@ namespace FaceTrackingBasics
             }
 
             // draw joints
-            if (this.skeletonData != null && false)
+            if (this.skeletonData != null)
             {
                 int index = 0;
                 foreach (Skeleton skeleton in this.skeletonData)
@@ -490,9 +490,9 @@ namespace FaceTrackingBasics
                     faceModelPts.Add(new Point(this.facePoints[i].X + 0.5f, this.facePoints[i].Y + 0.5f));
                 }
 
-                for (int i = 0; i < 10; i++)
+                for (int i = 0; i < facialVectors.Count - 1; i++)
                 {
-                    
+                    drawingContext.DrawLine(new Pen(Brushes.Yellow, 1), Maths.ScalePoint(faceModelPts[facialVectors[i]]), Maths.ScalePoint(faceModelPts[facialVectors[i+1]]));
                 }
                 //Console.WriteLine("**");
                 //Unit3D dot0 = new Unit3D(faceModelPts[0].X,faceModelPts[0].Y,0);
@@ -665,7 +665,7 @@ namespace FaceTrackingBasics
 
                     // printFaceVectors(frame);
                     // commented for testing
-                    //SkeletonProcessing.TrackSkeleton(skeletonOfInterest, frame, skeletonIndex);
+                    SkeletonProcessing.TrackSkeleton(skeletonOfInterest, frame, skeletonIndex);
 
                     //EnumIndexableCollection<FeaturePoint, Vector3DF> face3D = frame.Get3DShape();
                     //EnumIndexableCollection<FeaturePoint, PointF> face2D = frame.GetProjected3DShape();

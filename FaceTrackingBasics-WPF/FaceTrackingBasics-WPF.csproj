@@ -93,6 +93,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Database\Database.cs" />
+    <Compile Include="Database\Face.cs" />
     <Compile Include="Models\JointPoints.cs" />
     <Compile Include="Models\JsonModel.cs" />
     <Compile Include="Models\Unit3D.cs" />
@@ -110,8 +112,6 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Database\Database.cs" />
-    <Compile Include="Database\Face.cs" />
     <Compile Include="FaceTrackingViewer.xaml.cs">
       <DependentUpon>FaceTrackingViewer.xaml</DependentUpon>
     </Compile>

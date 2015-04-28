@@ -57,18 +57,6 @@ namespace FaceTrackingBasics
             
         }
 
-        public static double Angle_from_coords(Unit3D a, Unit3D b, Unit3D c)
-        {
-            return Angle(
-                       Coords_to_vector(a, b),
-                       Coords_to_vector(b, c));
-        }
-
-        public static Unit3D Coords_to_vector(Unit3D a, Unit3D b)
-        {
-            return new Unit3D(a.X - b.X, a.Y - b.Y, a.Z - b.Z);
-        }
-
         public static double Lenth_ratio()
         {
             return 0;
@@ -77,11 +65,6 @@ namespace FaceTrackingBasics
         public static double Angle_ratio()
         {
             return 0;
-        }
-
-        public static System.Windows.Point MidwayPoint(System.Windows.Point p1, System.Windows.Point p2)
-        {
-            return new System.Windows.Point((p1.X + p2.X) / 2, (p1.Y + p2.Y) / 2);
         }
 
         /*
@@ -96,6 +79,12 @@ namespace FaceTrackingBasics
         {
             // if 0 then... throw new DivideByZeroException;
             return Magnitude(a1, a2) / Magnitude(b1, b2);
+        }
+
+        // ratio of 2 lines (a, b) and (b, c) in the line (a, b, c)
+        public static double Ratio(Unit3D a, Unit3D b, Unit3D c)
+        {
+            return Magnitude(a, b) / Magnitude(b, c);
         }
 
         // ratio of 2 vectors
@@ -132,6 +121,18 @@ namespace FaceTrackingBasics
             return Math.Sqrt(v.X * v.X + v.Y * v.Y + v.Z * v.Z);
         }
 
+        public static Unit3D CoordToVector(Unit3D a, Unit3D b)
+        {
+            return new Unit3D(a.X - b.X, a.Y - b.Y, a.Z - b.Z);
+        }
+
+        public static double Angle(Unit3D a, Unit3D b, Unit3D c)
+        {
+            return Angle(
+                       CoordToVector(a, b),
+                       CoordToVector(b, c));
+        }
+
         public static double Angle(Unit3D v1, Unit3D v2)
         {
             double v1_magnitude;
@@ -160,6 +161,11 @@ namespace FaceTrackingBasics
             angle_degrees = angle_radians * (180.0 / Math.PI);
 
             return angle_degrees;
+        }
+
+        public static System.Windows.Point MidwayPoint(System.Windows.Point p1, System.Windows.Point p2)
+        {
+            return new System.Windows.Point((p1.X + p2.X) / 2, (p1.Y + p2.Y) / 2);
         }
 
         public static System.Windows.Point ScalePoint(System.Windows.Point p)
