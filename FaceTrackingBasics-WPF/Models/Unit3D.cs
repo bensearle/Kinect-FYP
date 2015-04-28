@@ -10,25 +10,25 @@ namespace FaceTrackingBasics.Models
 {
     public class Unit3D
     {
-        public double X { get; set; }
-        public double Y { get; set; }
-        public double Z { get; set; }
+        public decimal X { get; set; }
+        public decimal Y { get; set; }
+        public decimal Z { get; set; }
 
         public Unit3D(Joint joint)
         {
-            X = joint.Position.X;
-            Y = joint.Position.Y;
-            Z = joint.Position.Z;
+            X = (decimal)joint.Position.X;
+            Y = (decimal)joint.Position.Y;
+            Z = (decimal)joint.Position.Z;
         }
 
         public Unit3D(Vector3DF vector)
         {
-            X = vector.X;
-            Y = vector.Y;
-            Z = vector.Z;
+            X = (decimal)vector.X;
+            Y = (decimal)vector.Y;
+            Z = (decimal)vector.Z;
         }
 
-        public Unit3D(double x, double y, double z)
+        public Unit3D(decimal x, decimal y, decimal z)
         {
             X = x;
             Y = y;
