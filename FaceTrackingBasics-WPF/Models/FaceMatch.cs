@@ -17,6 +17,8 @@ namespace FaceTrackingBasics.Models
         private int count = 0;
         private decimal mean;
         private decimal lowest = 1;
+        private decimal totalDifference = 0;
+        private decimal totalMatch = 1; // 1 - totalDifference
         /* public double median { get; set; }
          public double maximum { get; set; }
          public double minimum { get; set; }
@@ -40,18 +42,29 @@ namespace FaceTrackingBasics.Models
             return lowest;
         }
 
+        public decimal GetTotalDifference()
+        {
+            return totalDifference;
+        }
+
+        public decimal GetTotalMatch()
+        {
+            return totalMatch;
+        }
+
         private void calculateAverages()
         {
             foreach (decimal match in matches)
             {
                 total += match; // add to the total
                 count++; // increment to count
-
+                totalDifference += 1 - match;
                 if (match < lowest)
                 {
                     lowest = match;
                 }
             }
+            totalMatch = 1 - totalDifference;
             mean = total / count;
         }
         private void getMatches()

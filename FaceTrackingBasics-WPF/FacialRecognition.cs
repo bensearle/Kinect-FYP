@@ -302,17 +302,19 @@ namespace FaceTrackingBasics
                             select b;
 
                 Console.WriteLine("Searching database...");
-
+                Console.WriteLine("Name     :: Total Match           :: Total Difference            :: Mean        ");
                 foreach (var found_face in query)
                 {
                     FaceMatch fm = new FaceMatch(found_face, face);
                     //decimal closeness = fm.GetMean();
-                    decimal closeness = fm.GetLowest();
+                    decimal closeness = fm.GetTotalDifference();
                     if (closeness > match)
                     {
                         match = closeness;
                         name = found_face.name;
                     }
+                    Console.WriteLine(String.Format("Checked {0} :: {1} :: {2} :: {3}",
+                        found_face.name, fm.GetTotalMatch(), fm.GetTotalDifference(), fm.GetMean()));
 
                     Console.WriteLine("checked " + found_face.name + " :: " + closeness);
                 }
