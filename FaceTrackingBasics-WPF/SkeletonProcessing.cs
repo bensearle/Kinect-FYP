@@ -147,7 +147,7 @@ namespace KinectTrackerAndBroadcaster
                 processSkeletonJoints(skeletonIndex); // create thread for tracking joints
 
                 // create the JSON for this skeleton
-                jsonSkeleton[skeletonIndex] = "\"Skeleton_" + skeletonIndex + "\": { " + jsonJoints[skeletonIndex] + jsonNames[skeletonIndex] + "}";
+                jsonSkeleton[skeletonIndex] = "{\"Skeleton_" + skeletonIndex + "\": { " + jsonJoints[skeletonIndex] + jsonNames[skeletonIndex] + "}}";
 
                 //Console.WriteLine(skeletonIndex + " --" + jsonSkeleton[skeletonIndex]);
                 skeletonReady[skeletonIndex] = false; // change to false, so that more data can be added
@@ -184,12 +184,24 @@ namespace KinectTrackerAndBroadcaster
 
         private static void sendJson()
         {
+            readyToSend = false;
+
+            for (int i = 0; i < 6; i++)
+            {
+                if (jsonSkeleton[i] != "") {
+                    UdpSend.UdpBroadcastMessage(jsonSkeleton[i], 4);
+                    jsonSkeleton[i] = "";
+                }
+            }
+
+            // sending all skeletons at once
+            /*
             JsonModel js = new JsonModel(jsonSkeleton);
             jsonString = js.JsonString;
 
             UdpSend.UdpBroadcastMessage(jsonString, 4);
             readyToSend = false;
-
+            */
             while (!readyToSend)
             {
                 // wait until ready to send
