@@ -293,7 +293,7 @@ namespace KinectTrackerAndBroadcaster
             using (var db = new Database.Database())
             {
                 //double target_match = (double)face.face_code;
-                decimal match = Decimal.MinValue; // the closest match
+                double match = Double.MinValue; // the closest match
                 string name = ""; // name of the closest match
 
                 // Display all Blogs from the database
@@ -303,21 +303,55 @@ namespace KinectTrackerAndBroadcaster
 
                 Console.WriteLine("Searching database...");
                 Console.WriteLine("Name       :: Total Match                 :: Total Difference                        :: Mean        ");
+
+                List<FaceMatch> faceMatches = new List<FaceMatch> { };
+
                 foreach (var found_face in query)
                 {
                     FaceMatch fm = new FaceMatch(found_face, face);
+                    faceMatches.Add(fm);
                     //decimal closeness = fm.GetMean();
-                    decimal closeness = fm.GetTotalDifference();
+                    /*
+                    decimal closeness = fm.GetMatchCount();
                     if (closeness > match)
                     {
                         match = closeness;
                         name = found_face.name;
                     }
                     Console.WriteLine(String.Format("Checked {0} :: {1} :: {2} :: {3}",
-                        found_face.name, fm.GetTotalMatch(), fm.GetTotalDifference(), fm.GetMean()));
-
+                        found_face.name, fm.GetMatchCount(), fm.GetTotalMatch(), fm.GetMean()));
+                    */
                     //Console.WriteLine("checked " + found_face.name + " :: " + closeness);
                 }
+
+                foreach (FaceMatch a in faceMatches)
+                {
+                    string nameA = a.Name;
+                    double facesCount = 0;
+                    double matchCountTotal = 0;
+                    foreach (FaceMatch b in faceMatches)
+                    {
+                        if (nameA == b.Name)
+                        {
+                            facesCount++;
+                            matchCountTotal += b.GetMatchCount();
+                        }
+                    }
+                    a.AverageMatchCount = matchCountTotal / facesCount;
+                }
+
+                foreach (FaceMatch fm in faceMatches)
+                {
+                    double closeness = fm.AverageMatchCount;
+                    if (closeness > match)
+                    {
+                        match = closeness;
+                        name = fm.Name;
+                    }
+                    Console.WriteLine(String.Format("Checked {0} :: {1} :: {2} :: {3} :: {4}",
+                        fm.Name,closeness, fm.GetMatchCount(), fm.GetTotalMatch(), fm.GetMean()));
+                }
+
                 //MainWindow
                 Console.WriteLine("closest match: " + name + " :: " + match); // write the name of the closest match
                 return name;

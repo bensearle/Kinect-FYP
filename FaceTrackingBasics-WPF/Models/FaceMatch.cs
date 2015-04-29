@@ -9,6 +9,7 @@ namespace KinectTrackerAndBroadcaster.Models
 {
     public class FaceMatch
     {
+        public String Name { get; set; }
         private Face faceA { get; set; }
         private Face faceB { get; set; }
         private List<decimal?> matches = new List<decimal?>();
@@ -19,6 +20,10 @@ namespace KinectTrackerAndBroadcaster.Models
         private decimal lowest = 1;
         private decimal totalDifference = 0;
         private decimal totalMatch = 1; // 1 - totalDifference
+        private int matchCount = 0; // how many of the matches are above 99.9%
+
+        public double AverageMatchCount { get; set; }
+
         /* public double median { get; set; }
          public double maximum { get; set; }
          public double minimum { get; set; }
@@ -27,6 +32,7 @@ namespace KinectTrackerAndBroadcaster.Models
          */
         public FaceMatch(Face a, Face b)
         {
+            Name = a.name;
             faceA = a;
             faceB = b;
             getMatches();
@@ -52,6 +58,11 @@ namespace KinectTrackerAndBroadcaster.Models
             return totalMatch;
         }
 
+        public int GetMatchCount()
+        {
+            return matchCount;
+        }
+
         private void calculateAverages()
         {
             foreach (decimal match in matches)
@@ -62,6 +73,10 @@ namespace KinectTrackerAndBroadcaster.Models
                 if (match < lowest)
                 {
                     lowest = match;
+                }
+                if (match > .99999m)
+                {
+                    matchCount++;
                 }
             }
             totalMatch = 1 - totalDifference;
