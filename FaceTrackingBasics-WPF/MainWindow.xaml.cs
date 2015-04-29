@@ -162,17 +162,26 @@ namespace KinectTrackerAndBroadcaster
 
         internal bool recognize = false;
 
+        /// <summary>
+        /// add a new person in to the system
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e">button pressed</param>
         private void Button_Add_Face(object sender, RoutedEventArgs e)
         {
             SkeletonProcessing.NewPerson(textName.Text);
-            //string name = textName.Text;
-            //SkeletonProcessing.addNewFace("Ben at Work");
         }
+
+        /// <summary>
+        /// refresh skeleton tracking and recognising
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e">button pressed</param>
         private void Button_Get_Face(object sender, RoutedEventArgs e)
         {
-            for (int i = 0; i < 6; i++)
+            for (int i = 0; i < 6; i++) // iterate skeletons
             {
-                SkeletonProcessing.UntrackSkeleton(i);
+                SkeletonProcessing.UntrackSkeleton(i); // untrack skeletons
             }
         }
     }

@@ -8,14 +8,18 @@ namespace KinectTrackerAndBroadcaster.Models
 {
     class JsonModel
     {
-        public string JsonString = "";
+        public string JsonString = ""; // json string for all skeletons
 
+        /// <summary>
+        /// create json string for all skeleton from array of json strings for each skeleton
+        /// </summary>
+        /// <param name="skeletons">array of all skeleton json strings</param>
         public JsonModel(string[] skeletons)
         {
-            bool firstSkeleton = true;
+            bool firstSkeleton = true; // bool to know whether it is the first skeleton
 
-            JsonString += "{";
-            for (int i = 0; i < skeletons.Length; i++)
+            JsonString += "{"; // start json string
+            for (int i = 0; i < skeletons.Length; i++) // iterate skeleton array
             {
                 if (skeletons[i].Length > 0) // if there is json for that skeleton
                 {
@@ -24,11 +28,11 @@ namespace KinectTrackerAndBroadcaster.Models
                         JsonString += ","; // put a comma before
                     }
 
-                    JsonString += skeletons[i]; // at the skelton json to the string
-                    firstSkeleton = false;
+                    JsonString += skeletons[i]; // add the skelton json to the string
+                    firstSkeleton = false; // no longer the first skeleton
                 }
             }
-            JsonString += "}";
+            JsonString += "}"; // end of json string
         }
     }
 }

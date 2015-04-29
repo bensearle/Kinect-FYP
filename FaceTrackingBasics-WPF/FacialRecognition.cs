@@ -18,7 +18,7 @@ namespace KinectTrackerAndBroadcaster
         /// <returns>the name of the recognised person</returns>
         public String Process(EnumIndexableCollection<FeaturePoint, Vector3DF> facePoints3D)
         {
-            return process_face(facePoints3D, "");
+            return process_face(facePoints3D, ""); // return process_face, passing the points and no name
         }
 
         /// <summary>
@@ -29,7 +29,7 @@ namespace KinectTrackerAndBroadcaster
         /// <returns>the name of the person</returns>
         public String Process(EnumIndexableCollection<FeaturePoint, Vector3DF> facePoints3D, String name)
         {
-            return process_face(facePoints3D, name);
+            return process_face(facePoints3D, name); // return process_face, passing the points and name
         }
 
         /// <summary>
@@ -37,33 +37,31 @@ namespace KinectTrackerAndBroadcaster
         /// </summary>
         /// <param name="frame">the face track frame</param>
         /// <param name="name">name of the person or blank</param>
-        /// <returns></returns>
+        /// <returns>the name of the person</returns>
         private String process_face(EnumIndexableCollection<FeaturePoint, Vector3DF> facePoints3D, String name)
         {
             // EnumIndexableCollection<FeaturePoint, Vector3DF> facePoints3D = frame.Get3DShape(); // get 3D face vectors
             Unit3D[] face_vectors = new Unit3D[121]; // create Unit3D array for the face vectors
 
-            int index = 0;
-            foreach (Vector3DF vector in facePoints3D)
+            int index = 0; // index number
+            foreach (Vector3DF vector in facePoints3D) // iterate through the points
             {
                 Unit3D face_vector = new Unit3D(vector); // convert Vector3DF to Unit3D
                 face_vectors[index] = face_vector; // add face vector to array
-                index++;
+                index++; // increment index
             }
 
             Face face = get_face(face_vectors); // returns a face without a name
 
-            if (name == "")
+            if (name == "") // if face is to be recognised
             {
-                // face is to be recognised
-                return get_match(face); // get the nearest match of the face
+                return get_match(face); // return the name of nearest match to the face
             }
-            else
+            else // face is to be added to the database
             {
-                // face is to be added to the database
                 face.name = name; // set the face name
                 add_to_db(face); // add the face to the database
-                return name;
+                return name; // return the name
             }
         }
 
@@ -74,8 +72,8 @@ namespace KinectTrackerAndBroadcaster
         /// <returns>the face details, but not the name</returns>
         private static Face get_face(Unit3D[] face_vectors)
         {
-            Face face = new Face();
-
+            Face face = new Face(); // initialize the face
+            // calculate angles
             face.angle_0_44_45 = Maths.Angle(face_vectors[0], face_vectors[44], face_vectors[45]);
             face.angle_44_45_47 = Maths.Angle(face_vectors[44], face_vectors[45], face_vectors[47]);
             face.angle_45_47_62 = Maths.Angle(face_vectors[45], face_vectors[47], face_vectors[62]);
@@ -175,7 +173,7 @@ namespace KinectTrackerAndBroadcaster
             face.angle_0_20_53 = Maths.Angle(face_vectors[0], face_vectors[20], face_vectors[53]);
             face.angle_20_53_2 = Maths.Angle(face_vectors[20], face_vectors[53], face_vectors[2]);
             face.angle_53_2_6 = Maths.Angle(face_vectors[53], face_vectors[2], face_vectors[6]);
-
+            // calculate magnitude ratios
             face.magRatio_0_44_45 = Maths.Ratio(face_vectors[0], face_vectors[44], face_vectors[45]);
             face.magRatio_44_45_47 = Maths.Ratio(face_vectors[44], face_vectors[45], face_vectors[47]);
             face.magRatio_45_47_62 = Maths.Ratio(face_vectors[45], face_vectors[47], face_vectors[62]);
@@ -275,28 +273,35 @@ namespace KinectTrackerAndBroadcaster
             face.magRatio_0_20_53 = Maths.Ratio(face_vectors[0], face_vectors[20], face_vectors[53]);
             face.magRatio_20_53_2 = Maths.Ratio(face_vectors[20], face_vectors[53], face_vectors[2]);
             face.magRatio_53_2_6 = Maths.Ratio(face_vectors[53], face_vectors[2], face_vectors[6]);
-
-            return face;
+            return face; // return the face
         }
 
+        /// <summary>
+        /// add face data and name to database
+        /// </summary>
+        /// <param name="face">face data</param>
         private static void add_to_db(Face face)
         {
-            using (var db = new Database.Database())
+            using (var db = new Database.Database()) // use the database
             {
                 db.Faces.Add(face); // add the face to the database
                 db.SaveChanges(); // update the database
             }
         }
 
+        /// <summary>
+        /// compare face with faces in the database to find closest match
+        /// </summary>
+        /// <param name="face">face data</param>
+        /// <returns>the name of the closest match</returns>
         private static String get_match(Face face)
         {
-            using (var db = new Database.Database())
+            using (var db = new Database.Database()) // using the database
             {
-                //double target_match = (double)face.face_code;
                 double match = Double.MinValue; // the closest match
                 string name = ""; // name of the closest match
 
-                // Display all Blogs from the database
+                // get all faces from the database
                 var query = from b in db.Faces
                             orderby b.name
                             select b;
@@ -304,12 +309,12 @@ namespace KinectTrackerAndBroadcaster
                 Console.WriteLine("Searching database...");
                 Console.WriteLine("Name       :: Total Match                 :: Total Difference                        :: Mean        ");
 
-                List<FaceMatch> faceMatches = new List<FaceMatch> { };
+                List<FaceMatch> faceMatches = new List<FaceMatch> { }; // list of all face comparisons
 
-                foreach (var found_face in query)
+                foreach (var found_face in query) // iterate faces from database
                 {
-                    FaceMatch fm = new FaceMatch(found_face, face);
-                    faceMatches.Add(fm);
+                    FaceMatch fm = new FaceMatch(found_face, face); // compare database face with unknown face
+                    faceMatches.Add(fm); // add comparison to list
                     //decimal closeness = fm.GetMean();
                     /*
                     decimal closeness = fm.GetMatchCount();
@@ -324,29 +329,29 @@ namespace KinectTrackerAndBroadcaster
                     //Console.WriteLine("checked " + found_face.name + " :: " + closeness);
                 }
 
-                foreach (FaceMatch a in faceMatches)
+                foreach (FaceMatch a in faceMatches) // itereate all face comparisons
                 {
-                    string nameA = a.Name;
-                    double facesCount = 0;
-                    double matchCountTotal = 0;
-                    foreach (FaceMatch b in faceMatches)
+                    string nameA = a.Name; // get the name
+                    double facesCount = 0; // total compaisons with the same name
+                    double matchCountTotal = 0; // total match
+                    foreach (FaceMatch b in faceMatches) // iterate all face comparisons
                     {
-                        if (nameA == b.Name)
+                        if (nameA == b.Name) // if names are the same
                         {
-                            facesCount++;
-                            matchCountTotal += b.GetMatchCount();
+                            facesCount++; // increment count
+                            matchCountTotal += b.GetMatchCount(); // increase the total match
                         }
                     }
-                    a.AverageMatchCount = matchCountTotal / facesCount;
+                    a.AverageMatchCount = matchCountTotal / facesCount; // set the average match for this person
                 }
 
-                foreach (FaceMatch fm in faceMatches)
+                foreach (FaceMatch fm in faceMatches) // iterate all face comparisons
                 {
-                    double closeness = fm.AverageMatchCount;
-                    if (closeness > match)
+                    double closeness = fm.AverageMatchCount; // get the average face match
+                    if (closeness > match) // if match is closer than previous comparisons
                     {
-                        match = closeness;
-                        name = fm.Name;
+                        match = closeness; // set new closest match
+                        name = fm.Name; // set the name
                     }
                     Console.WriteLine(String.Format("Checked {0} :: {1} :: {2} :: {3} :: {4}",
                         fm.Name,closeness, fm.GetMatchCount(), fm.GetTotalMatch(), fm.GetMean()));
@@ -354,7 +359,7 @@ namespace KinectTrackerAndBroadcaster
 
                 //MainWindow
                 Console.WriteLine("closest match: " + name + " :: " + match); // write the name of the closest match
-                return name;
+                return name; // return name of the closest match
             }
         }
     }

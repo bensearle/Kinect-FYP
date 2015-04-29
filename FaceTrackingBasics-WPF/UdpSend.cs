@@ -10,79 +10,27 @@ namespace KinectTrackerAndBroadcaster
 {
     public class UdpSend
     {
-
-        public static void Start()
-        {
-
-            byte[] data = new byte[1024];
-            string input, stringData;
-            IPEndPoint ipep = new IPEndPoint(
-                            IPAddress.Parse("192.168.1.255"), 4);
-
-            Socket server = new Socket(AddressFamily.InterNetwork,
-                           SocketType.Dgram, ProtocolType.Udp);
-
-
-            string welcome = "Hello, are you there?";
-            data = Encoding.ASCII.GetBytes(welcome);
-            server.SendTo(data, data.Length, SocketFlags.None, ipep);
-
-            
-            IPEndPoint sender = new IPEndPoint(IPAddress.Any, 0);
-            EndPoint Remote = (EndPoint)sender;
-
-            data = new byte[1024];
-            int recv = server.ReceiveFrom(data, ref Remote);
-
-            Console.WriteLine("Message received from {0}:", Remote.ToString());
-            Console.WriteLine("!!!!!!!!!!!");
-            Console.WriteLine(Encoding.ASCII.GetString(data, 0, recv));
-            Console.WriteLine("!!!!!!!!!!!");
-
-            while (true)
-            {
-                input = Console.ReadLine();
-                if (input == "exit")
-                    break;
-                server.SendTo(Encoding.ASCII.GetBytes(input), Remote);
-                data = new byte[1024];
-                recv = server.ReceiveFrom(data, ref Remote);
-                Console.WriteLine("!!!!!!!!!!!***");
-                stringData = Encoding.ASCII.GetString(data, 0, recv);
-                Console.WriteLine("!!!!!!!!!!!***");
-                Console.WriteLine(stringData);
-            }
-            Console.WriteLine("Stopping client");
-            server.Close();
-        }
-
         /// <summary>
-        /// Use this static method to broadcast UDP simple strings.
+        /// broadcast udp message over given port
         /// </summary>
-        /// <param name="message">String message to be broadcast as ASCII</param>
-        /// <param name="portNum">Port number to transmist from and to</param>
-        /// <param name="yourIP">please provide your IP address to broadcast on.</param>
+        /// <param name="message">message to be sent</param>
+        /// <param name="portNumber">port number to be used</param>
         public static void UdpBroadcastMessage(string message, int portNumber)
         {
-            string local_ip = getLocalIP();
+            string local_ip = getLocalIP(); // get the local ip address
             try
             {
-                // This constructor arbitrarily assigns the local port number.
-                UdpClient udpClient = new UdpClient(portNumber);
-                // enable broadcast
-                udpClient.EnableBroadcast = true;
+                UdpClient udpClient = new UdpClient(portNumber); // initialize udp client with port number to be sent from
+                udpClient.EnableBroadcast = true; // enable broadcast
 
+                byte[] sendBytes = Encoding.ASCII.GetBytes(message); // convert message to bytes
 
-                // Sends a message to the host to which you have connected.
-                byte[] sendBytes = Encoding.ASCII.GetBytes(message);
+                IPAddress broadcastIP = IPAddress.Parse(getBroadcastIP(local_ip)); // get the destination ip address
+                IPEndPoint ep = new IPEndPoint(broadcastIP, portNumber); // set the desination ip address and port number
 
-                //IPAddress broadcast = IPAddress.Parse("172.18.160.255");
-                IPAddress broadcastIP = IPAddress.Parse(getBroadcastIP(local_ip));
-                IPEndPoint ep = new IPEndPoint(broadcastIP, portNumber);
+                udpClient.Send(sendBytes, sendBytes.Length, ep); // send the data
 
-                udpClient.Send(sendBytes, sendBytes.Length, ep);
-
-                udpClient.Close();
+                udpClient.Close(); // close the udp client
 
                 Console.WriteLine(":: "+message);
 
@@ -93,25 +41,35 @@ namespace KinectTrackerAndBroadcaster
             }
         }
 
+        /// <summary>
+        /// get the ip address of the local machine
+        /// </summary>
+        /// <returns>ipv4 address</returns>
         private static string getLocalIP()
         {
-            string ip;
+            string ip; // initialize ip address
 
+            // get list of ip addresses from dns
             IPAddress[] ipv4Addresses = Array.FindAll(
                 Dns.GetHostEntry(string.Empty).AddressList,
                 a => a.AddressFamily == AddressFamily.InterNetwork);
 
-            ip = ipv4Addresses[ipv4Addresses.Length - 1].ToString();
+            ip = ipv4Addresses[ipv4Addresses.Length - 1].ToString(); // last ip address is local
 
-            return ip;
+            return ip; // return ip address
         }
 
+        /// <summary>
+        /// creates a desintation address by changing last part of ip to .255
+        /// </summary>
+        /// <param name="local_ip">ipv4 address</param>
+        /// <returns>ipv4 address</returns>
         private static string getBroadcastIP(string local_ip)
         {
-            string bIP;
-            string[] parts = local_ip.Split('.'); //  separate the ip address in to a list of strings
-            bIP = parts[0] + "." + parts[1] + "." + parts[2] + ".255";
-            return bIP;
+            string bIP; // initialize destination address
+            string[] parts = local_ip.Split('.'); //  separate the ip address in to a list of parts
+            bIP = parts[0] + "." + parts[1] + "." + parts[2] + ".255"; // chage the last part of address to .255
+            return bIP; // return destination address
         }
 
     }

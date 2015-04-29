@@ -9,81 +9,110 @@ namespace KinectTrackerAndBroadcaster.Models
 {
     public class FaceMatch
     {
-        public String Name { get; set; }
-        private Face faceA { get; set; }
-        private Face faceB { get; set; }
-        private List<decimal?> matches = new List<decimal?>();
+        public String Name { get; set; } // name of the person
+        private Face faceA { get; set; } // the face of the known person
+        private Face faceB { get; set; } // the face of the unknown person
+        private List<decimal?> matches = new List<decimal?>(); // list of 
 
-        private decimal total = 0;
-        private int count = 0;
-        private decimal mean;
-        private decimal lowest = 1;
-        private decimal totalDifference = 0;
+        private decimal total = 0; // total sum of matches
+        private int count = 0; // total count of matches
+        private decimal mean; // mean average of the matches (total/count)
+        private decimal lowest = 1; // the lowest match
+        private decimal totalDifference = 0; // sum of all differnces between 1 and match
         private decimal totalMatch = 1; // 1 - totalDifference
-        private int matchCount = 0; // how many of the matches are above 99.9%
+        private int matchCount = 0; // how many of the matches are above n% accuracy
 
-        public double AverageMatchCount { get; set; }
+        public double AverageMatchCount { get; set; } // the average match count for people with this name
 
-        /* public double median { get; set; }
-         public double maximum { get; set; }
-         public double minimum { get; set; }
-         public double range { get; set; }
-         public double standard_deviation { get; set; }
-         */
+        /// <summary>
+        /// constructor for the class
+        /// </summary>
+        /// <param name="a">the known face</param>
+        /// <param name="b">the face to be compared against</param>
         public FaceMatch(Face a, Face b)
         {
+            // set local variables
             Name = a.name;
             faceA = a;
             faceB = b;
+            // call methods
             getMatches();
             calculateAverages();
         }
 
+        /// <summary>
+        /// get the mean average
+        /// </summary>
+        /// <returns>mean average</returns>
         public decimal GetMean()
         {
             return mean;
         }
 
+        /// <summary>
+        /// get the lowest match
+        /// </summary>
+        /// <returns>lowest match</returns>
         public decimal GetLowest() {
             return lowest;
         }
 
+        /// <summary>
+        /// get the total difference between 1 and match
+        /// </summary>
+        /// <returns>total difference</returns>
         public decimal GetTotalDifference()
         {
             return totalDifference;
         }
 
+        /// <summary>
+        /// get the total match
+        /// </summary>
+        /// <returns>1-totalDifference</returns>
         public decimal GetTotalMatch()
         {
             return totalMatch;
         }
 
+        /// <summary>
+        /// get the count of matches above n% accuracy
+        /// </summary>
+        /// <returns>count of matches</returns>
         public int GetMatchCount()
         {
             return matchCount;
         }
 
+        /// <summary>
+        /// calculate all of the averages
+        /// </summary>
         private void calculateAverages()
         {
-            foreach (decimal match in matches)
+            foreach (decimal match in matches) // iterate through the matches
             {
                 total += match; // add to the total
-                count++; // increment to count
+                count++; // increment count
                 totalDifference += 1 - match;
-                if (match < lowest)
+                if (match < lowest) // if match is lowest so far
                 {
-                    lowest = match;
+                    lowest = match; // set match to be lowest
                 }
-                if (match > .99999m)
+                if (match > .9999m) // if match is more than 99.99% accurate
                 {
-                    matchCount++;
+                    matchCount++; // increment the matches about n% accuracy
                 }
             }
-            totalMatch = 1 - totalDifference;
-            mean = total / count;
+            totalMatch = 1 - totalDifference; 
+            mean = total / count; // calculate mean
         }
+
+        /// <summary>
+        /// get all of the matches between faceA data and faceB data
+        /// </summary>
         private void getMatches()
         {
+            // matches for angles
             matches.Add(Maths.NumericMatch((decimal)faceA.angle_0_44_45, (decimal)faceB.angle_0_44_45));
             matches.Add(Maths.NumericMatch((decimal)faceA.angle_44_45_47, (decimal)faceB.angle_44_45_47));
             matches.Add(Maths.NumericMatch((decimal)faceA.angle_45_47_62, (decimal)faceB.angle_45_47_62));
@@ -183,7 +212,8 @@ namespace KinectTrackerAndBroadcaster.Models
             matches.Add(Maths.NumericMatch((decimal)faceA.angle_0_20_53, (decimal)faceB.angle_0_20_53));
             matches.Add(Maths.NumericMatch((decimal)faceA.angle_20_53_2, (decimal)faceB.angle_20_53_2));
             matches.Add(Maths.NumericMatch((decimal)faceA.angle_53_2_6, (decimal)faceB.angle_53_2_6));
-
+            
+            // matches for magnitude ratios
             matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_0_44_45, (decimal)faceB.magRatio_0_44_45));
             matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_44_45_47, (decimal)faceB.magRatio_44_45_47));
             matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_45_47_62, (decimal)faceB.magRatio_45_47_62));
