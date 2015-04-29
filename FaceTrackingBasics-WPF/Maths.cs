@@ -145,7 +145,7 @@ namespace KinectTrackerAndBroadcaster
             Unit3D v2_normalized;
             decimal dot_product;
             decimal angle_radians;
-            decimal angle_degrees;
+            //decimal angle_degrees;
 
             // get the magnitude of each vector
             v1_magnitude = Sqrt(v1.X * v1.X + v1.Y * v1.Y + v1.Z * v1.Z);

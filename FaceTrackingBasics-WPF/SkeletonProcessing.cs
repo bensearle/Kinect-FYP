@@ -22,19 +22,18 @@ namespace KinectTrackerAndBroadcaster
         private static String[] jsonNames = { "\"name\": unknown", "\"name\": unknown", "\"name\": unknown", "\"name\": unknown", "\"name\": unknown", "\"name\": unknown" };
         private static String[] jsonSkeleton = { "", "", "", "", "", "" };
 
+        private static String[] names = { "", "", "", "", "", "" };
+
         private static string newPerson = ""; // name of person to be added to the system
 
         private static bool readyToSend = false;
         private static string jsonString = "{}";
 
         static bool toInitialize = true;
-        static int testi = 0;
-
-        private static int testint = 0;
 
         public static string GetName(int i)
         {
-            return jsonNames[i];
+            return names[i];
         }
 
         public static void Initialize()
@@ -59,10 +58,7 @@ namespace KinectTrackerAndBroadcaster
             skeletonThreads[5].Name = "ThreadSkel5";
             skeletonThreads[5].Start();
 
-            //main();
-            // mainThread.Start();
-            jsonSendThread.Start(); // commented for testing
-            //timer();
+            jsonSendThread.Start();
         }
 
         public static void TrackSkeleton(Skeleton skeleton, FaceTrackFrame frame, int skeletonIndex)
@@ -74,15 +70,11 @@ namespace KinectTrackerAndBroadcaster
             }
 
             if (!skeletonReady[skeletonIndex])
-            //if (skeletonThreads[skeletonIndex].ThreadState == ThreadState.WaitSleepJoin) // thread is sleeping
             {
                 Console.WriteLine("TrackSkeleton " + skeletonIndex);
                 skeletons[skeletonIndex] = skeleton; // skeleton added to array
                 facePoints3D[skeletonIndex] = frame.Get3DShape(); // get the facePoints3D from the frame and add to array
                 skeletonReady[skeletonIndex] = true; // skeleton is now being tracked               
-                //Console.WriteLine(" THREAD STATE " + skeletonThreads[skeletonIndex].ThreadState);
-                //skeletonThreads[skeletonIndex].Interrupt(); // wake the thread to process the skeleton
-                //Console.WriteLine(" /\\ " + testint++);
 
             }
         }
@@ -91,6 +83,7 @@ namespace KinectTrackerAndBroadcaster
         {
             skeletonReady[i] = false;
             jsonNames[i] = "\"name\": unknown";
+            names[i] = "";
             jsonSkeleton[i] = "";
             Console.WriteLine("***skel being untracked " + i);
         }
@@ -146,7 +139,7 @@ namespace KinectTrackerAndBroadcaster
 
                 //testi += 1;
 
-                if (jsonNames[skeletonIndex] == "\"name\": unknown") // if the name is unkown
+                if (names[skeletonIndex] == "") // if the name is unkown
                 {
                     processSkeletonFace(skeletonIndex); // create thread for facial recognition
                     //MainWindow.UpdateNames("");        
@@ -168,28 +161,18 @@ namespace KinectTrackerAndBroadcaster
             }
             catch (ThreadInterruptedException e) // exception caught when thead is iterrupted
             {
-                Console.WriteLine("wake up");
+                Console.WriteLine("Error - SkeletonProcessing.processSkeleton("+skeletonIndex+"): " + e);
                 processSkeleton(skeletonIndex); // call this method
             }
             processSkeleton(skeletonIndex); // call this method
-
-            /*while (!skeletonReady[skeletonIndex])
-            {
-                // wait
-            }
-            //Console.WriteLine("£$£$£$£$£$£$£$£$£$£$ money");
-            ProcessSkeleton(skeletonIndex);
-             */
-
         }
 
         private static void processSkeletonFace(int i)
         {
             FacialRecognition fr = new FacialRecognition();
             string name = fr.Process(facePoints3D[i]); // returns name
-            string name_json = String.Format("\"name\": \"{0}\"", name); // JSON format of name
-            jsonNames[i] = name_json;
-
+            names[i] = name;
+            jsonNames[i] = String.Format("\"name\": \"{0}\"", name); // JSON format of name
         }
 
         private static void processSkeletonJoints(int i)
@@ -197,9 +180,6 @@ namespace KinectTrackerAndBroadcaster
             JointPoints joints = new JointPoints(skeletons[i]); // returns all joints as JointPoints
             string joints_json = joints.ToJson(); // JSON of joints
             jsonJoints[i] = joints_json;
-            //Console.WriteLine("++ "+i+" ++"+joints_json);
-            //Console.WriteLine(i + " ++" + jsonJoints[i]);
-
         }
 
         private static void sendJson()

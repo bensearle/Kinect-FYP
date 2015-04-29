@@ -102,21 +102,7 @@ namespace KinectTrackerAndBroadcaster
                 a => a.AddressFamily == AddressFamily.InterNetwork);
 
             ip = ipv4Addresses[ipv4Addresses.Length - 1].ToString();
-            return ip;
 
-
-            string host_name = System.Net.Dns.GetHostName();
-            IPHostEntry ipEntry = System.Net.Dns.GetHostEntry(host_name);
-            IPAddress[] ip_address = ipEntry.AddressList;
-            ip = ip_address[ip_address.Length - 1].ToString();
-            //Console.WriteLine(ip_address[ip_address.Length - 1].ToString());
-            /*
-            // if statement below return ipv6 if used - not wanted for this purpose
-            if (addr[0].AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6)
-            {
-                returnIP = addr[0].ToString();
-                Console.WriteLine(addr[0].ToString()); //ipv6
-            }*/
             return ip;
         }
 

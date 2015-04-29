@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="KinectStream.xaml.cs" company="Microsoft">
+// <copyright file="FaceTrackingBasics.xaml.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -18,8 +18,6 @@ namespace KinectTrackerAndBroadcaster
     using Point = System.Windows.Point;
     using System.Globalization;
     using KinectTrackerAndBroadcaster.Models;
-
-
 
     /// <summary>
     /// Class that uses the Face Tracking SDK to display a face mask for
@@ -49,6 +47,8 @@ namespace KinectTrackerAndBroadcaster
         private bool disposed;
 
         private Skeleton[] skeletonData;
+
+        private bool drawOnStream = true;
 
         public KinectStream()
         {
@@ -91,38 +91,40 @@ namespace KinectTrackerAndBroadcaster
 
         protected override void OnRender(DrawingContext drawingContext)
         {
-
-            base.OnRender(drawingContext);
-            foreach (SkeletonTracker faceInformation in this.trackedSkeletons.Values)
+            if (drawOnStream)
             {
-                faceInformation.DrawFaceModel(drawingContext);
-            }
-
-            // draw joints
-            if (this.skeletonData != null)
-            {
-                int index = 0;
-                foreach (Skeleton skeleton in this.skeletonData)
+                base.OnRender(drawingContext);
+                foreach (SkeletonTracker faceInformation in this.trackedSkeletons.Values)
                 {
-                    if (skeleton.TrackingState != SkeletonTrackingState.NotTracked)
-                    {
-                        foreach (JointType joint in Enum.GetValues(typeof(JointType)))
-                        {
-                            Point p = skeletonPointToScreen(skeleton.Joints[joint].Position);
-                            drawingContext.DrawEllipse(Brushes.Red, new Pen(Brushes.Red, 1), p, 5, 5);
+                    faceInformation.DrawFaceModel(drawingContext);
+                }
 
-                            if (joint.ToString() == "Head")
+                // draw joints
+                if (this.skeletonData != null)
+                {
+                    int index = 0;
+                    foreach (Skeleton skeleton in this.skeletonData)
+                    {
+                        if (skeleton.TrackingState != SkeletonTrackingState.NotTracked)
+                        {
+                            foreach (JointType joint in Enum.GetValues(typeof(JointType)))
                             {
-                                FormattedText f = new FormattedText(SkeletonProcessing.GetName(index),
-                                    CultureInfo.GetCultureInfo("en-us"),
-                                    FlowDirection.LeftToRight,
-                                    new Typeface("Verdana"),
-                                    14, System.Windows.Media.Brushes.Red);
-                                drawingContext.DrawText(f, new Point(p.X, p.Y + 10));
+                                Point p = skeletonPointToScreen(skeleton.Joints[joint].Position);
+                                drawingContext.DrawEllipse(Brushes.Red, new Pen(Brushes.Red, 1), p, 5, 5);
+
+                                if (joint.ToString() == "Head")
+                                {
+                                    FormattedText f = new FormattedText(SkeletonProcessing.GetName(index),
+                                        CultureInfo.GetCultureInfo("en-us"),
+                                        FlowDirection.LeftToRight,
+                                        new Typeface("Verdana"),
+                                        14, System.Windows.Media.Brushes.YellowGreen);
+                                    drawingContext.DrawText(f, new Point(p.X, p.Y - 20));
+                                }
                             }
                         }
+                        index++;
                     }
-                    index++;
                 }
             }
         }
@@ -476,7 +478,7 @@ namespace KinectTrackerAndBroadcaster
 
             public void DrawFaceModel(DrawingContext drawingContext)
             {
-                Boolean scaleFace = true;
+                Boolean scaleFace = false;
 
                 if (!this.lastFaceTrackSucceeded || this.skeletonTrackingState != SkeletonTrackingState.Tracked)
                 {
@@ -593,32 +595,6 @@ namespace KinectTrackerAndBroadcaster
                 }
                 Console.WriteLine(s);
             }
-
-
-            static int tInc = 0;
-            static System.Timers.Timer _timer; // From System.Timers
-
-            public static void timer_5()
-            {
-                _timer = new System.Timers.Timer(1000); // Set up the timer for 3 seconds
-                _timer.Elapsed += new System.Timers.ElapsedEventHandler(_timer_Elapsed);
-                _timer.Enabled = true; // Enable it
-            }
-
-            public static void _timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
-            {
-                if (tInc == 5)
-                {
-                    tInc = 5;
-                }
-                else
-                {
-                    tInc++;
-                }
-                Console.WriteLine(tInc);
-                // _l.Add(DateTime.Now); // Add date on each timer event
-            }
-
         }
     }
 }
