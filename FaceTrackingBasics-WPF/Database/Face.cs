@@ -411,5 +411,7 @@ namespace KinectTrackerAndBroadcaster.Database
         public decimal? magRatio_20_53_2 { get; set; }
 
         public decimal? magRatio_53_2_6 { get; set; }
+
+        public int? version { get; set; }
     }
 }

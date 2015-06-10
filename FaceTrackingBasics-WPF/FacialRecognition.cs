@@ -303,6 +303,7 @@ namespace KinectTrackerAndBroadcaster
 
                 // get all faces from the database
                 var query = from b in db.Faces
+                            where b.version == null
                             orderby b.name
                             select b;
 

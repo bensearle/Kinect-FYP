@@ -8,7 +8,7 @@ namespace KinectTrackerAndBroadcaster.Database
     public partial class Database : DbContext
     {
         public Database()
-            : base("name=Database7")
+            : base("name=Database8")
         {
         }
 

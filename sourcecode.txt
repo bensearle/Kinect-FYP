@@ -1,0 +1,1283 @@
+namespace KinectTrackerAndBroadcaster
+{
+    public partial class KinectStream : UserControl, IDisposable
+    {
+        protected override void OnRender(DrawingContext drawingContext)
+        {
+            if (drawOnStream) // if drawing is to happen
+            {
+                base.OnRender(drawingContext);
+                // draw face
+                foreach (SkeletonTracker faceInformation in this.trackedSkeletons.Values) // for each face being tracked
+                {
+                    faceInformation.DrawFaceModel(drawingContext); // draw face on screen
+                }
+                // draw joints
+                if (this.skeletonData != null) // if not null
+                {
+                    int index = 0; // start index
+                    foreach (Skeleton skeleton in this.skeletonData) // for each skeleton
+                    {
+                        if (skeleton.TrackingState != SkeletonTrackingState.NotTracked) // if skeleton is being tracked
+                        {
+                            foreach (JointType joint in Enum.GetValues(typeof(JointType))) // iterate joint types
+                            {
+                                Point p = skeletonPointToScreen(skeleton.Joints[joint].Position); // convert joint position in 3D space to position on screen
+                                drawingContext.DrawEllipse(Brushes.Red, new Pen(Brushes.Red, 1), p, 5, 5); // draw a circle over the joint
+
+                                if (joint.ToString() == "Head") // at the head
+                                {
+                                    // create text with the name of the person
+                                    FormattedText f = new FormattedText(SkeletonProcessing.GetName(index),
+                                        CultureInfo.GetCultureInfo("en-us"),
+                                        FlowDirection.LeftToRight,
+                                        new Typeface("Verdana"),
+                                        16, System.Windows.Media.Brushes.Red);
+                                    drawingContext.DrawText(f, new Point(p.X, p.Y - 25)); // write the name above the head
+                                }
+                            }
+                        }
+                        index++; // increment index
+                    }
+                }
+            }
+        }
+        public class SkeletonTracker : IDisposable
+        {
+            private List<int> staticFacialPoints = new List<int>
+            {
+                0, // forehead
+                1, // forehead
+                2, // forehead
+                3, // forehead
+                4, // forehead
+                5, // nose
+                6, // nose
+                //7, // upper lip
+                //8, // chin
+                //9, // chin
+                //10, // chin
+                11, // forehead
+                12, // forehead
+                13, // forehead
+                14, // forehead
+                //15, // left eyebrow
+                //16, // left eyebrow
+                //17, // left eyebrow
+                //18, // left eyebrow
+                19, // left eye
+                20, // left eye
+                //21, // upper left eye
+                //22, // left eye - close to 24
+                23, // left eye
+                24, // left eye
+                25, // nose
+                26, // nose
+                27, // left side of face
+                28, // left side of face
+                29, // left side of face
+                30, // left side of face
+                //31, // chin
+                //32, // chin
+                //33, // top lip
+                34, // forehead
+                //35, // forehead - same as 2
+                //36, // forehead - same as 3
+                //37, // nose - close to 4
+                //38, // nose - same as 5
+                //39, // nose - same as 6
+                //40, // mouth
+                41, // chin
+                42, // chin
+                43, // chin
+                44, // forehead
+                45, // forehead
+                46, // forehead
+                47, // forehead
+                //48, // right eyebrow
+                //49, // right eyebrow
+                //50, // right eyebrow
+                //51, // right eyebrow
+                52, // right eye
+                53, // right eye
+                //54, // upper right eye
+                //55, // right eye - close to 57
+                56, // right eye
+                57, // right eye
+                58, // nose
+                59, // nose
+                60, // right side of face
+                61, // right side of face
+                62, // right side of face
+                63, // right side of face
+                //64, // chin
+                //65, // chin
+                //66, // top lip
+                //67, // upper left eye
+                68, // left eye
+                //69, // upper right eye
+                70, // right eye
+                //71, // upper left eye
+                72, // left eye
+                //73, // upper right eye
+                74, // right eye
+                75, // nose
+                76, // nose
+                //77, // nose - close to 4
+                //78, // nose - close to 4
+                //79, // mouth
+                //80, // mouth
+                //81, // mouth
+                //82, // mouth
+                //83, // mouth
+                //84, // mouth
+                //85, // mouth
+                //86, // mouth
+                //87, // mouth
+                //88, // mouth
+                //89, // mouth
+                //90, // top lip
+                //91, // top lip
+                92, // nose
+                93, // nose
+                94, // nose
+                95, // left eye
+                96, // right eye
+                //97, // left eye - close to 95
+                //98, // right eye - close to 96
+                //99, // left eye - close to 101
+                //100, // right eye - close to 102
+                101, // left eye
+                102, // right eye
+                103, // left eye
+                104, // right eye
+                //105, // left eye - close to 103
+                //106, // right eye - close to 104
+                //107, // left eye - close to 109
+                //108, // right eye - close to 110
+                109, // left eye
+                110, // right eye
+                111, // nose
+                112, // nose
+                //113, // right side of face
+                //114, // right side of face
+                //115, // right side of face
+                //116, // right side of face
+                //117, // left side of face
+                //118, // left side of face
+                //119, // left side of face
+                //120  // left side of face
+            };
+            private List<int> facialLine = new List<int> { 
+                0,44,45,47,62,61,63,43,30,28,29,14,12,11,0, // outer of face loop
+                34,45,46,47,2,62,60,61,41,63,42,30,27,29,13,12,1,11,2,14,36,// face loop of triangles
+                13,1,34,46,53,60, // inner right of face loop
+                59,112,6,111,26,25,75,5,76,58,59,93,94,92,5,94,25,58,25,6, // nose
+                42,27, // inner left of face loop
+                20,95,19,103,23,109,24,101,20,103,72,95,68,19, // left eye
+                4,
+                52,96,53,56,104,52,102,110,57,96,57,94,56,74,70,53, // right eye
+                43,0,20,53,2,6// face cross
+            };
+            public void DrawFaceModel(DrawingContext drawingContext)
+            {
+                Boolean scaleFace = false; // do you want to increase the size of the face overlay?
+                Boolean labelFacePoint = false; // do you want to label the face points?
+
+                if (!this.lastFaceTrackSucceeded || this.skeletonTrackingState != SkeletonTrackingState.Tracked)
+                {
+                    return;
+                }
+                // get the coordinates for the face points
+                var faceModelPts = new List<Point>();
+                for (int i = 0; i < this.facePoints.Count; i++)
+                {
+                    faceModelPts.Add(new Point(this.facePoints[i].X + 0.5f, this.facePoints[i].Y + 0.5f));
+                }
+                // draw the face line
+                int lineLength = facialLine.Count;
+                for (int i = 0; i < lineLength; i++)
+                {
+                    if (i != lineLength - 1) // last number in list
+                    {
+                        if (scaleFace)
+                        {
+                            drawingContext.DrawLine(new Pen(Brushes.Blue, 1), Maths.ScalePoint(faceModelPts[facialLine[i]]), Maths.ScalePoint(faceModelPts[facialLine[i + 1]]));
+
+                        }
+                        else
+                        {
+                            drawingContext.DrawLine(new Pen(Brushes.Blue, 1), faceModelPts[facialLine[i]], faceModelPts[facialLine[i + 1]]);
+                        }
+                    }
+                }
+                if (labelFacePoint)
+                {
+                    // draw the numbers over top of face
+                    foreach (int point in staticFacialPoints)
+                    {
+                        Point p;
+                        if (scaleFace)
+                        {
+                            p = Maths.ScalePoint(faceModelPts[point]);
+                        }
+                        else
+                        {
+                            p = faceModelPts[point];
+                        }
+                        FormattedText f = new FormattedText("" + point,
+                            CultureInfo.GetCultureInfo("en-us"),
+                            FlowDirection.LeftToRight,
+                            new Typeface("Verdana"),
+                            5, System.Windows.Media.Brushes.Blue);
+                        drawingContext.DrawText(f, p);
+                    }
+                }
+            }
+        }
+    }
+}
+
+using Point = System.Windows.Point;
+namespace KinectTrackerAndBroadcaster
+{
+    //public static class Maths:     // cannot derive from static class System.Math
+    public static class Maths
+    {
+        //public static decimal PI = (decimal)Math.PI;
+        public static decimal PI = 3.141592653589793238462643383279502884197169399375105820974944592307816406286208998628034825342117067982148086513282306647093844609550582231725359408128481117450284102701938521105559644622948954930381964428810975665933446128475648233786783165271201909145648566923460348610454326648213393607260249141273724587006606315588174881520920962829254091715364367892590360011330530548820466521384146951941511609433057270365759591953092186117381932611793105118548074462379962749567351885752724891227938183011949129833673362440656643086021394946395224737190702179860943702770539217176293176752384674818467669405132000568127145263560827785771342757789609173637178721468440901224953430146549585371050792279689258923542019956112129021960864034418159813629774771309960518707211349999998372978049951059731732816096318595024459455346908302642522308253344685035261931188171010003137838752886587533208381420617177669147303598253490428755468731159562863882353787593751957781857780532171226806613001927876611195909216420198938095257201065485863278865936153381827968230301952035301852968995773622599413891249721775283479131515574857242454150695950829533116861727855889075098381754637464939319255060400927701671139009848824012858361603563707660104710181942955596198946767837449448255379774726847104047534646208046684259069491293313677028989152104752162056966024058038150193511253382430035587640247496473263914199272604269922796782354781636009341721641219924586315030286182974555706749838505494588586926995690927210797509302955321165344987202755960236480665499119881834797753566369807426542527862551818417574672890977772793800081647060016145249192173217214772350141441973568548161361157352552133475741849468438523323907394143334547762416862518983569485562099219222184272550254256887671790494601653466804988627232791786085784383827967976681454100953883786360950680064225125205117392984896084128488626945604241965285022210661186306744278622039194945047123713786960956364371917287467764657573962413890865832645995813390478027590099465764078951269468398352595709825822620522489407726719478268482601476990902640136394437455305068203496252451749399651431429809190659250937221696461515709858387410597885959772975498930161753928468138268683868942774155991855925245953959431049972524680845987273644695848653836736222626099124608051243884390451244136549762780797715691435997700129616089441694868555848406353422072225828488648158456028506016842739452267467678895252138522549954666727823986456596116354886230577456498035593634568174324112515076069479451096596094025228879710893145669136867228748940560101503308617928680920874760917824938589009714909675985261365549781893129784821682998948722658804857564014270477555132379641451523746234364542858444795265867821051141354735739523113427166102135969536231442952484937187110145765403590279934403742007310578539062198387447808478489683321445713868751943506430218453191048481005370614680674919278191197939952061419663428754440643745123718192179998391015919561814675142691239748940907186494231961567945208095146550225231603881930142093762137855956638937787083039069792077346722182562599661501421503068038447734549202605414665925201497442850732518666002132434088190710486331734649651453905796268561005508106658796998163574736384052571459102897064140110971206280439039759515677157700420337869936007230558763176359421873125147120532928191826186125867321579198414848829164470609575270695722091756711672291098169091528017350671274858322287183520935396572512108357915136988209144421006751033467110314126711136990865851639831501970165151168517143765761835155650884909989859982387345528331635507647918535893226185489632132933089857064204675259070915481416549859461637180270981994309924488957571282890592323326097299712084433573265489382391193259746366730583604142813883032038249037589852437441702913276561809377344403070746921120191302033038019762110110044929321516084244485963766983895228684783123552658213144957685726243344189303968642624341077322697802807318915441101044682325271620105265227211166039666557309254711055785376346682065310989652691862056476931257058635662018558100729360659876486117910453348850346113657686753249441668039626579787718556084552965412665408530614344431858676975145661406800700237877659134401712749470420562230538994561314071127000407854733269939081454664645880797270826683063432858785698305235808933065757406795457163775254202114955761581400250126228594130216471550979259230990796547376125517656751357517829666454779174501129961489030463994713296210734043751895735961458901938971311179042978285647503203198691514028708085990480109412147221317947647772622414254854540332157185306142288137585043063321751829798662237172159160771669254748738986654949450114654062843366393790039769265672146385306736096571209180763832716641627488880078692560290228472104031721186082041900042296617119637792133757511495950156604963186294726547364252308177036751590673502350728354056704038674351362222477158915049530984448933309634087807693259939780541934144737744184263129860809988868741326047215695162396586457302163159819319516735381297416772947867242292465436680098067692823828068996400482435403701416314965897940924323789690706977942236250822168895738379862300159377647165122893578601588161755782973523344604281512627203734314653197777416031990665541876397929334419521541341899485444734567383162499341913181480927777103863877343177207545654532207770921201905166096280490926360197598828161332316663652861932668633606273567630354477628035045077723554710585954870279081435624014517180624643626794561275318134078330336254232783944975382437205835311477119926063813346776879695970309833913077109870408591337464144282277263465947047458784778720192771528073176790770715721344473060570073349243693113835049316312840425121925651798069411352801314701304781643788518529092854520116583934196562134914341595625865865570552690496520985803385072242648293972858478316305777756068887644624824685792603953527734803048029005876075825104747091643961362676044925627420420832085661190625454337213153595845068772460290161876679524061634252257719542916299193064553779914037340432875262888963995879475729174642635745525407909145135711136941091193932519107602082520261879853188770584297259167781314969900901921169717372784768472686084900337702424291651300500516832336435038951702989392233451722013812806965011784408745196012122859937162313017114448464090389064495444006198690754851602632750529834918740786680881833851022833450850486082503930213321971551843063545500766828294930413776552793975175461395398468339363830474611996653858153842056853386218672523340283087112328278921250771262946322956398989893582116745627010218356462201349671518819097303811980049734072396103685406643193950979019069963955245300545058068550195673022921913933918568034490398205955100226353536192041994745538593810234395544959778377902374216172711172364343543947822181852862408514006660443325888569867054315470696574745855033232334210730154594051655379068662733379958511562578432298827372319898757141595781119635833005940873068121602876496286744604774649159950549737425626901049037781986835938146574126804925648798556145372347867330390468838343634655379498641927056387293174872332083760112302991136793862708943879936201629515413371424892830722012690147546684765357616477379467520049075715552781965362132392640616013635815590742202020318727760527721900556148425551879253034351398442532234157623361064250639049750086562710953591946589751413103482276930624743536325691607815478181152843667957061108615331504452127473924544945423682886061340841486377670096120715124914043027253860764823634143346235189757664521641376796903149501910857598442391986291642193994907236234646844117394032659184044378051333894525742399508296591228508555821572503107125701266830240292952522011872676756220415420516184163484756516999811614101002996078386909291603028840026910414079m;
+        public static Unit3D Rotate_vector(Unit3D vector, Vector3DF rotation)
+        {
+            // XYZ of vector
+            decimal x = vector.X;
+            decimal y = vector.Y;
+            decimal z = vector.Z;
+            // rotation around XYZ axis the face has taken, flipped and then converted to radians
+            decimal rotX = (decimal)Math.PI * (-(decimal)rotation.X / 180);
+            decimal rotY = (decimal)Math.PI * (-(decimal)rotation.Y / 180);
+            decimal rotZ = (decimal)Math.PI * (-(decimal)rotation.Z / 180);
+            // rotate around X-axis
+            decimal x1 = x;
+            decimal y1 = (y * (decimal)Cos(rotX)) - (z * (decimal)Sin(rotX));
+            decimal z1 = (y * (decimal)Sin(rotX)) + (z * (decimal)Cos(rotX));
+            // rotate around Y-axis
+            decimal x2 = (x1 * Cos(rotY)) + (z1 * Sin(rotY));
+            decimal y2 = y1;
+            decimal z2 = (-x1 * Sin(rotY)) + (z1 * Cos(rotY));
+            // rotate around Z-axis
+            decimal x3 = (x2 * Cos(rotZ)) - (y2 * Sin(rotZ));
+            decimal y3 = (x2 * Sin(rotZ)) + (y2 * Cos(rotZ));
+            decimal z3 = z2;
+            // return rotated vector
+            return new Unit3D(x3, y3, z3);
+        }
+        public static decimal NumericMatch(decimal a, decimal b)
+        {
+            if (a < b) // if a is less than be
+            {
+                return a / b; // a divided by b
+            }
+            else
+            {
+                return b / a; // b divided by a
+            }
+        }
+        public static decimal Ratio(Unit3D a1, Unit3D a2, Unit3D b1, Unit3D b2)
+        {
+            return Magnitude(a1, a2) / Magnitude(b1, b2); // length / length
+        }
+        public static decimal Ratio(Unit3D a, Unit3D b, Unit3D c)
+        {
+            return Magnitude(a, b) / Magnitude(b, c); // length / length
+        }
+        public static decimal Ratio(Unit3D v1, Unit3D v2)
+        {
+            return Magnitude(v1) / Magnitude(v2); // length / length
+        }
+        public static decimal Ratio(decimal d1, decimal d2)
+        {
+            // if 0 then... throw new DivideByZeroException;
+            return d1 / d2; // return ratio
+        }
+        public static decimal Magnitude(Unit3D a, Unit3D b)
+        {
+            decimal x = a.X - b.X; // distance between X's
+            decimal y = a.Y - b.Y; // distance between Y's
+            decimal z = a.Z - b.Z; // distance between Z's
+            return Sqrt(x * x + y * y + z * z); // return length
+        }
+        public static decimal Magnitude(Unit3D v)
+        {
+            return Sqrt(v.X * v.X + v.Y * v.Y + v.Z * v.Z); // return length
+        }
+        public static Unit3D CoordToVector(Unit3D a, Unit3D b)
+        {
+            return new Unit3D(a.X - b.X, a.Y - b.Y, a.Z - b.Z); // calculate vector
+        }
+        public static decimal Angle(Unit3D a, Unit3D b, Unit3D c)
+        {
+            return Angle( // pass vectors to angle method
+                       CoordToVector(a, b), // vector of first line
+                       CoordToVector(b, c)); // vector of second line
+        }
+        public static decimal Angle(Unit3D v1, Unit3D v2)
+        {
+            // initialize local variables
+            decimal v1_magnitude;
+            decimal v2_magnitude;
+            Unit3D v1_normalized;
+            Unit3D v2_normalized;
+            decimal dot_product;
+            decimal angle_radians;
+            // get the magnitude of each vector
+            v1_magnitude = Sqrt(v1.X * v1.X + v1.Y * v1.Y + v1.Z * v1.Z);
+            v2_magnitude = Sqrt(v2.X * v2.X + v2.Y * v2.Y + v2.Z * v2.Z);
+            // normalize the vectors
+            v1_normalized = new Unit3D(v1.X / v1_magnitude, v1.Y / v1_magnitude, v1.Z / v1_magnitude);
+            v2_normalized = new Unit3D(v2.X / v2_magnitude, v2.Y / v2_magnitude, v2.Z / v2_magnitude);
+            // calculate the dot product
+            dot_product = v1_normalized.X * v2_normalized.X + v1_normalized.Y * v2_normalized.Y + v1_normalized.Z * v2_normalized.Z;
+            // deal with rounding errors that go outside of the -1 to 1 range
+            if (dot_product > 1)
+            {
+                dot_product = 1;
+            }
+            else if (dot_product < -1)
+            {
+                dot_product = -1;
+            }
+            angle_radians = Acos(dot_product);
+            return angle_radians;
+        }
+        public static Point MidwayPoint(Point p1, Point p2)
+        {
+            return new Point((p1.X + p2.X) / 2, (p1.Y + p2.Y) / 2); // calculate middle
+        }
+        public static Point ScalePoint(Point p)
+        {
+            return new Point(p.X * 4 - 1200, p.Y * 4 - 800); // x4 bigger
+            //return new Point(p.X * 5 - 1620, p.Y * 5 - 1100); // x5 bigger
+        }
+        public static decimal Round(decimal d)
+        {
+            return Math.Round(d);
+        }
+        public static decimal Cos(decimal d)
+        {
+            return (decimal)Math.Acos((double)d);
+        }
+        public static decimal Sin(decimal d)
+        {
+            return (decimal)Math.Asin((double)d);
+        }
+        public static decimal Acos(decimal d)
+        {
+            return (decimal)Math.Acos((double)d);
+        }
+        public static decimal Asin(decimal d)
+        {
+            return (decimal)Math.Asin((double)d);
+        }
+        public static decimal Sqrt(decimal d)
+        {
+            return (decimal)Math.Sqrt((double)d);
+        }
+    }
+}
+
+namespace KinectTrackerAndBroadcaster
+{
+    public static class SkeletonProcessing
+    {
+        public static bool[] skeletonReady = { false, false, false, false, false, false }; // is the skeleton ready to be processed
+        public static Skeleton[] skeletons = new Skeleton[6]; // all of the skeletons
+        public static EnumIndexableCollection<FeaturePoint, Vector3DF>[] facePoints3D = new EnumIndexableCollection<FeaturePoint, Vector3DF>[6]; // all of the 3D face points
+        // arrays of json strings
+        private static String[] jsonSkeleton = { "", "", "", "", "", "" };
+        private static String[] jsonJoints = new String[6];
+        private static String[] jsonNames = { "\"name\": unknown", "\"name\": unknown", "\"name\": unknown", "\"name\": unknown", "\"name\": unknown", "\"name\": unknown" };
+        private static String[] names = { "", "", "", "", "", "" }; // names of skeletons in scope
+        private static string newPerson = ""; // name of person to be added to the system
+        private static bool readyToSend = false; // is json data ready to be sent
+        private static string jsonString = "{}"; // the json string to be sent
+        private static bool toInitialize = true; // do the threads need to be initialized
+        private static Thread[] skeletonThreads; // threads for processing skeletons
+        private static Thread jsonSendThread = new Thread(sendJson); // thread for sending json data
+        public static void Initialize()
+        {
+            skeletonThreads = new Thread[6]; // create array of 6 threads
+            // create the skeleton thread
+            // label the skeleton thread
+            // start the skeleton thread
+            skeletonThreads[0] = new Thread(() => processSkeleton(0)); // create 6 threads
+            skeletonThreads[0].Name = "ThreadSkel0";
+            skeletonThreads[0].Start();
+            skeletonThreads[1] = new Thread(() => processSkeleton(1)); // create 6 threads
+            skeletonThreads[1].Name = "ThreadSkel1";
+            skeletonThreads[1].Start();
+            skeletonThreads[2] = new Thread(() => processSkeleton(2)); // create 6 threads
+            skeletonThreads[2].Name = "ThreadSkel2";
+            skeletonThreads[2].Start();
+            skeletonThreads[3] = new Thread(() => processSkeleton(3)); // create 6 threads
+            skeletonThreads[3].Name = "ThreadSkel3";
+            skeletonThreads[3].Start();
+            skeletonThreads[4] = new Thread(() => processSkeleton(4)); // create 6 threads
+            skeletonThreads[4].Name = "ThreadSkel4";
+            skeletonThreads[4].Start();
+            skeletonThreads[5] = new Thread(() => processSkeleton(5)); // create 6 threads
+            skeletonThreads[5].Name = "ThreadSkel5";
+            skeletonThreads[5].Start();
+            jsonSendThread.Start(); // start the json thread
+        }
+        public static void TrackSkeleton(Skeleton skeleton, FaceTrackFrame frame, int skeletonIndex)
+        {
+            if (toInitialize) // if not initialize
+            {
+                Initialize(); // initialize
+                toInitialize = false; // flip bit
+            }
+            if (!skeletonReady[skeletonIndex]) // if skeleton is not being processed
+            {
+                Console.WriteLine("TrackSkeleton " + skeletonIndex);
+                skeletons[skeletonIndex] = skeleton; // skeleton added to array
+                facePoints3D[skeletonIndex] = frame.Get3DShape(); // get the facePoints3D from the frame and add to array
+                skeletonReady[skeletonIndex] = true; // skeleton is now being processed               
+
+            }
+        }
+        public static void UntrackSkeleton(int i)
+        {
+            Console.WriteLine("Untrack " + i);
+            skeletonReady[i] = false; // skeleton not ready
+            jsonNames[i] = "\"name\": unknown"; // name is unkown
+            names[i] = ""; // name is empty
+            jsonSkeleton[i] = ""; // json string is empty
+        }
+        private static void processSkeleton(int skeletonIndex)
+        {
+            //Console.WriteLine("executed"+skeletonIndex);
+            if (skeletonReady[skeletonIndex])
+            { // if skeleton is being tracked
+                Console.WriteLine("ProcessSkeleton " + skeletonIndex);
+                if (newPerson != "") // if person is to be added to the system
+                {
+                    //Console.WriteLine("Add New Person: " + newPerson);
+                    string name = newPerson; // create local copy of name
+                    newPerson = ""; // remove name
+                    //Console.WriteLine(name + " being added to database");
+                    FacialRecognition fr = new FacialRecognition(); // create instance of facial recognition
+                    string nameAdded = fr.Process(facePoints3D[skeletonIndex], name); // add the name and face to the system
+                    names[skeletonIndex] = nameAdded; // set the name to local variable
+                    Console.WriteLine(name + " added to database");
+                }
+                if (names[skeletonIndex] == "") // if the name is unkown
+                {
+                    processSkeletonFace(skeletonIndex); // get the name of the skeleton
+                }
+                processSkeletonJoints(skeletonIndex); // get skeleton joints
+                // create the JSON for this skeleton
+                jsonSkeleton[skeletonIndex] = "{\"Skeleton_" + skeletonIndex + "\": { " + jsonJoints[skeletonIndex] + jsonNames[skeletonIndex] + "}}";
+                skeletonReady[skeletonIndex] = false; // change to false, so that more data can be added
+                readyToSend = true; // json data is ready to be sent
+            }
+            try
+            {
+                //Thread.Sleep(Timeout.Infinite);
+                Thread.Sleep(500); // sleep for 500ms
+            }
+            catch (ThreadInterruptedException e) // exception caught when thead is iterrupted
+            {
+                Console.WriteLine("Error - SkeletonProcessing.processSkeleton("+skeletonIndex+"): " + e);
+                processSkeleton(skeletonIndex); // call this method
+            }
+            processSkeleton(skeletonIndex); // call this method
+        }
+        private static void processSkeletonFace(int i)
+        {
+            FacialRecognition fr = new FacialRecognition(); // create facial recognition instance
+            string name = fr.Process(facePoints3D[i]); // get name
+            names[i] = name; // set local name variable
+            jsonNames[i] = String.Format("\"name\": \"{0}\"", name); // JSON format of name
+        }
+        private static void processSkeletonJoints(int i)
+        {
+            JointPoints joints = new JointPoints(skeletons[i]); // get all joints as JointPoints
+            string joints_json = joints.ToJson(); // create json of joints
+            jsonJoints[i] = joints_json; // set local variable
+        }
+        private static void sendJson()
+        {
+            readyToSend = false; // flip bit
+
+            for (int i = 0; i < 6; i++) // iterate skeleton jsons
+            {
+                if (jsonSkeleton[i] != "") { // if the json has content
+                    UdpSend.UdpBroadcastMessage(jsonSkeleton[i], 4); // send the json through port 4
+                    jsonSkeleton[i] = ""; // remove json string from local variable
+                }
+            }
+            while (!readyToSend)
+            {
+                // wait until ready to send
+            }
+            sendJson(); // call this method
+        }
+        public static void NewPerson(string name)
+        {
+            newPerson = name; // set the local variable for name to be added
+        }
+        public static string GetName(int i)
+        {
+            return names[i]; // return name
+        }
+        static System.Timers.Timer _timer; // From System.Timers
+        private static void timer()
+        {
+            _timer = new System.Timers.Timer(3000); // Set up the timer 
+            _timer.Elapsed += new System.Timers.ElapsedEventHandler(_timer_Elapsed);
+            _timer.Enabled = true; // Enable it
+        }
+        private static void _timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        {
+            //main();
+            timer();
+            Console.WriteLine("timer");
+        }
+    }
+}
+
+namespace KinectTrackerAndBroadcaster
+{
+    public class UdpSend
+    {
+        public static void UdpBroadcastMessage(string message, int portNumber)
+        {
+            string local_ip = getLocalIP(); // get the local ip address
+            try
+            {
+                UdpClient udpClient = new UdpClient(portNumber); // initialize udp client with port number to be sent from
+                udpClient.EnableBroadcast = true; // enable broadcast
+                byte[] sendBytes = Encoding.ASCII.GetBytes(message); // convert message to bytes
+                IPAddress broadcastIP = IPAddress.Parse(getBroadcastIP(local_ip)); // get the destination ip address
+                IPEndPoint ep = new IPEndPoint(broadcastIP, portNumber); // set the desination ip address and port number
+                udpClient.Send(sendBytes, sendBytes.Length, ep); // send the data
+                udpClient.Close(); // close the udp client
+                Console.WriteLine(":: "+message);
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+        }
+        private static string getLocalIP()
+        {
+            string ip; // initialize ip address
+
+            // get list of ip addresses from dns
+            IPAddress[] ipv4Addresses = Array.FindAll(
+                Dns.GetHostEntry(string.Empty).AddressList,
+                a => a.AddressFamily == AddressFamily.InterNetwork);
+
+            ip = ipv4Addresses[ipv4Addresses.Length - 1].ToString(); // last ip address is local
+
+            return ip; // return ip address
+        }
+        private static string getBroadcastIP(string local_ip)
+        {
+            string bIP; // initialize destination address
+            string[] parts = local_ip.Split('.'); //  separate the ip address in to a list of parts
+            //bIP = parts[0] + "." + parts[1] + "." + parts[2] + ".255"; // chage the last part of address to .255
+            // default gateway at university is .254
+            bIP = parts[0] + "." + parts[1] + "." + "175" + ".254"; // chage the last part of address to .255
+            return bIP; // return destination address
+        }
+    }
+}
+
+namespace KinectTrackerAndBroadcaster
+{
+    class FacialRecognition
+    {
+        public String Process(EnumIndexableCollection<FeaturePoint, Vector3DF> facePoints3D)
+        {
+            return process_face(facePoints3D, ""); // return process_face, passing the points and no name
+        }
+        public String Process(EnumIndexableCollection<FeaturePoint, Vector3DF> facePoints3D, String name)
+        {
+            return process_face(facePoints3D, name); // return process_face, passing the points and name
+        }
+        private String process_face(EnumIndexableCollection<FeaturePoint, Vector3DF> facePoints3D, String name)
+        {
+            // EnumIndexableCollection<FeaturePoint, Vector3DF> facePoints3D = frame.Get3DShape(); // get 3D face vectors
+            Unit3D[] face_vectors = new Unit3D[121]; // create Unit3D array for the face vectors
+
+            int index = 0; // index number
+            foreach (Vector3DF vector in facePoints3D) // iterate through the points
+            {
+                Unit3D face_vector = new Unit3D(vector); // convert Vector3DF to Unit3D
+                face_vectors[index] = face_vector; // add face vector to array
+                index++; // increment index
+            }
+            Face face = get_face(face_vectors); // returns a face without a name
+            if (name == "") // if face is to be recognised
+            {
+                return get_match(face); // return the name of nearest match to the face
+            }
+            else // face is to be added to the database
+            {
+                face.name = name; // set the face name
+                add_to_db(face); // add the face to the database
+                return name; // return the name
+            }
+        }
+        private static Face get_face(Unit3D[] face_vectors)
+        {
+            Face face = new Face(); // initialize the face
+            // calculate angles
+            face.angle_0_44_45 = Maths.Angle(face_vectors[0], face_vectors[44], face_vectors[45]);
+            face.angle_44_45_47 = Maths.Angle(face_vectors[44], face_vectors[45], face_vectors[47]);
+            face.angle_45_47_62 = Maths.Angle(face_vectors[45], face_vectors[47], face_vectors[62]);
+            face.angle_47_62_61 = Maths.Angle(face_vectors[47], face_vectors[62], face_vectors[61]);
+            face.angle_62_61_63 = Maths.Angle(face_vectors[62], face_vectors[61], face_vectors[63]);
+            face.angle_61_63_43 = Maths.Angle(face_vectors[61], face_vectors[63], face_vectors[43]);
+            face.angle_63_43_30 = Maths.Angle(face_vectors[63], face_vectors[43], face_vectors[30]);
+            face.angle_43_30_28 = Maths.Angle(face_vectors[43], face_vectors[30], face_vectors[28]);
+            face.angle_30_28_29 = Maths.Angle(face_vectors[30], face_vectors[28], face_vectors[29]);
+            face.angle_28_29_14 = Maths.Angle(face_vectors[28], face_vectors[29], face_vectors[14]);
+            face.angle_29_14_12 = Maths.Angle(face_vectors[29], face_vectors[14], face_vectors[12]);
+            face.angle_14_12_11 = Maths.Angle(face_vectors[14], face_vectors[12], face_vectors[11]);
+            face.angle_12_11_0 = Maths.Angle(face_vectors[12], face_vectors[11], face_vectors[0]);
+            face.angle_11_0_34 = Maths.Angle(face_vectors[11], face_vectors[0], face_vectors[34]);
+            face.angle_0_34_45 = Maths.Angle(face_vectors[0], face_vectors[34], face_vectors[45]);
+            face.angle_34_45_46 = Maths.Angle(face_vectors[34], face_vectors[45], face_vectors[46]);
+            face.angle_45_46_47 = Maths.Angle(face_vectors[45], face_vectors[46], face_vectors[47]);
+            face.angle_46_47_2 = Maths.Angle(face_vectors[46], face_vectors[47], face_vectors[2]);
+            face.angle_47_2_62 = Maths.Angle(face_vectors[47], face_vectors[2], face_vectors[62]);
+            face.angle_2_62_60 = Maths.Angle(face_vectors[2], face_vectors[62], face_vectors[60]);
+            face.angle_62_60_61 = Maths.Angle(face_vectors[62], face_vectors[60], face_vectors[61]);
+            face.angle_60_61_41 = Maths.Angle(face_vectors[60], face_vectors[61], face_vectors[41]);
+            face.angle_61_41_63 = Maths.Angle(face_vectors[61], face_vectors[41], face_vectors[63]);
+            face.angle_41_63_42 = Maths.Angle(face_vectors[41], face_vectors[63], face_vectors[42]);
+            face.angle_63_42_30 = Maths.Angle(face_vectors[63], face_vectors[42], face_vectors[30]);
+            face.angle_42_30_27 = Maths.Angle(face_vectors[42], face_vectors[30], face_vectors[27]);
+            face.angle_30_27_29 = Maths.Angle(face_vectors[30], face_vectors[27], face_vectors[29]);
+            face.angle_27_29_13 = Maths.Angle(face_vectors[27], face_vectors[29], face_vectors[13]);
+            face.angle_29_13_12 = Maths.Angle(face_vectors[29], face_vectors[13], face_vectors[12]);
+            face.angle_13_12_1 = Maths.Angle(face_vectors[13], face_vectors[12], face_vectors[1]);
+            face.angle_12_1_11 = Maths.Angle(face_vectors[12], face_vectors[1], face_vectors[11]);
+            face.angle_1_11_2 = Maths.Angle(face_vectors[1], face_vectors[11], face_vectors[2]);
+            face.angle_11_2_14 = Maths.Angle(face_vectors[11], face_vectors[2], face_vectors[14]);
+            face.angle_2_14_36 = Maths.Angle(face_vectors[2], face_vectors[14], face_vectors[36]);
+            face.angle_14_36_13 = Maths.Angle(face_vectors[14], face_vectors[36], face_vectors[13]);
+            face.angle_36_13_1 = Maths.Angle(face_vectors[36], face_vectors[13], face_vectors[1]);
+            face.angle_13_1_34 = Maths.Angle(face_vectors[13], face_vectors[1], face_vectors[34]);
+            face.angle_1_34_46 = Maths.Angle(face_vectors[1], face_vectors[34], face_vectors[46]);
+            face.angle_34_46_53 = Maths.Angle(face_vectors[34], face_vectors[46], face_vectors[53]);
+            face.angle_46_53_60 = Maths.Angle(face_vectors[46], face_vectors[53], face_vectors[60]);
+            face.angle_53_60_59 = Maths.Angle(face_vectors[53], face_vectors[60], face_vectors[59]);
+            face.angle_60_59_112 = Maths.Angle(face_vectors[60], face_vectors[59], face_vectors[112]);
+            face.angle_59_112_6 = Maths.Angle(face_vectors[59], face_vectors[112], face_vectors[6]);
+            face.angle_112_6_111 = Maths.Angle(face_vectors[112], face_vectors[6], face_vectors[111]);
+            face.angle_6_111_26 = Maths.Angle(face_vectors[6], face_vectors[111], face_vectors[26]);
+            face.angle_111_26_25 = Maths.Angle(face_vectors[111], face_vectors[26], face_vectors[25]);
+            face.angle_26_25_75 = Maths.Angle(face_vectors[26], face_vectors[25], face_vectors[75]);
+            face.angle_25_75_5 = Maths.Angle(face_vectors[25], face_vectors[75], face_vectors[5]);
+            face.angle_75_5_76 = Maths.Angle(face_vectors[75], face_vectors[5], face_vectors[76]);
+            face.angle_5_76_58 = Maths.Angle(face_vectors[5], face_vectors[76], face_vectors[58]);
+            face.angle_76_58_59 = Maths.Angle(face_vectors[76], face_vectors[58], face_vectors[59]);
+            face.angle_58_59_93 = Maths.Angle(face_vectors[58], face_vectors[59], face_vectors[93]);
+            face.angle_59_93_94 = Maths.Angle(face_vectors[59], face_vectors[93], face_vectors[94]);
+            face.angle_93_94_92 = Maths.Angle(face_vectors[93], face_vectors[94], face_vectors[92]);
+            face.angle_94_92_5 = Maths.Angle(face_vectors[94], face_vectors[92], face_vectors[5]);
+            face.angle_92_5_94 = Maths.Angle(face_vectors[92], face_vectors[5], face_vectors[94]);
+            face.angle_5_94_25 = Maths.Angle(face_vectors[5], face_vectors[94], face_vectors[25]);
+            face.angle_94_25_58 = Maths.Angle(face_vectors[94], face_vectors[25], face_vectors[58]);
+            face.angle_25_58_25 = Maths.Angle(face_vectors[25], face_vectors[58], face_vectors[25]);
+            face.angle_58_25_6 = Maths.Angle(face_vectors[58], face_vectors[25], face_vectors[6]);
+            face.angle_25_6_42 = Maths.Angle(face_vectors[25], face_vectors[6], face_vectors[42]);
+            face.angle_6_42_27 = Maths.Angle(face_vectors[6], face_vectors[42], face_vectors[27]);
+            face.angle_42_27_20 = Maths.Angle(face_vectors[42], face_vectors[27], face_vectors[20]);
+            face.angle_27_20_95 = Maths.Angle(face_vectors[27], face_vectors[20], face_vectors[95]);
+            face.angle_20_95_19 = Maths.Angle(face_vectors[20], face_vectors[95], face_vectors[19]);
+            face.angle_95_19_103 = Maths.Angle(face_vectors[95], face_vectors[19], face_vectors[103]);
+            face.angle_19_103_23 = Maths.Angle(face_vectors[19], face_vectors[103], face_vectors[23]);
+            face.angle_103_23_109 = Maths.Angle(face_vectors[103], face_vectors[23], face_vectors[109]);
+            face.angle_23_109_24 = Maths.Angle(face_vectors[23], face_vectors[109], face_vectors[24]);
+            face.angle_109_24_101 = Maths.Angle(face_vectors[109], face_vectors[24], face_vectors[101]);
+            face.angle_24_101_20 = Maths.Angle(face_vectors[24], face_vectors[101], face_vectors[20]);
+            face.angle_101_20_103 = Maths.Angle(face_vectors[101], face_vectors[20], face_vectors[103]);
+            face.angle_20_103_72 = Maths.Angle(face_vectors[20], face_vectors[103], face_vectors[72]);
+            face.angle_103_72_95 = Maths.Angle(face_vectors[103], face_vectors[72], face_vectors[95]);
+            face.angle_72_95_68 = Maths.Angle(face_vectors[72], face_vectors[95], face_vectors[68]);
+            face.angle_95_68_19 = Maths.Angle(face_vectors[95], face_vectors[68], face_vectors[19]);
+            face.angle_68_19_4 = Maths.Angle(face_vectors[68], face_vectors[19], face_vectors[4]);
+            face.angle_19_4_52 = Maths.Angle(face_vectors[19], face_vectors[4], face_vectors[52]);
+            face.angle_4_52_96 = Maths.Angle(face_vectors[4], face_vectors[52], face_vectors[96]);
+            face.angle_52_96_53 = Maths.Angle(face_vectors[52], face_vectors[96], face_vectors[53]);
+            face.angle_96_53_56 = Maths.Angle(face_vectors[96], face_vectors[53], face_vectors[56]);
+            face.angle_53_56_104 = Maths.Angle(face_vectors[53], face_vectors[56], face_vectors[104]);
+            face.angle_56_104_52 = Maths.Angle(face_vectors[56], face_vectors[104], face_vectors[52]);
+            face.angle_104_52_102 = Maths.Angle(face_vectors[104], face_vectors[52], face_vectors[102]);
+            face.angle_52_102_110 = Maths.Angle(face_vectors[52], face_vectors[102], face_vectors[110]);
+            face.angle_102_110_57 = Maths.Angle(face_vectors[102], face_vectors[110], face_vectors[57]);
+            face.angle_110_57_96 = Maths.Angle(face_vectors[110], face_vectors[57], face_vectors[96]);
+            face.angle_57_96_57 = Maths.Angle(face_vectors[57], face_vectors[96], face_vectors[57]);
+            face.angle_96_57_94 = Maths.Angle(face_vectors[96], face_vectors[57], face_vectors[94]);
+            face.angle_57_94_56 = Maths.Angle(face_vectors[57], face_vectors[94], face_vectors[56]);
+            face.angle_94_56_74 = Maths.Angle(face_vectors[94], face_vectors[56], face_vectors[74]);
+            face.angle_56_74_70 = Maths.Angle(face_vectors[56], face_vectors[74], face_vectors[70]);
+            face.angle_74_70_53 = Maths.Angle(face_vectors[74], face_vectors[70], face_vectors[53]);
+            face.angle_70_53_43 = Maths.Angle(face_vectors[70], face_vectors[53], face_vectors[43]);
+            face.angle_53_43_0 = Maths.Angle(face_vectors[53], face_vectors[43], face_vectors[0]);
+            face.angle_43_0_20 = Maths.Angle(face_vectors[43], face_vectors[0], face_vectors[20]);
+            face.angle_0_20_53 = Maths.Angle(face_vectors[0], face_vectors[20], face_vectors[53]);
+            face.angle_20_53_2 = Maths.Angle(face_vectors[20], face_vectors[53], face_vectors[2]);
+            face.angle_53_2_6 = Maths.Angle(face_vectors[53], face_vectors[2], face_vectors[6]);
+            // calculate magnitude ratios
+            face.magRatio_0_44_45 = Maths.Ratio(face_vectors[0], face_vectors[44], face_vectors[45]);
+            face.magRatio_44_45_47 = Maths.Ratio(face_vectors[44], face_vectors[45], face_vectors[47]);
+            face.magRatio_45_47_62 = Maths.Ratio(face_vectors[45], face_vectors[47], face_vectors[62]);
+            face.magRatio_47_62_61 = Maths.Ratio(face_vectors[47], face_vectors[62], face_vectors[61]);
+            face.magRatio_62_61_63 = Maths.Ratio(face_vectors[62], face_vectors[61], face_vectors[63]);
+            face.magRatio_61_63_43 = Maths.Ratio(face_vectors[61], face_vectors[63], face_vectors[43]);
+            face.magRatio_63_43_30 = Maths.Ratio(face_vectors[63], face_vectors[43], face_vectors[30]);
+            face.magRatio_43_30_28 = Maths.Ratio(face_vectors[43], face_vectors[30], face_vectors[28]);
+            face.magRatio_30_28_29 = Maths.Ratio(face_vectors[30], face_vectors[28], face_vectors[29]);
+            face.magRatio_28_29_14 = Maths.Ratio(face_vectors[28], face_vectors[29], face_vectors[14]);
+            face.magRatio_29_14_12 = Maths.Ratio(face_vectors[29], face_vectors[14], face_vectors[12]);
+            face.magRatio_14_12_11 = Maths.Ratio(face_vectors[14], face_vectors[12], face_vectors[11]);
+            face.magRatio_12_11_0 = Maths.Ratio(face_vectors[12], face_vectors[11], face_vectors[0]);
+            face.magRatio_11_0_34 = Maths.Ratio(face_vectors[11], face_vectors[0], face_vectors[34]);
+            face.magRatio_0_34_45 = Maths.Ratio(face_vectors[0], face_vectors[34], face_vectors[45]);
+            face.magRatio_34_45_46 = Maths.Ratio(face_vectors[34], face_vectors[45], face_vectors[46]);
+            face.magRatio_45_46_47 = Maths.Ratio(face_vectors[45], face_vectors[46], face_vectors[47]);
+            face.magRatio_46_47_2 = Maths.Ratio(face_vectors[46], face_vectors[47], face_vectors[2]);
+            face.magRatio_47_2_62 = Maths.Ratio(face_vectors[47], face_vectors[2], face_vectors[62]);
+            face.magRatio_2_62_60 = Maths.Ratio(face_vectors[2], face_vectors[62], face_vectors[60]);
+            face.magRatio_62_60_61 = Maths.Ratio(face_vectors[62], face_vectors[60], face_vectors[61]);
+            face.magRatio_60_61_41 = Maths.Ratio(face_vectors[60], face_vectors[61], face_vectors[41]);
+            face.magRatio_61_41_63 = Maths.Ratio(face_vectors[61], face_vectors[41], face_vectors[63]);
+            face.magRatio_41_63_42 = Maths.Ratio(face_vectors[41], face_vectors[63], face_vectors[42]);
+            face.magRatio_63_42_30 = Maths.Ratio(face_vectors[63], face_vectors[42], face_vectors[30]);
+            face.magRatio_42_30_27 = Maths.Ratio(face_vectors[42], face_vectors[30], face_vectors[27]);
+            face.magRatio_30_27_29 = Maths.Ratio(face_vectors[30], face_vectors[27], face_vectors[29]);
+            face.magRatio_27_29_13 = Maths.Ratio(face_vectors[27], face_vectors[29], face_vectors[13]);
+            face.magRatio_29_13_12 = Maths.Ratio(face_vectors[29], face_vectors[13], face_vectors[12]);
+            face.magRatio_13_12_1 = Maths.Ratio(face_vectors[13], face_vectors[12], face_vectors[1]);
+            face.magRatio_12_1_11 = Maths.Ratio(face_vectors[12], face_vectors[1], face_vectors[11]);
+            face.magRatio_1_11_2 = Maths.Ratio(face_vectors[1], face_vectors[11], face_vectors[2]);
+            face.magRatio_11_2_14 = Maths.Ratio(face_vectors[11], face_vectors[2], face_vectors[14]);
+            face.magRatio_2_14_36 = Maths.Ratio(face_vectors[2], face_vectors[14], face_vectors[36]);
+            face.magRatio_14_36_13 = Maths.Ratio(face_vectors[14], face_vectors[36], face_vectors[13]);
+            face.magRatio_36_13_1 = Maths.Ratio(face_vectors[36], face_vectors[13], face_vectors[1]);
+            face.magRatio_13_1_34 = Maths.Ratio(face_vectors[13], face_vectors[1], face_vectors[34]);
+            face.magRatio_1_34_46 = Maths.Ratio(face_vectors[1], face_vectors[34], face_vectors[46]);
+            face.magRatio_34_46_53 = Maths.Ratio(face_vectors[34], face_vectors[46], face_vectors[53]);
+            face.magRatio_46_53_60 = Maths.Ratio(face_vectors[46], face_vectors[53], face_vectors[60]);
+            face.magRatio_53_60_59 = Maths.Ratio(face_vectors[53], face_vectors[60], face_vectors[59]);
+            face.magRatio_60_59_112 = Maths.Ratio(face_vectors[60], face_vectors[59], face_vectors[112]);
+            face.magRatio_59_112_6 = Maths.Ratio(face_vectors[59], face_vectors[112], face_vectors[6]);
+            face.magRatio_112_6_111 = Maths.Ratio(face_vectors[112], face_vectors[6], face_vectors[111]);
+            face.magRatio_6_111_26 = Maths.Ratio(face_vectors[6], face_vectors[111], face_vectors[26]);
+            face.magRatio_111_26_25 = Maths.Ratio(face_vectors[111], face_vectors[26], face_vectors[25]);
+            face.magRatio_26_25_75 = Maths.Ratio(face_vectors[26], face_vectors[25], face_vectors[75]);
+            face.magRatio_25_75_5 = Maths.Ratio(face_vectors[25], face_vectors[75], face_vectors[5]);
+            face.magRatio_75_5_76 = Maths.Ratio(face_vectors[75], face_vectors[5], face_vectors[76]);
+            face.magRatio_5_76_58 = Maths.Ratio(face_vectors[5], face_vectors[76], face_vectors[58]);
+            face.magRatio_76_58_59 = Maths.Ratio(face_vectors[76], face_vectors[58], face_vectors[59]);
+            face.magRatio_58_59_93 = Maths.Ratio(face_vectors[58], face_vectors[59], face_vectors[93]);
+            face.magRatio_59_93_94 = Maths.Ratio(face_vectors[59], face_vectors[93], face_vectors[94]);
+            face.magRatio_93_94_92 = Maths.Ratio(face_vectors[93], face_vectors[94], face_vectors[92]);
+            face.magRatio_94_92_5 = Maths.Ratio(face_vectors[94], face_vectors[92], face_vectors[5]);
+            face.magRatio_92_5_94 = Maths.Ratio(face_vectors[92], face_vectors[5], face_vectors[94]);
+            face.magRatio_5_94_25 = Maths.Ratio(face_vectors[5], face_vectors[94], face_vectors[25]);
+            face.magRatio_94_25_58 = Maths.Ratio(face_vectors[94], face_vectors[25], face_vectors[58]);
+            face.magRatio_25_58_25 = Maths.Ratio(face_vectors[25], face_vectors[58], face_vectors[25]);
+            face.magRatio_58_25_6 = Maths.Ratio(face_vectors[58], face_vectors[25], face_vectors[6]);
+            face.magRatio_25_6_42 = Maths.Ratio(face_vectors[25], face_vectors[6], face_vectors[42]);
+            face.magRatio_6_42_27 = Maths.Ratio(face_vectors[6], face_vectors[42], face_vectors[27]);
+            face.magRatio_42_27_20 = Maths.Ratio(face_vectors[42], face_vectors[27], face_vectors[20]);
+            face.magRatio_27_20_95 = Maths.Ratio(face_vectors[27], face_vectors[20], face_vectors[95]);
+            face.magRatio_20_95_19 = Maths.Ratio(face_vectors[20], face_vectors[95], face_vectors[19]);
+            face.magRatio_95_19_103 = Maths.Ratio(face_vectors[95], face_vectors[19], face_vectors[103]);
+            face.magRatio_19_103_23 = Maths.Ratio(face_vectors[19], face_vectors[103], face_vectors[23]);
+            face.magRatio_103_23_109 = Maths.Ratio(face_vectors[103], face_vectors[23], face_vectors[109]);
+            face.magRatio_23_109_24 = Maths.Ratio(face_vectors[23], face_vectors[109], face_vectors[24]);
+            face.magRatio_109_24_101 = Maths.Ratio(face_vectors[109], face_vectors[24], face_vectors[101]);
+            face.magRatio_24_101_20 = Maths.Ratio(face_vectors[24], face_vectors[101], face_vectors[20]);
+            face.magRatio_101_20_103 = Maths.Ratio(face_vectors[101], face_vectors[20], face_vectors[103]);
+            face.magRatio_20_103_72 = Maths.Ratio(face_vectors[20], face_vectors[103], face_vectors[72]);
+            face.magRatio_103_72_95 = Maths.Ratio(face_vectors[103], face_vectors[72], face_vectors[95]);
+            face.magRatio_72_95_68 = Maths.Ratio(face_vectors[72], face_vectors[95], face_vectors[68]);
+            face.magRatio_95_68_19 = Maths.Ratio(face_vectors[95], face_vectors[68], face_vectors[19]);
+            face.magRatio_68_19_4 = Maths.Ratio(face_vectors[68], face_vectors[19], face_vectors[4]);
+            face.magRatio_19_4_52 = Maths.Ratio(face_vectors[19], face_vectors[4], face_vectors[52]);
+            face.magRatio_4_52_96 = Maths.Ratio(face_vectors[4], face_vectors[52], face_vectors[96]);
+            face.magRatio_52_96_53 = Maths.Ratio(face_vectors[52], face_vectors[96], face_vectors[53]);
+            face.magRatio_96_53_56 = Maths.Ratio(face_vectors[96], face_vectors[53], face_vectors[56]);
+            face.magRatio_53_56_104 = Maths.Ratio(face_vectors[53], face_vectors[56], face_vectors[104]);
+            face.magRatio_56_104_52 = Maths.Ratio(face_vectors[56], face_vectors[104], face_vectors[52]);
+            face.magRatio_104_52_102 = Maths.Ratio(face_vectors[104], face_vectors[52], face_vectors[102]);
+            face.magRatio_52_102_110 = Maths.Ratio(face_vectors[52], face_vectors[102], face_vectors[110]);
+            face.magRatio_102_110_57 = Maths.Ratio(face_vectors[102], face_vectors[110], face_vectors[57]);
+            face.magRatio_110_57_96 = Maths.Ratio(face_vectors[110], face_vectors[57], face_vectors[96]);
+            face.magRatio_57_96_57 = Maths.Ratio(face_vectors[57], face_vectors[96], face_vectors[57]);
+            face.magRatio_96_57_94 = Maths.Ratio(face_vectors[96], face_vectors[57], face_vectors[94]);
+            face.magRatio_57_94_56 = Maths.Ratio(face_vectors[57], face_vectors[94], face_vectors[56]);
+            face.magRatio_94_56_74 = Maths.Ratio(face_vectors[94], face_vectors[56], face_vectors[74]);
+            face.magRatio_56_74_70 = Maths.Ratio(face_vectors[56], face_vectors[74], face_vectors[70]);
+            face.magRatio_74_70_53 = Maths.Ratio(face_vectors[74], face_vectors[70], face_vectors[53]);
+            face.magRatio_70_53_43 = Maths.Ratio(face_vectors[70], face_vectors[53], face_vectors[43]);
+            face.magRatio_53_43_0 = Maths.Ratio(face_vectors[53], face_vectors[43], face_vectors[0]);
+            face.magRatio_43_0_20 = Maths.Ratio(face_vectors[43], face_vectors[0], face_vectors[20]);
+            face.magRatio_0_20_53 = Maths.Ratio(face_vectors[0], face_vectors[20], face_vectors[53]);
+            face.magRatio_20_53_2 = Maths.Ratio(face_vectors[20], face_vectors[53], face_vectors[2]);
+            face.magRatio_53_2_6 = Maths.Ratio(face_vectors[53], face_vectors[2], face_vectors[6]);
+            return face; // return the face
+        }
+        private static void add_to_db(Face face)
+        {
+            using (var db = new Database.Database()) // use the database
+            {
+                db.Faces.Add(face); // add the face to the database
+                db.SaveChanges(); // update the database
+            }
+        }
+        private static String get_match(Face face)
+        {
+            using (var db = new Database.Database()) // using the database
+            {
+                double match = Double.MinValue; // the closest match
+                string name = ""; // name of the closest match
+                // get all faces from the database
+                var query = from b in db.Faces
+                            where b.version == null
+                            orderby b.name
+                            select b;
+                Console.WriteLine("Searching database...");
+                Console.WriteLine("Name       :: Total Match                 :: Total Difference                        :: Mean        ");
+                List<FaceMatch> faceMatches = new List<FaceMatch> { }; // list of all face comparisons
+                foreach (var found_face in query) // iterate faces from database
+                {
+                    FaceMatch fm = new FaceMatch(found_face, face); // compare database face with unknown face
+                    faceMatches.Add(fm); // add comparison to list
+                }
+                foreach (FaceMatch a in faceMatches) // itereate all face comparisons
+                {
+                    string nameA = a.Name; // get the name
+                    double facesCount = 0; // total compaisons with the same name
+                    double matchCountTotal = 0; // total match
+                    foreach (FaceMatch b in faceMatches) // iterate all face comparisons
+                    {
+                        if (nameA == b.Name) // if names are the same
+                        {
+                            facesCount++; // increment count
+                            matchCountTotal += b.GetMatchCount(); // increase the total match
+                        }
+                    }
+                    a.AverageMatchCount = matchCountTotal / facesCount; // set the average match for this person
+                }
+                foreach (FaceMatch fm in faceMatches) // iterate all face comparisons
+                {
+                    double closeness = fm.AverageMatchCount; // get the average face match
+                    if (closeness > match) // if match is closer than previous comparisons
+                    {
+                        match = closeness; // set new closest match
+                        name = fm.Name; // set the name
+                    }
+                    Console.WriteLine(String.Format("Checked {0} :: {1} :: {2} :: {3} :: {4}",
+                        fm.Name,closeness, fm.GetMatchCount(), fm.GetTotalMatch(), fm.GetMean()));
+                }
+                //MainWindow
+                Console.WriteLine("closest match: " + name + " :: " + match); // write the name of the closest match
+                return name; // return name of the closest match
+            }
+        }
+    }
+}
+
+namespace KinectTrackerAndBroadcaster.Models
+{
+    public class FaceMatch
+    {
+        public String Name { get; set; } // name of the person
+        private Face faceA { get; set; } // the face of the known person
+        private Face faceB { get; set; } // the face of the unknown person
+        private List<decimal?> matches = new List<decimal?>(); // list of 
+        private decimal total = 0; // total sum of matches
+        private int count = 0; // total count of matches
+        private decimal mean; // mean average of the matches (total/count)
+        private decimal lowest = 1; // the lowest match
+        private decimal totalDifference = 0; // sum of all differnces between 1 and match
+        private decimal totalMatch = 1; // 1 - totalDifference
+        private int matchCount = 0; // how many of the matches are above n% accuracy
+        public double AverageMatchCount { get; set; } // the average match count for people with this name
+        public FaceMatch(Face a, Face b)
+        {
+            // set local variables
+            Name = a.name;
+            faceA = a;
+            faceB = b;
+            // call methods
+            getMatches();
+            calculateAverages();
+        }
+        public decimal GetMean()
+        {
+            return mean;
+        }
+        public decimal GetLowest() {
+            return lowest;
+        }
+        public decimal GetTotalDifference()
+        {
+            return totalDifference;
+        }
+        public decimal GetTotalMatch()
+        {
+            return totalMatch;
+        }
+        public int GetMatchCount()
+        {
+            return matchCount;
+        }
+        private void calculateAverages()
+        {
+            foreach (decimal match in matches) // iterate through the matches
+            {
+                total += match; // add to the total
+                count++; // increment count
+                totalDifference += 1 - match;
+                if (match < lowest) // if match is lowest so far
+                {
+                    lowest = match; // set match to be lowest
+                }
+                if (match > .9999m) // if match is more than 99.99% accurate
+                {
+                    matchCount++; // increment the matches about n% accuracy
+                }
+            }
+            totalMatch = 1 - totalDifference; 
+            mean = total / count; // calculate mean
+        }
+        private void getMatches()
+        {
+            // matches for angles
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_0_44_45, (decimal)faceB.angle_0_44_45));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_44_45_47, (decimal)faceB.angle_44_45_47));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_45_47_62, (decimal)faceB.angle_45_47_62));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_47_62_61, (decimal)faceB.angle_47_62_61));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_62_61_63, (decimal)faceB.angle_62_61_63));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_61_63_43, (decimal)faceB.angle_61_63_43));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_63_43_30, (decimal)faceB.angle_63_43_30));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_43_30_28, (decimal)faceB.angle_43_30_28));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_30_28_29, (decimal)faceB.angle_30_28_29));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_28_29_14, (decimal)faceB.angle_28_29_14));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_29_14_12, (decimal)faceB.angle_29_14_12));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_14_12_11, (decimal)faceB.angle_14_12_11));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_12_11_0, (decimal)faceB.angle_12_11_0));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_11_0_34, (decimal)faceB.angle_11_0_34));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_0_34_45, (decimal)faceB.angle_0_34_45));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_34_45_46, (decimal)faceB.angle_34_45_46));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_45_46_47, (decimal)faceB.angle_45_46_47));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_46_47_2, (decimal)faceB.angle_46_47_2));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_47_2_62, (decimal)faceB.angle_47_2_62));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_2_62_60, (decimal)faceB.angle_2_62_60));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_62_60_61, (decimal)faceB.angle_62_60_61));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_60_61_41, (decimal)faceB.angle_60_61_41));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_61_41_63, (decimal)faceB.angle_61_41_63));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_41_63_42, (decimal)faceB.angle_41_63_42));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_63_42_30, (decimal)faceB.angle_63_42_30));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_42_30_27, (decimal)faceB.angle_42_30_27));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_30_27_29, (decimal)faceB.angle_30_27_29));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_27_29_13, (decimal)faceB.angle_27_29_13));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_29_13_12, (decimal)faceB.angle_29_13_12));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_13_12_1, (decimal)faceB.angle_13_12_1));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_12_1_11, (decimal)faceB.angle_12_1_11));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_1_11_2, (decimal)faceB.angle_1_11_2));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_11_2_14, (decimal)faceB.angle_11_2_14));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_2_14_36, (decimal)faceB.angle_2_14_36));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_14_36_13, (decimal)faceB.angle_14_36_13));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_36_13_1, (decimal)faceB.angle_36_13_1));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_13_1_34, (decimal)faceB.angle_13_1_34));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_1_34_46, (decimal)faceB.angle_1_34_46));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_34_46_53, (decimal)faceB.angle_34_46_53));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_46_53_60, (decimal)faceB.angle_46_53_60));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_53_60_59, (decimal)faceB.angle_53_60_59));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_60_59_112, (decimal)faceB.angle_60_59_112));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_59_112_6, (decimal)faceB.angle_59_112_6));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_112_6_111, (decimal)faceB.angle_112_6_111));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_6_111_26, (decimal)faceB.angle_6_111_26));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_111_26_25, (decimal)faceB.angle_111_26_25));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_26_25_75, (decimal)faceB.angle_26_25_75));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_25_75_5, (decimal)faceB.angle_25_75_5));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_75_5_76, (decimal)faceB.angle_75_5_76));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_5_76_58, (decimal)faceB.angle_5_76_58));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_76_58_59, (decimal)faceB.angle_76_58_59));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_58_59_93, (decimal)faceB.angle_58_59_93));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_59_93_94, (decimal)faceB.angle_59_93_94));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_93_94_92, (decimal)faceB.angle_93_94_92));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_94_92_5, (decimal)faceB.angle_94_92_5));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_92_5_94, (decimal)faceB.angle_92_5_94));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_5_94_25, (decimal)faceB.angle_5_94_25));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_94_25_58, (decimal)faceB.angle_94_25_58));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_25_58_25, (decimal)faceB.angle_25_58_25));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_58_25_6, (decimal)faceB.angle_58_25_6));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_25_6_42, (decimal)faceB.angle_25_6_42));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_6_42_27, (decimal)faceB.angle_6_42_27));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_42_27_20, (decimal)faceB.angle_42_27_20));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_27_20_95, (decimal)faceB.angle_27_20_95));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_20_95_19, (decimal)faceB.angle_20_95_19));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_95_19_103, (decimal)faceB.angle_95_19_103));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_19_103_23, (decimal)faceB.angle_19_103_23));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_103_23_109, (decimal)faceB.angle_103_23_109));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_23_109_24, (decimal)faceB.angle_23_109_24));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_109_24_101, (decimal)faceB.angle_109_24_101));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_24_101_20, (decimal)faceB.angle_24_101_20));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_101_20_103, (decimal)faceB.angle_101_20_103));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_20_103_72, (decimal)faceB.angle_20_103_72));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_103_72_95, (decimal)faceB.angle_103_72_95));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_72_95_68, (decimal)faceB.angle_72_95_68));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_95_68_19, (decimal)faceB.angle_95_68_19));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_68_19_4, (decimal)faceB.angle_68_19_4));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_19_4_52, (decimal)faceB.angle_19_4_52));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_4_52_96, (decimal)faceB.angle_4_52_96));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_52_96_53, (decimal)faceB.angle_52_96_53));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_96_53_56, (decimal)faceB.angle_96_53_56));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_53_56_104, (decimal)faceB.angle_53_56_104));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_56_104_52, (decimal)faceB.angle_56_104_52));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_104_52_102, (decimal)faceB.angle_104_52_102));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_52_102_110, (decimal)faceB.angle_52_102_110));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_102_110_57, (decimal)faceB.angle_102_110_57));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_110_57_96, (decimal)faceB.angle_110_57_96));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_57_96_57, (decimal)faceB.angle_57_96_57));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_96_57_94, (decimal)faceB.angle_96_57_94));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_57_94_56, (decimal)faceB.angle_57_94_56));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_94_56_74, (decimal)faceB.angle_94_56_74));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_56_74_70, (decimal)faceB.angle_56_74_70));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_74_70_53, (decimal)faceB.angle_74_70_53));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_70_53_43, (decimal)faceB.angle_70_53_43));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_53_43_0, (decimal)faceB.angle_53_43_0));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_43_0_20, (decimal)faceB.angle_43_0_20));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_0_20_53, (decimal)faceB.angle_0_20_53));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_20_53_2, (decimal)faceB.angle_20_53_2));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_53_2_6, (decimal)faceB.angle_53_2_6));
+            
+            // matches for magnitude ratios
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_0_44_45, (decimal)faceB.magRatio_0_44_45));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_44_45_47, (decimal)faceB.magRatio_44_45_47));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_45_47_62, (decimal)faceB.magRatio_45_47_62));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_47_62_61, (decimal)faceB.magRatio_47_62_61));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_62_61_63, (decimal)faceB.magRatio_62_61_63));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_61_63_43, (decimal)faceB.magRatio_61_63_43));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_63_43_30, (decimal)faceB.magRatio_63_43_30));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_43_30_28, (decimal)faceB.magRatio_43_30_28));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_30_28_29, (decimal)faceB.magRatio_30_28_29));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_28_29_14, (decimal)faceB.magRatio_28_29_14));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_29_14_12, (decimal)faceB.magRatio_29_14_12));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_14_12_11, (decimal)faceB.magRatio_14_12_11));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_12_11_0, (decimal)faceB.magRatio_12_11_0));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_11_0_34, (decimal)faceB.magRatio_11_0_34));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_0_34_45, (decimal)faceB.magRatio_0_34_45));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_34_45_46, (decimal)faceB.magRatio_34_45_46));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_45_46_47, (decimal)faceB.magRatio_45_46_47));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_46_47_2, (decimal)faceB.magRatio_46_47_2));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_47_2_62, (decimal)faceB.magRatio_47_2_62));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_2_62_60, (decimal)faceB.magRatio_2_62_60));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_62_60_61, (decimal)faceB.magRatio_62_60_61));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_60_61_41, (decimal)faceB.magRatio_60_61_41));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_61_41_63, (decimal)faceB.magRatio_61_41_63));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_41_63_42, (decimal)faceB.magRatio_41_63_42));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_63_42_30, (decimal)faceB.magRatio_63_42_30));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_42_30_27, (decimal)faceB.magRatio_42_30_27));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_30_27_29, (decimal)faceB.magRatio_30_27_29));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_27_29_13, (decimal)faceB.magRatio_27_29_13));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_29_13_12, (decimal)faceB.magRatio_29_13_12));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_13_12_1, (decimal)faceB.magRatio_13_12_1));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_12_1_11, (decimal)faceB.magRatio_12_1_11));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_1_11_2, (decimal)faceB.magRatio_1_11_2));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_11_2_14, (decimal)faceB.magRatio_11_2_14));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_2_14_36, (decimal)faceB.magRatio_2_14_36));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_14_36_13, (decimal)faceB.magRatio_14_36_13));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_36_13_1, (decimal)faceB.magRatio_36_13_1));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_13_1_34, (decimal)faceB.magRatio_13_1_34));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_1_34_46, (decimal)faceB.magRatio_1_34_46));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_34_46_53, (decimal)faceB.magRatio_34_46_53));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_46_53_60, (decimal)faceB.magRatio_46_53_60));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_53_60_59, (decimal)faceB.magRatio_53_60_59));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_60_59_112, (decimal)faceB.magRatio_60_59_112));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_59_112_6, (decimal)faceB.magRatio_59_112_6));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_112_6_111, (decimal)faceB.magRatio_112_6_111));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_6_111_26, (decimal)faceB.magRatio_6_111_26));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_111_26_25, (decimal)faceB.magRatio_111_26_25));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_26_25_75, (decimal)faceB.magRatio_26_25_75));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_25_75_5, (decimal)faceB.magRatio_25_75_5));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_75_5_76, (decimal)faceB.magRatio_75_5_76));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_5_76_58, (decimal)faceB.magRatio_5_76_58));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_76_58_59, (decimal)faceB.magRatio_76_58_59));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_58_59_93, (decimal)faceB.magRatio_58_59_93));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_59_93_94, (decimal)faceB.magRatio_59_93_94));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_93_94_92, (decimal)faceB.magRatio_93_94_92));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_94_92_5, (decimal)faceB.magRatio_94_92_5));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_92_5_94, (decimal)faceB.magRatio_92_5_94));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_5_94_25, (decimal)faceB.magRatio_5_94_25));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_94_25_58, (decimal)faceB.magRatio_94_25_58));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_25_58_25, (decimal)faceB.magRatio_25_58_25));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_58_25_6, (decimal)faceB.magRatio_58_25_6));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_25_6_42, (decimal)faceB.magRatio_25_6_42));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_6_42_27, (decimal)faceB.magRatio_6_42_27));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_42_27_20, (decimal)faceB.magRatio_42_27_20));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_27_20_95, (decimal)faceB.magRatio_27_20_95));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_20_95_19, (decimal)faceB.magRatio_20_95_19));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_95_19_103, (decimal)faceB.magRatio_95_19_103));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_19_103_23, (decimal)faceB.magRatio_19_103_23));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_103_23_109, (decimal)faceB.magRatio_103_23_109));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_23_109_24, (decimal)faceB.magRatio_23_109_24));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_109_24_101, (decimal)faceB.magRatio_109_24_101));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_24_101_20, (decimal)faceB.magRatio_24_101_20));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_101_20_103, (decimal)faceB.magRatio_101_20_103));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_20_103_72, (decimal)faceB.magRatio_20_103_72));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_103_72_95, (decimal)faceB.magRatio_103_72_95));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_72_95_68, (decimal)faceB.magRatio_72_95_68));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_95_68_19, (decimal)faceB.magRatio_95_68_19));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_68_19_4, (decimal)faceB.magRatio_68_19_4));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_19_4_52, (decimal)faceB.magRatio_19_4_52));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_4_52_96, (decimal)faceB.magRatio_4_52_96));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_52_96_53, (decimal)faceB.magRatio_52_96_53));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_96_53_56, (decimal)faceB.magRatio_96_53_56));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_53_56_104, (decimal)faceB.magRatio_53_56_104));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_56_104_52, (decimal)faceB.magRatio_56_104_52));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_104_52_102, (decimal)faceB.magRatio_104_52_102));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_52_102_110, (decimal)faceB.magRatio_52_102_110));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_102_110_57, (decimal)faceB.magRatio_102_110_57));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_110_57_96, (decimal)faceB.magRatio_110_57_96));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_57_96_57, (decimal)faceB.magRatio_57_96_57));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_96_57_94, (decimal)faceB.magRatio_96_57_94));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_57_94_56, (decimal)faceB.magRatio_57_94_56));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_94_56_74, (decimal)faceB.magRatio_94_56_74));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_56_74_70, (decimal)faceB.magRatio_56_74_70));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_74_70_53, (decimal)faceB.magRatio_74_70_53));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_70_53_43, (decimal)faceB.magRatio_70_53_43));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_53_43_0, (decimal)faceB.magRatio_53_43_0));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_43_0_20, (decimal)faceB.magRatio_43_0_20));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_0_20_53, (decimal)faceB.magRatio_0_20_53));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_20_53_2, (decimal)faceB.magRatio_20_53_2));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_53_2_6, (decimal)faceB.magRatio_53_2_6));           
+        }
+    }
+}
+
+namespace KinectTrackerAndBroadcaster.Models
+{
+    class JointPoints
+    {
+        List<NamePointPair> joints = new List<NamePointPair>(); // list of joint names and coordinates
+        public JointPoints(Skeleton skeleton)
+        {
+            foreach (JointType joint in Enum.GetValues(typeof(JointType))) // iterate joint types
+            {
+                Unit3D joint_position = new Unit3D(skeleton.Joints[joint]); // create Unit3D of the joint coordinates
+                joints.Add(new NamePointPair(joint.ToString(), joint_position)); // add joint name and coordinates to list
+            }
+        }
+        private struct NamePointPair
+        {
+            public String Name; // name of joint
+            public Unit3D Point; // coordinates of joint
+            public NamePointPair(String s, Unit3D p)
+            {
+                // set local variables
+                Name = s;
+                Point = p;
+            }
+        }
+        public override string ToString()
+        {
+            String s = ""; // initialize string
+            foreach (NamePointPair joint in joints) // iterate joints
+            {
+                // add string for joint to the return string
+                s += String.Format("{0}:{1}, ", joint.Name, joint.Point.ToString());
+            }
+            return s; // return string
+        }
+        public string ToJson()
+        {
+            String s = ""; // initialize string
+            foreach (NamePointPair joint in joints) // iterate joints
+            {
+                // add string for joint to return string
+                s += String.Format("\"{0}\":{1},", joint.Name, joint.Point.ToJson());
+            }
+            return s; // return string
+        }
+    }
+}
+
+namespace KinectTrackerAndBroadcaster.Models
+{
+    class JsonModel
+    {
+        public string JsonString = ""; // json string for all skeletons
+        public JsonModel(string[] skeletons)
+        {
+            bool firstSkeleton = true; // bool to know whether it is the first skeleton
+            JsonString += "{"; // start json string
+            for (int i = 0; i < skeletons.Length; i++) // iterate skeleton array
+            {
+                if (skeletons[i].Length > 0) // if there is json for that skeleton
+                {
+                    if (!firstSkeleton) // if it is not the first skeleton
+                    {
+                        JsonString += ","; // put a comma before
+                    }
+
+                    JsonString += skeletons[i]; // add the skelton json to the string
+                    firstSkeleton = false; // no longer the first skeleton
+                }
+            }
+            JsonString += "}"; // end of json string
+        }
+    }
+}
+
+namespace KinectTrackerAndBroadcaster.Models
+{
+    public class Unit3D
+    {
+        public decimal X { get; set; } // x point for 3D data type
+        public decimal Y { get; set; } // y point for 3D data type
+        public decimal Z { get; set; } // z point for 3D data type
+        public Unit3D(Joint joint)
+        {
+            // set local variables
+            X = (decimal)joint.Position.X;
+            Y = (decimal)joint.Position.Y;
+            Z = (decimal)joint.Position.Z;
+        }
+        public Unit3D(Vector3DF vector)
+        {
+            // set local variables
+            X = (decimal)vector.X;
+            Y = (decimal)vector.Y;
+            Z = (decimal)vector.Z;
+        }
+        public Unit3D(decimal x, decimal y, decimal z)
+        {
+            // set local variables
+            X = x;
+            Y = y;
+            Z = z;
+        }
+        public override string ToString()
+        {
+            return String.Format("({0},{1},{2})", X, Y, Z);
+        }
+        public string ToJson()
+        {
+            return String.Format("{{\"x\":{0},\"y\":{1},\"z\":{2}}}", Maths.Round(X*100), Maths.Round(Y*100), Maths.Round(Z*100));
+        }
+    }
+}
+

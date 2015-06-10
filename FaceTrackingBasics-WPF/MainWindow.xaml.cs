@@ -100,7 +100,7 @@ namespace KinectTrackerAndBroadcaster
                         newSensor.SkeletonStream.EnableTrackingInNearRange = false;
                     }
 
-                    newSensor.SkeletonStream.TrackingMode = SkeletonTrackingMode.Seated;
+                    newSensor.SkeletonStream.TrackingMode = SkeletonTrackingMode.Default;
                     newSensor.SkeletonStream.Enable();
                     newSensor.AllFramesReady += KinectSensorOnAllFramesReady;
                 }

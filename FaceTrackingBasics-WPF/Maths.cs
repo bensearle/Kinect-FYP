@@ -128,9 +128,9 @@ namespace KinectTrackerAndBroadcaster
         /// <returns>length of line</returns>
         public static decimal Magnitude(Unit3D a, Unit3D b)
         {
-            decimal x = a.X - b.X; // distance beween X's
-            decimal y = a.Y - b.Y; // distance beween Y's
-            decimal z = a.Z - b.Z; // distance beween Z's
+            decimal x = a.X - b.X; // distance between X's
+            decimal y = a.Y - b.Y; // distance between Y's
+            decimal z = a.Z - b.Z; // distance between Z's
             return Sqrt(x * x + y * y + z * z); // return length
         }
 

@@ -68,7 +68,9 @@ namespace KinectTrackerAndBroadcaster
         {
             string bIP; // initialize destination address
             string[] parts = local_ip.Split('.'); //  separate the ip address in to a list of parts
-            bIP = parts[0] + "." + parts[1] + "." + parts[2] + ".255"; // chage the last part of address to .255
+            //bIP = parts[0] + "." + parts[1] + "." + parts[2] + ".255"; // chage the last part of address to .255
+            // default gateway at university is .254
+            bIP = parts[0] + "." + parts[1] + "." + "175" + ".254"; // chage the last part of address to .255
             return bIP; // return destination address
         }
 

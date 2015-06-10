@@ -89,48 +89,52 @@ namespace KinectTrackerAndBroadcaster
             }
         }
 
+        /// <summary>
+        /// draw the joints and face on the video stream
+        /// </summary>
+        /// <param name="drawingContext">the window to be drawn on</param>
         protected override void OnRender(DrawingContext drawingContext)
         {
-            if (drawOnStream)
+            if (drawOnStream) // if drawing is to happen
             {
                 base.OnRender(drawingContext);
-                foreach (SkeletonTracker faceInformation in this.trackedSkeletons.Values)
+
+                // draw face
+                foreach (SkeletonTracker faceInformation in this.trackedSkeletons.Values) // for each face being tracked
                 {
-                    faceInformation.DrawFaceModel(drawingContext);
+                    faceInformation.DrawFaceModel(drawingContext); // draw face on screen
                 }
 
                 // draw joints
-                if (this.skeletonData != null)
+                if (this.skeletonData != null) // if not null
                 {
-                    int index = 0;
-                    foreach (Skeleton skeleton in this.skeletonData)
+                    int index = 0; // start index
+                    foreach (Skeleton skeleton in this.skeletonData) // for each skeleton
                     {
-                        if (skeleton.TrackingState != SkeletonTrackingState.NotTracked)
+                        if (skeleton.TrackingState != SkeletonTrackingState.NotTracked) // if skeleton is being tracked
                         {
-                            foreach (JointType joint in Enum.GetValues(typeof(JointType)))
+                            foreach (JointType joint in Enum.GetValues(typeof(JointType))) // iterate joint types
                             {
-                                Point p = skeletonPointToScreen(skeleton.Joints[joint].Position);
-                                drawingContext.DrawEllipse(Brushes.Red, new Pen(Brushes.Red, 1), p, 5, 5);
+                                Point p = skeletonPointToScreen(skeleton.Joints[joint].Position); // convert joint position in 3D space to position on screen
+                                drawingContext.DrawEllipse(Brushes.Red, new Pen(Brushes.Red, 1), p, 5, 5); // draw a circle over the joint
 
-                                if (joint.ToString() == "Head")
+                                if (joint.ToString() == "Head") // at the head
                                 {
+                                    // create text with the name of the person
                                     FormattedText f = new FormattedText(SkeletonProcessing.GetName(index),
                                         CultureInfo.GetCultureInfo("en-us"),
                                         FlowDirection.LeftToRight,
                                         new Typeface("Verdana"),
-                                        14, System.Windows.Media.Brushes.YellowGreen);
-                                    drawingContext.DrawText(f, new Point(p.X, p.Y - 20));
+                                        16, System.Windows.Media.Brushes.Red);
+                                    drawingContext.DrawText(f, new Point(p.X, p.Y - 25)); // write the name above the head
                                 }
                             }
                         }
-                        index++;
+                        index++; // increment index
                     }
                 }
             }
         }
-
-        // draw rectangle on the video stream
-        //drawingContext.DrawRectangle(null, new Pen(Brushes.Blue, 10), new System.Windows.Rect(new Point(250, 0), new Point(400, 200)));
 
         /// <summary>
         /// Active Kinect sensor
@@ -138,23 +142,25 @@ namespace KinectTrackerAndBroadcaster
         private KinectSensor jointSensor;
 
         /// <summary>
-        /// Maps a SkeletonPoint to lie within our render space and converts to Point
+        /// map a point in 3D space to point on screen
         /// </summary>
-        /// <param name="skelpoint">point to map</param>
-        /// <returns>mapped point</returns>
+        /// <param name="skelpoint">point in 3D space</param>
+        /// <returns>point on screen</returns>
         private Point skeletonPointToScreen(SkeletonPoint skelpoint)
         {
-            // Convert point to depth space.  
-            // We are not using depth directly, but we do want the points in our 640x480 output resolution.
+            // map point to 640x480 resolution.
             DepthImagePoint depthPoint = jointSensor.CoordinateMapper.MapSkeletonPointToDepthPoint(skelpoint, DepthImageFormat.Resolution640x480Fps30);
-            return new Point(depthPoint.X +2.5f, depthPoint.Y+2.5f);
+            return new Point(depthPoint.X +2.5f, depthPoint.Y+2.5f); // return point on screen
         }
 
+        /// <summary>
+        /// when colour and depth frames are ready to be processed, get the skeletons
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="allFramesReadyEventArgs"></param>
         private void OnAllFramesReady(object sender, AllFramesReadyEventArgs allFramesReadyEventArgs)
         {
-            // ************************
-            // commented for testing
-            Kinect.SkeletonStream.TrackingMode = SkeletonTrackingMode.Default; // Use Standing Mode (all 20 joints)
+            //Kinect.SkeletonStream.TrackingMode = SkeletonTrackingMode.Default; // Use Standing Mode (all 20 joints)
             ColorImageFrame colorImageFrame = null;
             DepthImageFrame depthImageFrame = null;
             SkeletonFrame skeletonFrame = null;
@@ -207,8 +213,6 @@ namespace KinectTrackerAndBroadcaster
                 depthImageFrame.CopyPixelDataTo(this.depthImage);
                 skeletonFrame.CopySkeletonDataTo(this.skeletonData);
 
-                int total_skeleton_count = 0;
-
                 // Update the list of trackers and the trackers with the current frame information
                 foreach (Skeleton skeleton in this.skeletonData)
                 {
@@ -230,10 +234,6 @@ namespace KinectTrackerAndBroadcaster
                         {
                             skeletonTracker.OnFrameReady(this.Kinect, colorImageFormat, colorImage, depthImageFormat, depthImage, skeleton, skeletonIndex);
                             skeletonTracker.LastTrackedFrame = skeletonFrame.FrameNumber;
-                            //Console.WriteLine(skeletonFrame.FrameNumber);
-                            total_skeleton_count++;
-                            //s.OnFrameReady(this.Kinect, colorImageFormat, colorImage, depthImageFormat, depthImage, skeleton);
-
                         }
                     }
                 }
@@ -326,7 +326,8 @@ namespace KinectTrackerAndBroadcaster
             public int LastTrackedFrame { get; set; }
 
             /// <summary>
-            /// 
+            /// list of 121 facial points, with dynamic and duplicate points commented out
+            /// location for each point is given
             /// </summary>
             private List<int> staticFacialPoints = new List<int>
             {
@@ -454,7 +455,7 @@ namespace KinectTrackerAndBroadcaster
             };
 
             /// <summary>
-            /// 
+            /// the order of the line on the face
             /// </summary>
             private List<int> facialLine = new List<int> { 
                 0,44,45,47,62,61,63,43,30,28,29,14,12,11,0, // outer of face loop
@@ -467,6 +468,7 @@ namespace KinectTrackerAndBroadcaster
                 52,96,53,56,104,52,102,110,57,96,57,94,56,74,70,53, // right eye
                 43,0,20,53,2,6// face cross
             };
+
             public void Dispose()
             {
                 if (this.faceTracker != null)
@@ -476,9 +478,14 @@ namespace KinectTrackerAndBroadcaster
                 }
             }
 
+            /// <summary>
+            /// draw line and face points on the face
+            /// </summary>
+            /// <param name="drawingContext">window to be drawn on</param>
             public void DrawFaceModel(DrawingContext drawingContext)
             {
-                Boolean scaleFace = false;
+                Boolean scaleFace = false; // do you want to increase the size of the face overlay?
+                Boolean labelFacePoint = false; // do you want to label the face points?
 
                 if (!this.lastFaceTrackSucceeded || this.skeletonTrackingState != SkeletonTrackingState.Tracked)
                 {
@@ -500,48 +507,54 @@ namespace KinectTrackerAndBroadcaster
                     {
                         if (scaleFace)
                         {
-                            drawingContext.DrawLine(new Pen(Brushes.Yellow, 1), Maths.ScalePoint(faceModelPts[facialLine[i]]), Maths.ScalePoint(faceModelPts[facialLine[i + 1]]));
+                            drawingContext.DrawLine(new Pen(Brushes.Blue, 1), Maths.ScalePoint(faceModelPts[facialLine[i]]), Maths.ScalePoint(faceModelPts[facialLine[i + 1]]));
 
                         }
                         else
                         {
-                            drawingContext.DrawLine(new Pen(Brushes.Yellow, 1), faceModelPts[facialLine[i]], faceModelPts[facialLine[i + 1]]);
+                            drawingContext.DrawLine(new Pen(Brushes.Blue, 1), faceModelPts[facialLine[i]], faceModelPts[facialLine[i + 1]]);
                         }
                     }
                 }
 
-                // draw the numbers over top of face
-                foreach (int point in staticFacialPoints)
+                if (labelFacePoint)
                 {
-                    Point p;
-                    if (scaleFace)
+                    // draw the numbers over top of face
+                    foreach (int point in staticFacialPoints)
                     {
-                        p = Maths.ScalePoint(faceModelPts[point]);
+                        Point p;
+                        if (scaleFace)
+                        {
+                            p = Maths.ScalePoint(faceModelPts[point]);
+                        }
+                        else
+                        {
+                            p = faceModelPts[point];
+                        }
+                        FormattedText f = new FormattedText("" + point,
+                            CultureInfo.GetCultureInfo("en-us"),
+                            FlowDirection.LeftToRight,
+                            new Typeface("Verdana"),
+                            5, System.Windows.Media.Brushes.Blue);
+                        drawingContext.DrawText(f, p);
                     }
-                    else
-                    {
-                        p = faceModelPts[point];
-                    }
-                    FormattedText f = new FormattedText("" + point,
-                        CultureInfo.GetCultureInfo("en-us"),
-                        FlowDirection.LeftToRight,
-                        new Typeface("Verdana"),
-                        5, System.Windows.Media.Brushes.Cyan);
-                    drawingContext.DrawText(f, p);
                 }
 
             }
 
             /// <summary>
             /// Updates the face tracking information for this skeleton
+            /// calls the SkeletonProcessing class to start or stop processing data
             /// </summary>
             internal void OnFrameReady(KinectSensor kinectSensor, ColorImageFormat colorImageFormat, byte[] colorImage, DepthImageFormat depthImageFormat, short[] depthImage, Skeleton skeletonOfInterest, int skeletonIndex)
             {
                 this.skeletonTrackingState = skeletonOfInterest.TrackingState;
 
-                if (this.skeletonTrackingState != SkeletonTrackingState.Tracked)
+                /*
+                 * stop tracking the skeleton
+                 */
+                if (this.skeletonTrackingState != SkeletonTrackingState.Tracked) // if the skeleton is not being tracked
                 {
-                    // nothing to do with an untracked skeleton.
                     SkeletonProcessing.UntrackSkeleton(skeletonIndex); // stop processing the skeleton
                     return;
                 }
@@ -562,14 +575,16 @@ namespace KinectTrackerAndBroadcaster
                     }
                 }
 
-                if (this.faceTracker != null)
+                /*
+                 * start/continue tracking the skeleton
+                 */
+                if (this.faceTracker != null) // if there is data
                 {
+                    // create the face frame for skeleton from the colour and depth frames
                     FaceTrackFrame frame = this.faceTracker.Track(
                         colorImageFormat, colorImage, depthImageFormat, depthImage, skeletonOfInterest);
 
-                    // printFaceVectors(frame);
-                    // commented for testing
-                    SkeletonProcessing.TrackSkeleton(skeletonOfInterest, frame, skeletonIndex);
+                    SkeletonProcessing.TrackSkeleton(skeletonOfInterest, frame, skeletonIndex); // process the skeleton
 
                     //EnumIndexableCollection<FeaturePoint, Vector3DF> face3D = frame.Get3DShape();
                     //EnumIndexableCollection<FeaturePoint, PointF> face2D = frame.GetProjected3DShape();
@@ -580,20 +595,6 @@ namespace KinectTrackerAndBroadcaster
                         this.facePoints = frame.GetProjected3DShape();
                     }
                 }
-            }
-
-            private void printFaceVectors(FaceTrackFrame frame)
-            {
-                string s = " *** ,";
-                int i = 0;
-                EnumIndexableCollection<FeaturePoint, Vector3DF> facePoints3D = frame.Get3DShape(); // get 3D face vectors
-                foreach (Vector3DF vector in facePoints3D)
-                {
-                    s += "Vector" + i + "," + vector.X + "," + vector.Y + "," + vector.Z + ",";
-
-                    i++;
-                }
-                Console.WriteLine(s);
             }
         }
     }

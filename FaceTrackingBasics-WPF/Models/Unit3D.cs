@@ -70,8 +70,4 @@ namespace KinectTrackerAndBroadcaster.Models
             return String.Format("{{\"x\":{0},\"y\":{1},\"z\":{2}}}", Maths.Round(X*100), Maths.Round(Y*100), Maths.Round(Z*100));
         }
     }
-
-
-
-
 }
