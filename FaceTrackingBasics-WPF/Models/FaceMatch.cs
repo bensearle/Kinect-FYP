@@ -22,7 +22,7 @@ namespace KinectTrackerAndBroadcaster.Models
         private decimal totalMatch = 1; // 1 - totalDifference
         private int matchCount = 0; // how many of the matches are above n% accuracy
 
-        public double AverageMatchCount { get; set; } // the average match count for people with this name
+        public decimal AverageMatchCount { get; set; } // the average match count for people with this name
 
         /// <summary>
         /// constructor for the class
@@ -53,7 +53,8 @@ namespace KinectTrackerAndBroadcaster.Models
         /// get the lowest match
         /// </summary>
         /// <returns>lowest match</returns>
-        public decimal GetLowest() {
+        public decimal GetLowest()
+        {
             return lowest;
         }
 
@@ -103,7 +104,7 @@ namespace KinectTrackerAndBroadcaster.Models
                     matchCount++; // increment the matches about n% accuracy
                 }
             }
-            totalMatch = 1 - totalDifference; 
+            totalMatch = 1 - totalDifference;
             mean = total / count; // calculate mean
         }
 
@@ -111,6 +112,102 @@ namespace KinectTrackerAndBroadcaster.Models
         /// get all of the matches between faceA data and faceB data
         /// </summary>
         private void getMatches()
+        {
+            // matches for angles
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_1_0_34, (decimal)faceB.angle_1_0_34));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_11_0_44, (decimal)faceB.angle_11_0_44));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_12_11_0, (decimal)faceB.angle_12_11_0));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_0_44_45, (decimal)faceB.angle_0_44_45));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_11_12_14, (decimal)faceB.angle_11_12_14));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_44_45_47, (decimal)faceB.angle_44_45_47));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_12_14_29, (decimal)faceB.angle_12_14_29));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_45_47_62, (decimal)faceB.angle_45_47_62));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_14_29_28, (decimal)faceB.angle_14_29_28));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_47_62_61, (decimal)faceB.angle_47_62_61));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_29_28_30, (decimal)faceB.angle_29_28_30));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_62_61_63, (decimal)faceB.angle_62_61_63));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_28_30_43, (decimal)faceB.angle_28_30_43));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_61_63_43, (decimal)faceB.angle_61_63_43));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_30_43_63, (decimal)faceB.angle_30_43_63));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_30_42_63, (decimal)faceB.angle_30_42_63));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_30_41_63, (decimal)faceB.angle_30_41_63));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_41_61_60, (decimal)faceB.angle_41_61_60));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_41_28_27, (decimal)faceB.angle_41_28_27));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_27_29_2, (decimal)faceB.angle_27_29_2));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_60_62_2, (decimal)faceB.angle_60_62_2));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_14_2_29, (decimal)faceB.angle_14_2_29));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_47_2_62, (decimal)faceB.angle_47_2_62));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_1_3_34, (decimal)faceB.angle_1_3_34));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_13_3_46, (decimal)faceB.angle_13_3_46));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_34_46_53, (decimal)faceB.angle_34_46_53));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_1_13_20, (decimal)faceB.angle_1_13_20));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_13_20_27, (decimal)faceB.angle_13_20_27));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_46_53_60, (decimal)faceB.angle_46_53_60));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_20_27_26, (decimal)faceB.angle_20_27_26));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_53_60_59, (decimal)faceB.angle_53_60_59));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_14_1_34, (decimal)faceB.angle_14_1_34));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_47_34_1, (decimal)faceB.angle_47_34_1));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_23_3_56, (decimal)faceB.angle_23_3_56));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_20_3_53, (decimal)faceB.angle_20_3_53));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_26_4_59, (decimal)faceB.angle_26_4_59));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_92_4_93, (decimal)faceB.angle_92_4_93));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_92_94_93, (decimal)faceB.angle_92_94_93));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_75_94_76, (decimal)faceB.angle_75_94_76));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_26_25_94, (decimal)faceB.angle_26_25_94));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_59_58_94, (decimal)faceB.angle_59_58_94));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_111_26_25, (decimal)faceB.angle_111_26_25));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_112_59_58, (decimal)faceB.angle_112_59_58));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_26_111_75, (decimal)faceB.angle_26_111_75));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_59_112_76, (decimal)faceB.angle_59_112_76));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_75_6_76, (decimal)faceB.angle_75_6_76));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_25_5_58, (decimal)faceB.angle_25_5_58));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_20_95_19, (decimal)faceB.angle_20_95_19));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_95_19_103, (decimal)faceB.angle_95_19_103));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_19_103_23, (decimal)faceB.angle_19_103_23));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_103_23_109, (decimal)faceB.angle_103_23_109));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_23_109_24, (decimal)faceB.angle_23_109_24));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_109_24_103, (decimal)faceB.angle_109_24_103));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_24_103_20, (decimal)faceB.angle_24_103_20));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_103_20_95, (decimal)faceB.angle_103_20_95));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_56_104_52, (decimal)faceB.angle_56_104_52));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_104_52_96, (decimal)faceB.angle_104_52_96));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_52_96_53, (decimal)faceB.angle_52_96_53));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_96_53_102, (decimal)faceB.angle_96_53_102));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_53_102_57, (decimal)faceB.angle_53_102_57));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_102_57_110, (decimal)faceB.angle_102_57_110));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_57_110_56, (decimal)faceB.angle_57_110_56));
+            matches.Add(Maths.NumericMatch((decimal)faceA.angle_110_56_104, (decimal)faceB.angle_110_56_104));
+
+            // matches for magnitude ratios
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_0_43_12_45, (decimal)faceB.magRatio_0_43_12_45));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_0_43_14_47, (decimal)faceB.magRatio_0_43_14_47));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_0_43_29_62, (decimal)faceB.magRatio_0_43_29_62));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_0_43_28_61, (decimal)faceB.magRatio_0_43_28_61));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_0_43_30_63, (decimal)faceB.magRatio_0_43_30_63));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_0_2_2_43, (decimal)faceB.magRatio_0_2_2_43));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_2_4_4_43, (decimal)faceB.magRatio_2_4_4_43));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_4_6_6_43, (decimal)faceB.magRatio_4_6_6_43));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_6_42_42_43, (decimal)faceB.magRatio_6_42_42_43));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_29_62_20_53, (decimal)faceB.magRatio_29_62_20_53));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_23_56_20_53, (decimal)faceB.magRatio_23_56_20_53));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_94_5_26_59, (decimal)faceB.magRatio_94_5_26_59));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_4_6_26_59, (decimal)faceB.magRatio_4_6_26_59));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_23_56_26_59, (decimal)faceB.magRatio_23_56_26_59));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_92_93_26_59, (decimal)faceB.magRatio_92_93_26_59));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_25_58_26_59, (decimal)faceB.magRatio_25_58_26_59));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_75_76_26_59, (decimal)faceB.magRatio_75_76_26_59));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_20_23_19_24, (decimal)faceB.magRatio_20_23_19_24));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_20_23_29_4, (decimal)faceB.magRatio_20_23_29_4));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_20_23_56_53, (decimal)faceB.magRatio_20_23_56_53));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_4_62_56_53, (decimal)faceB.magRatio_4_62_56_53));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_52_57_56_53, (decimal)faceB.magRatio_52_57_56_53));
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_30_63_41_43, (decimal)faceB.magRatio_30_63_41_43));
+        }
+
+        /// <summary>
+        /// get all of the matches between faceA data and faceB data
+        /// </summary>
+        private void getMatches_submissionVersion()
         {
             // matches for angles
             matches.Add(Maths.NumericMatch((decimal)faceA.angle_0_44_45, (decimal)faceB.angle_0_44_45));
@@ -212,7 +309,7 @@ namespace KinectTrackerAndBroadcaster.Models
             matches.Add(Maths.NumericMatch((decimal)faceA.angle_0_20_53, (decimal)faceB.angle_0_20_53));
             matches.Add(Maths.NumericMatch((decimal)faceA.angle_20_53_2, (decimal)faceB.angle_20_53_2));
             matches.Add(Maths.NumericMatch((decimal)faceA.angle_53_2_6, (decimal)faceB.angle_53_2_6));
-            
+
             // matches for magnitude ratios
             matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_0_44_45, (decimal)faceB.magRatio_0_44_45));
             matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_44_45_47, (decimal)faceB.magRatio_44_45_47));
@@ -312,7 +409,7 @@ namespace KinectTrackerAndBroadcaster.Models
             matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_43_0_20, (decimal)faceB.magRatio_43_0_20));
             matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_0_20_53, (decimal)faceB.magRatio_0_20_53));
             matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_20_53_2, (decimal)faceB.magRatio_20_53_2));
-            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_53_2_6, (decimal)faceB.magRatio_53_2_6));           
+            matches.Add(Maths.NumericMatch((decimal)faceA.magRatio_53_2_6, (decimal)faceB.magRatio_53_2_6));
         }
     }
 }

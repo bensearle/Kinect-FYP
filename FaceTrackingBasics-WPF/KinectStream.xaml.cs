@@ -150,7 +150,7 @@ namespace KinectTrackerAndBroadcaster
         {
             // map point to 640x480 resolution.
             DepthImagePoint depthPoint = jointSensor.CoordinateMapper.MapSkeletonPointToDepthPoint(skelpoint, DepthImageFormat.Resolution640x480Fps30);
-            return new Point(depthPoint.X +2.5f, depthPoint.Y+2.5f); // return point on screen
+            return new Point(depthPoint.X + 2.5f, depthPoint.Y + 2.5f); // return point on screen
         }
 
         /// <summary>
@@ -469,6 +469,74 @@ namespace KinectTrackerAndBroadcaster
                 43,0,20,53,2,6// face cross
             };
 
+            private List<int> facialAngles = new List<int>
+            {
+                1,0,34,
+                11,0,44,
+                12,11,0,
+                0,44,45,
+                11,12,14,
+                44,45,47,
+                12,14,29,
+                45,47,62,
+                14,29,28,
+                47,62,61,
+                29,28,30,
+                62,61,63,
+                28,30,43,
+                61,63,43,
+                30,43,63,
+                30,42,63,
+                30,41,63,
+                41,61,60,
+                41,28,27,
+                27,29,2,
+                60,62,2,
+                14,2,29,
+                47,2,62,
+                1,3,34,
+                13,3,46,
+                34,46,53,
+                1,13,20,
+                13,20,27,
+                46,53,60,
+                20,27,26,
+                53,60,59,
+                14,1,34,
+                47,34,1,
+                23,3,56,
+                20,3,53,
+                26,4,59,
+                92,4,93,
+                92,94,93,
+                75,94,76,
+                26,25,94,
+                59,58,94,
+                111,26,25,
+                112,59,58,
+                26,111,75,
+                59,112,76,
+                75,6,76,
+                25,5,58,
+                20,95,19,
+                95,19,103,
+                19,103,23,
+                103,23,109,
+                23,109,24,
+                109,24,103,
+                24,103,20,
+                103,20,95,
+                56,104,52,
+                104,52,96,
+                52,96,53,
+                96,53,102,
+                53,102,57,
+                102,57,110,
+                57,110,56,
+                110,56,104
+
+            };
+
             public void Dispose()
             {
                 if (this.faceTracker != null)
@@ -499,8 +567,18 @@ namespace KinectTrackerAndBroadcaster
                     faceModelPts.Add(new Point(this.facePoints[i].X + 0.5f, this.facePoints[i].Y + 0.5f));
                 }
 
+                // draw the face angles
+                int anglesLength = facialAngles.Count;
+                //int index = 0;
+                for (int i = 0; i < anglesLength; i=i+3)
+                {
+                    drawingContext.DrawLine(new Pen(Brushes.Blue, 1), faceModelPts[facialAngles[i]], faceModelPts[facialAngles[i + 1]]);
+                    drawingContext.DrawLine(new Pen(Brushes.Blue, 1), faceModelPts[facialAngles[i+1]], faceModelPts[facialAngles[i + 2]]);
+                    //index = index + 3;
+                }
+
                 // draw the face line
-                int lineLength = facialLine.Count;
+                /*int lineLength = facialLine.Count;
                 for (int i = 0; i < lineLength; i++)
                 {
                     if (i != lineLength - 1) // last number in list
@@ -515,7 +593,7 @@ namespace KinectTrackerAndBroadcaster
                             drawingContext.DrawLine(new Pen(Brushes.Blue, 1), faceModelPts[facialLine[i]], faceModelPts[facialLine[i + 1]]);
                         }
                     }
-                }
+                }*/
 
                 if (labelFacePoint)
                 {

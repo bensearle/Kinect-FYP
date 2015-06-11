@@ -74,6 +74,107 @@ namespace KinectTrackerAndBroadcaster
         {
             Face face = new Face(); // initialize the face
             // calculate angles
+            face.angle_1_0_34 = (decimal)Maths.Angle(face_vectors[1], face_vectors[0], face_vectors[34]);
+            face.angle_11_0_44 = (decimal)Maths.Angle(face_vectors[11], face_vectors[0], face_vectors[44]);
+            face.angle_12_11_0 = (decimal)Maths.Angle(face_vectors[12], face_vectors[11], face_vectors[0]);
+            face.angle_0_44_45 = (decimal)Maths.Angle(face_vectors[0], face_vectors[44], face_vectors[45]);
+            face.angle_11_12_14 = (decimal)Maths.Angle(face_vectors[11], face_vectors[12], face_vectors[14]);
+            face.angle_44_45_47 = (decimal)Maths.Angle(face_vectors[44], face_vectors[45], face_vectors[47]);
+            face.angle_12_14_29 = (decimal)Maths.Angle(face_vectors[12], face_vectors[14], face_vectors[29]);
+            face.angle_45_47_62 = (decimal)Maths.Angle(face_vectors[45], face_vectors[47], face_vectors[62]);
+            face.angle_14_29_28 = (decimal)Maths.Angle(face_vectors[14], face_vectors[29], face_vectors[28]);
+            face.angle_47_62_61 = (decimal)Maths.Angle(face_vectors[47], face_vectors[62], face_vectors[61]);
+            face.angle_29_28_30 = (decimal)Maths.Angle(face_vectors[29], face_vectors[28], face_vectors[30]);
+            face.angle_62_61_63 = (decimal)Maths.Angle(face_vectors[62], face_vectors[61], face_vectors[63]);
+            face.angle_28_30_43 = (decimal)Maths.Angle(face_vectors[28], face_vectors[30], face_vectors[43]);
+            face.angle_61_63_43 = (decimal)Maths.Angle(face_vectors[61], face_vectors[63], face_vectors[43]);
+            face.angle_30_43_63 = (decimal)Maths.Angle(face_vectors[30], face_vectors[43], face_vectors[63]);
+            face.angle_30_42_63 = (decimal)Maths.Angle(face_vectors[30], face_vectors[42], face_vectors[63]);
+            face.angle_30_41_63 = (decimal)Maths.Angle(face_vectors[30], face_vectors[41], face_vectors[63]);
+            face.angle_41_61_60 = (decimal)Maths.Angle(face_vectors[41], face_vectors[61], face_vectors[60]);
+            face.angle_41_28_27 = (decimal)Maths.Angle(face_vectors[41], face_vectors[28], face_vectors[27]);
+            face.angle_27_29_2 = (decimal)Maths.Angle(face_vectors[27], face_vectors[29], face_vectors[2]);
+            face.angle_60_62_2 = (decimal)Maths.Angle(face_vectors[60], face_vectors[62], face_vectors[2]);
+            face.angle_14_2_29 = (decimal)Maths.Angle(face_vectors[14], face_vectors[2], face_vectors[29]);
+            face.angle_47_2_62 = (decimal)Maths.Angle(face_vectors[47], face_vectors[2], face_vectors[62]);
+            face.angle_1_3_34 = (decimal)Maths.Angle(face_vectors[1], face_vectors[3], face_vectors[34]);
+            face.angle_13_3_46 = (decimal)Maths.Angle(face_vectors[13], face_vectors[3], face_vectors[46]);
+            face.angle_34_46_53 = (decimal)Maths.Angle(face_vectors[34], face_vectors[46], face_vectors[53]);
+            face.angle_1_13_20 = (decimal)Maths.Angle(face_vectors[1], face_vectors[13], face_vectors[20]);
+            face.angle_13_20_27 = (decimal)Maths.Angle(face_vectors[13], face_vectors[20], face_vectors[27]);
+            face.angle_46_53_60 = (decimal)Maths.Angle(face_vectors[46], face_vectors[53], face_vectors[60]);
+            face.angle_20_27_26 = (decimal)Maths.Angle(face_vectors[20], face_vectors[27], face_vectors[26]);
+            face.angle_53_60_59 = (decimal)Maths.Angle(face_vectors[53], face_vectors[60], face_vectors[59]);
+            face.angle_14_1_34 = (decimal)Maths.Angle(face_vectors[14], face_vectors[1], face_vectors[34]);
+            face.angle_47_34_1 = (decimal)Maths.Angle(face_vectors[47], face_vectors[34], face_vectors[1]);
+            face.angle_23_3_56 = (decimal)Maths.Angle(face_vectors[23], face_vectors[3], face_vectors[56]);
+            face.angle_20_3_53 = (decimal)Maths.Angle(face_vectors[20], face_vectors[3], face_vectors[53]);
+            face.angle_26_4_59 = (decimal)Maths.Angle(face_vectors[26], face_vectors[4], face_vectors[59]);
+            face.angle_92_4_93 = (decimal)Maths.Angle(face_vectors[92], face_vectors[4], face_vectors[93]);
+            face.angle_92_94_93 = (decimal)Maths.Angle(face_vectors[92], face_vectors[94], face_vectors[93]);
+            face.angle_75_94_76 = (decimal)Maths.Angle(face_vectors[75], face_vectors[94], face_vectors[76]);
+            face.angle_26_25_94 = (decimal)Maths.Angle(face_vectors[26], face_vectors[25], face_vectors[94]);
+            face.angle_59_58_94 = (decimal)Maths.Angle(face_vectors[59], face_vectors[58], face_vectors[94]);
+            face.angle_111_26_25 = (decimal)Maths.Angle(face_vectors[111], face_vectors[26], face_vectors[25]);
+            face.angle_112_59_58 = (decimal)Maths.Angle(face_vectors[112], face_vectors[59], face_vectors[58]);
+            face.angle_26_111_75 = (decimal)Maths.Angle(face_vectors[26], face_vectors[111], face_vectors[75]);
+            face.angle_59_112_76 = (decimal)Maths.Angle(face_vectors[59], face_vectors[112], face_vectors[76]);
+            face.angle_75_6_76 = (decimal)Maths.Angle(face_vectors[75], face_vectors[6], face_vectors[76]);
+            face.angle_25_5_58 = (decimal)Maths.Angle(face_vectors[25], face_vectors[5], face_vectors[58]);
+            face.angle_20_95_19 = (decimal)Maths.Angle(face_vectors[20], face_vectors[95], face_vectors[19]);
+            face.angle_95_19_103 = (decimal)Maths.Angle(face_vectors[95], face_vectors[19], face_vectors[103]);
+            face.angle_19_103_23 = (decimal)Maths.Angle(face_vectors[19], face_vectors[103], face_vectors[23]);
+            face.angle_103_23_109 = (decimal)Maths.Angle(face_vectors[103], face_vectors[23], face_vectors[109]);
+            face.angle_23_109_24 = (decimal)Maths.Angle(face_vectors[23], face_vectors[109], face_vectors[24]);
+            face.angle_109_24_103 = (decimal)Maths.Angle(face_vectors[109], face_vectors[24], face_vectors[103]);
+            face.angle_24_103_20 = (decimal)Maths.Angle(face_vectors[24], face_vectors[103], face_vectors[20]);
+            face.angle_103_20_95 = (decimal)Maths.Angle(face_vectors[103], face_vectors[20], face_vectors[95]);
+            face.angle_56_104_52 = (decimal)Maths.Angle(face_vectors[56], face_vectors[104], face_vectors[52]);
+            face.angle_104_52_96 = (decimal)Maths.Angle(face_vectors[104], face_vectors[52], face_vectors[96]);
+            face.angle_52_96_53 = (decimal)Maths.Angle(face_vectors[52], face_vectors[96], face_vectors[53]);
+            face.angle_96_53_102 = (decimal)Maths.Angle(face_vectors[96], face_vectors[53], face_vectors[102]);
+            face.angle_53_102_57 = (decimal)Maths.Angle(face_vectors[53], face_vectors[102], face_vectors[57]);
+            face.angle_102_57_110 = (decimal)Maths.Angle(face_vectors[102], face_vectors[57], face_vectors[110]);
+            face.angle_57_110_56 = (decimal)Maths.Angle(face_vectors[57], face_vectors[110], face_vectors[56]);
+            face.angle_110_56_104 = (decimal)Maths.Angle(face_vectors[110], face_vectors[56], face_vectors[104]);
+
+            // calculate magnitude ratios
+            face.magRatio_0_43_12_45 = (decimal)Maths.Ratio(face_vectors[0], face_vectors[43], face_vectors[12], face_vectors[45]);
+            face.magRatio_0_43_14_47 = (decimal)Maths.Ratio(face_vectors[0], face_vectors[43], face_vectors[14], face_vectors[47]);
+            face.magRatio_0_43_29_62 = (decimal)Maths.Ratio(face_vectors[0], face_vectors[43], face_vectors[29], face_vectors[62]);
+            face.magRatio_0_43_28_61 = (decimal)Maths.Ratio(face_vectors[0], face_vectors[43], face_vectors[28], face_vectors[61]);
+            face.magRatio_0_43_30_63 = (decimal)Maths.Ratio(face_vectors[0], face_vectors[43], face_vectors[30], face_vectors[63]);
+            face.magRatio_0_2_2_43 = (decimal)Maths.Ratio(face_vectors[0], face_vectors[2], face_vectors[2], face_vectors[43]);
+            face.magRatio_2_4_4_43 = (decimal)Maths.Ratio(face_vectors[2], face_vectors[4], face_vectors[4], face_vectors[43]);
+            face.magRatio_4_6_6_43 = (decimal)Maths.Ratio(face_vectors[4], face_vectors[6], face_vectors[6], face_vectors[43]);
+            face.magRatio_6_42_42_43 = (decimal)Maths.Ratio(face_vectors[6], face_vectors[42], face_vectors[42], face_vectors[43]);
+            face.magRatio_29_62_20_53 = (decimal)Maths.Ratio(face_vectors[29], face_vectors[62], face_vectors[20], face_vectors[53]);
+            face.magRatio_23_56_20_53 = (decimal)Maths.Ratio(face_vectors[23], face_vectors[56], face_vectors[20], face_vectors[53]);
+            face.magRatio_94_5_26_59 = (decimal)Maths.Ratio(face_vectors[94], face_vectors[5], face_vectors[26], face_vectors[59]);
+            face.magRatio_4_6_26_59 = (decimal)Maths.Ratio(face_vectors[4], face_vectors[6], face_vectors[26], face_vectors[59]);
+            face.magRatio_23_56_26_59 = (decimal)Maths.Ratio(face_vectors[23], face_vectors[56], face_vectors[26], face_vectors[59]);
+            face.magRatio_92_93_26_59 = (decimal)Maths.Ratio(face_vectors[92], face_vectors[93], face_vectors[26], face_vectors[59]);
+            face.magRatio_25_58_26_59 = (decimal)Maths.Ratio(face_vectors[25], face_vectors[58], face_vectors[26], face_vectors[59]);
+            face.magRatio_75_76_26_59 = (decimal)Maths.Ratio(face_vectors[75], face_vectors[76], face_vectors[26], face_vectors[59]);
+            face.magRatio_20_23_19_24 = (decimal)Maths.Ratio(face_vectors[20], face_vectors[23], face_vectors[19], face_vectors[24]);
+            face.magRatio_20_23_29_4 = (decimal)Maths.Ratio(face_vectors[20], face_vectors[23], face_vectors[29], face_vectors[4]);
+            face.magRatio_20_23_56_53 = (decimal)Maths.Ratio(face_vectors[20], face_vectors[23], face_vectors[56], face_vectors[53]);
+            face.magRatio_4_62_56_53 = (decimal)Maths.Ratio(face_vectors[4], face_vectors[62], face_vectors[56], face_vectors[53]);
+            face.magRatio_52_57_56_53 = (decimal)Maths.Ratio(face_vectors[52], face_vectors[57], face_vectors[56], face_vectors[53]);
+            face.magRatio_30_63_41_43 = (decimal)Maths.Ratio(face_vectors[30], face_vectors[63], face_vectors[41], face_vectors[43]);
+
+            return face; // return the face
+        }
+
+        /// <summary>
+        /// Method used to calculate all of the face details, other than the name.
+        /// </summary>
+        /// <param name="face_vectors">array of Unit3D face vectors</param>
+        /// <returns>the face details, but not the name</returns>
+        private static Face get_face_submissionVersion(Unit3D[] face_vectors)
+        {
+            Face face = new Face(); // initialize the face
+            // calculate angles
             face.angle_0_44_45 = Maths.Angle(face_vectors[0], face_vectors[44], face_vectors[45]);
             face.angle_44_45_47 = Maths.Angle(face_vectors[44], face_vectors[45], face_vectors[47]);
             face.angle_45_47_62 = Maths.Angle(face_vectors[45], face_vectors[47], face_vectors[62]);
@@ -298,7 +399,7 @@ namespace KinectTrackerAndBroadcaster
         {
             using (var db = new Database.Database()) // using the database
             {
-                double match = Double.MinValue; // the closest match
+                decimal match = Decimal.MinValue; // the closest match
                 string name = ""; // name of the closest match
 
                 // get all faces from the database
@@ -316,9 +417,9 @@ namespace KinectTrackerAndBroadcaster
                 {
                     FaceMatch fm = new FaceMatch(found_face, face); // compare database face with unknown face
                     faceMatches.Add(fm); // add comparison to list
-                    //decimal closeness = fm.GetMean();
-                    /*
-                    decimal closeness = fm.GetMatchCount();
+                    decimal closeness = fm.GetMean();
+                    
+                    //decimal closeness = fm.GetMatchCount();
                     if (closeness > match)
                     {
                         match = closeness;
@@ -326,10 +427,11 @@ namespace KinectTrackerAndBroadcaster
                     }
                     Console.WriteLine(String.Format("Checked {0} :: {1} :: {2} :: {3}",
                         found_face.name, fm.GetMatchCount(), fm.GetTotalMatch(), fm.GetMean()));
-                    */
+                    
                     //Console.WriteLine("checked " + found_face.name + " :: " + closeness);
                 }
 
+                /* // use sampling
                 foreach (FaceMatch a in faceMatches) // itereate all face comparisons
                 {
                     string nameA = a.Name; // get the name
@@ -343,12 +445,12 @@ namespace KinectTrackerAndBroadcaster
                             matchCountTotal += b.GetMatchCount(); // increase the total match
                         }
                     }
-                    a.AverageMatchCount = matchCountTotal / facesCount; // set the average match for this person
+                    a.AverageMatchCount = (decimal) (matchCountTotal / facesCount); // set the average match for this person
                 }
 
                 foreach (FaceMatch fm in faceMatches) // iterate all face comparisons
                 {
-                    double closeness = fm.AverageMatchCount; // get the average face match
+                    decimal closeness = fm.AverageMatchCount; // get the average face match
                     if (closeness > match) // if match is closer than previous comparisons
                     {
                         match = closeness; // set new closest match
@@ -357,7 +459,7 @@ namespace KinectTrackerAndBroadcaster
                     Console.WriteLine(String.Format("Checked {0} :: {1} :: {2} :: {3} :: {4}",
                         fm.Name,closeness, fm.GetMatchCount(), fm.GetTotalMatch(), fm.GetMean()));
                 }
-
+                */
                 //MainWindow
                 Console.WriteLine("closest match: " + name + " :: " + match); // write the name of the closest match
                 return name; // return name of the closest match
